@@ -1,0 +1,121 @@
+# Vendors polled by the status monitor. Adding a vendor = one entry.
+# Endpoint verification below was fetched on 2026-11-04.
+vendors:
+  # Verified 2026-11-04: BetterStack; index.json returns JSON only with Accept: application/json.
+  - id: vapi
+    name: Vapi
+    type: betterstack
+    url: https://status.vapi.ai
+
+  # Verified 2026-11-04: Instatus (not Atlassian); summary.json + v2/components.json respond.
+  - id: northflank
+    name: Northflank
+    type: instatus
+    url: https://status.northflank.com
+
+  # Verified 2026-11-04: incident.io page serving a Statuspage-compatible summary.json; unresolved.json returns 404.
+  - id: openai
+    name: OpenAI
+    type: statuspage
+    url: https://status.openai.com
+    notes: "incident.io page; summary only, no unresolved.json"
+
+  # Verified 2026-11-04: Atlassian Statuspage. Filter is an assumption (tune later): unfiltered Twilio is permanently degraded from worldwide carrier incidents.
+  - id: twilio
+    name: Twilio
+    type: statuspage
+    url: https://status.twilio.com
+    components:
+      - PROGRAMMABLE VOICE AU1
+      - PROGRAMMABLE VOICE US1
+      - ELASTIC SIP TRUNKING AU1
+      - ELASTIC SIP TRUNKING US1
+      - TWILIO PLATFORM
+
+  # Verified 2026-11-04: incident.io page, summary.json only.
+  - id: telnyx
+    name: Telnyx
+    type: statuspage
+    url: https://status.telnyx.com
+    notes: "incident.io page; summary only, no unresolved.json"
+
+  # Verified 2026-11-04: BetterStack at status.gohighlevel.com; status.leadconnectorhq.com does not resolve.
+  - id: gohighlevel
+    name: GoHighLevel
+    type: betterstack
+    url: https://status.gohighlevel.com
+    notes: "Covers LeadConnector (status.leadconnectorhq.com does not resolve)."
+
+  # Verified 2026-11-04: status.odoo.com is a Twitter embed with no feed; /web/health returns {"status": "pass"}.
+  - id: odoo
+    name: Odoo
+    type: http
+    url: https://www.odoo.com/web/health
+    expectBody: '"pass"'
+    feed: none
+    pageUrl: https://status.odoo.com
+    notes: "status.odoo.com is a Twitter embed with no machine-readable feed; monitored with an HTTP ping of /web/health."
+
+  # Verified 2026-11-04: Google JSON dashboard (incidents.json + products.json), filtered to Gmail and Google Calendar.
+  - id: google-workspace
+    name: Google Workspace
+    type: google_workspace
+    url: https://www.google.com/appsstatus/dashboard/incidents.json
+    components:
+      - Gmail
+      - Google Calendar
+
+  # Verified 2026-11-04: Slack Status API v2.0.0.
+  - id: slack
+    name: Slack
+    type: slack
+    url: https://slack-status.com/api/v2.0.0/current
+
+  # Verified 2026-11-04: incident.io page, summary.json only.
+  - id: elevenlabs
+    name: ElevenLabs
+    type: statuspage
+    url: https://status.elevenlabs.io
+    notes: "incident.io page; summary only, no unresolved.json"
+
+  # Verified 2026-11-04: Atlassian Statuspage.
+  - id: deepgram
+    name: Deepgram
+    type: statuspage
+    url: https://status.deepgram.com
+
+  # Verified 2026-11-04: incident.io page, summary.json only.
+  - id: cartesia
+    name: Cartesia
+    type: statuspage
+    url: https://status.cartesia.ai
+    notes: "incident.io page; summary only, no unresolved.json"
+
+  # Verified 2026-11-04: Atlassian Statuspage.
+  - id: github
+    name: GitHub
+    type: statuspage
+    url: https://www.githubstatus.com
+
+  # Verified 2026-11-04: AWS Health Dashboard RSS; the guid carries the region, so filter on ap-southeast-2.
+  - id: aws
+    name: AWS
+    type: rss
+    url: https://status.aws.amazon.com/rss/all.rss
+    components:
+      - ap-southeast-2
+    lookbackHours: 24
+
+  # Verified 2026-11-04: Atlassian Statuspage; status.anthropic.com redirects to status.claude.com.
+  - id: anthropic
+    name: Anthropic
+    type: statuspage
+    url: https://status.claude.com
+
+  # Verified 2026-11-04: our own health endpoint returns JSON containing "status":"healthy".
+  - id: inspra-platform
+    name: Inspra Platform
+    type: http
+    url: https://platform.inspra.ai/api/health
+    expectBody: '"status":"healthy"'
+    pageUrl: https://platform.inspra.ai

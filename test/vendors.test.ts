@@ -48,3 +48,16 @@ describe('parseVendors', () => {
     expect(() => parseVendors(yaml)).toThrow(/url/);
   });
 });
+
+describe('vendors.yaml', () => {
+  it('loads the 16 real vendors in order and builds checks', async () => {
+    const { loadVendors } = await import('../src/vendors.js');
+    const { createVendorChecks } = await import('../src/checks/vendor.js');
+    const vs = loadVendors('vendors.yaml');
+    expect(vs.map((v) => v.id)).toEqual([
+      'vapi', 'northflank', 'openai', 'twilio', 'telnyx', 'gohighlevel', 'odoo', 'google-workspace',
+      'slack', 'elevenlabs', 'deepgram', 'cartesia', 'github', 'aws', 'anthropic', 'inspra-platform',
+    ]);
+    expect(createVendorChecks(vs)).toHaveLength(16);
+  });
+});
