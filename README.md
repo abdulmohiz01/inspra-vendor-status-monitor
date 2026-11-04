@@ -4,7 +4,7 @@ One page showing whether every third-party platform Inspra depends on is up, plu
 
 ## Why
 
-A client's call logging broke after Northflank changes and the client churned. Nobody knew the upstream platform was having trouble until the client told us. This service polls the public status feeds of each vendor, normalises them to one status vocabulary, shows them on a dashboard and alerts Slack (and optionally email) on every change.
+A client's call logging broke after Northflank changes and the client churned. This service polls the public status feeds of each vendor, normalises them to one status vocabulary, shows them on a dashboard and alerts Slack (and optionally email) on every change.
 
 Stack: TypeScript on Node, pnpm. One process: a Hono server renders HTML, a poller loop runs in the same process, state lives in SQLite (better-sqlite3).
 
@@ -16,7 +16,7 @@ cp .env.example .env
 pnpm dev
 ```
 
-Set a local `APP_URL` and `PORT` in `.env`, for example `PORT=4180` and `APP_URL=http://localhost:4180/insprastatus`. The dashboard is then at `http://localhost:4180/insprastatus/`. `APP_URL` must include the base path, because alert links are built from it.
+`pnpm dev` and `pnpm start` load `.env` automatically (Node's `--env-file-if-exists`). Set a local `APP_URL` and `PORT` in `.env`, for example `PORT=4180` and `APP_URL=http://localhost:4180/insprastatus`. The dashboard is then at `http://localhost:4180/insprastatus/`. `APP_URL` must include the base path, because alert links are built from it.
 
 Git Bash note: running with `BASE_PATH=/insprastatus` inline needs `MSYS_NO_PATHCONV=1`, or MSYS rewrites the path into a Windows path.
 
@@ -24,9 +24,9 @@ Git Bash note: running with `BASE_PATH=/insprastatus` inline needs `MSYS_NO_PATH
 
 | Script | What it does |
 |---|---|
-| `pnpm dev` | Run `src/main.ts` with `tsx watch` |
+| `pnpm dev` | Run `src/main.ts` with `tsx watch`, loading `.env` if present |
 | `pnpm build` | Compile `src` to `dist` with `tsc` |
-| `pnpm start` | Run `node dist/main.js` |
+| `pnpm start` | Run `node dist/main.js`, loading `.env` if present |
 | `pnpm test` | Run the vitest suite (parsers against saved fixtures, normalisation, alert logic, server) |
 | `pnpm typecheck` | `tsc --noEmit` |
 | `pnpm sample:slack` | Print sample Slack payloads (degradation and recovery) to stdout |
@@ -37,8 +37,8 @@ Empty values are treated as unset, except `BASE_PATH`, where an explicit empty v
 
 | Variable | Default | Range / notes |
 |---|---|---|
-| `PORT` | `8080` | 1-65535 |
-| `HOST` | `0.0.0.0` | Bind address |
+| `PORT` | `8080` | 1-65535. Affects `pnpm dev`/`start` only; Compose pins the container to 8080 |
+| `HOST` | `0.0.0.0` | Bind address. The container healthcheck probes 127.0.0.1, so keep this `0.0.0.0` or loopback |
 | `APP_URL` | `https://hub.automateaccelerator.com/insprastatus` | http(s) URL including the base path; used for absolute links in alerts |
 | `BASE_PATH` | `/insprastatus` | Prefix everything is served under; empty = root |
 | `POLL_INTERVAL_SECONDS` | `180` | 60-600, with a little jitter |
@@ -48,7 +48,7 @@ Empty values are treated as unset, except `BASE_PATH`, where an explicit empty v
 | `HISTORY_RETENTION_DAYS` | `30` | 1-365 |
 | `DATA_DIR` | `./data` | SQLite location (`/data` in the container) |
 | `VENDORS_FILE` | `./vendors.yaml` | Path to the vendors file (`/app/vendors.yaml` in the container) |
-| `SLACK_WEBHOOK_URL` | unset | Slack incoming webhook. Unset = alert payloads are logged, nothing is posted |
+| `SLACK_WEBHOOK_URL` | unset | Slack incoming webhook; must be an http(s) URL. Unset = alert payloads are logged, nothing is posted |
 | `SMTP_HOST` | unset | Setting it enables email; then `SMTP_FROM` and `SMTP_TO` are required |
 | `SMTP_PORT` | `587` | 1-65535 |
 | `SMTP_SECURE` | `false` | `true`/`1` or `false`/`0` |
@@ -87,7 +87,7 @@ A top-level `vendors:` list. The file is validated on load (unknown keys, bad UR
 2. Append an entry to `vendors.yaml` with the matching `type`.
 3. Restart. A malformed entry stops startup with a clear message.
 
-No code change is needed unless the vendor needs a new source type (add a parser in `src/parsers/` and a case in `src/checks/vendor.ts`).
+No code change is needed unless the vendor needs a new source type: add the type name to `VENDOR_TYPES` in `src/vendors.ts`, add a parser in `src/parsers/`, and add a case in `src/checks/vendor.ts`.
 
 ## Status normalisation
 
@@ -187,7 +187,7 @@ The app serves natively under `BASE_PATH`; it does not rely on the proxy strippi
 4. Domains: `https://hub.automateaccelerator.com/insprastatus` (Coolify supports path-based domains). No other app on `hub.automateaccelerator.com` may claim `/insprastatus`. DNS already resolves to the Coolify server `52.65.8.240`, so no DNS change.
 5. Turn off Coolify's "Strip Prefixes" (Advanced) for this resource, because the app serves natively under the prefix. Verify the exact setting name in the Coolify UI.
 6. Environment variables: `APP_URL`, `BASE_PATH`, `SLACK_WEBHOOK_URL`, optional `SMTP_*`.
-7. Persistent storage: mount a volume at `/data` (Dockerfile pack). The compose pack uses the named volume `status-data`.
+7. Persistent storage: use a named or Coolify-managed volume at `/data` (Dockerfile pack). A host bind mount must be writable by uid 1000 (`node`). The compose pack uses the named volume `status-data`.
 8. Health check: path `/insprastatus/healthz`, port `8080`.
 9. To override the vendor list, mount a file and set `VENDORS_FILE` to its path.
 
@@ -205,13 +205,13 @@ cp .env.example .env   # edit values
 docker compose up -d --build
 ```
 
-`docker-compose.yml` publishes no host port (`expose` only), so put it behind a reverse proxy that routes `/insprastatus` to port 8080 without stripping the prefix. For a local run publish a port:
+`docker-compose.yml` publishes no host port (`expose` only) and pins the container `PORT` to 8080, so a `PORT` in `.env` only affects `pnpm dev`/`start`. Unset secrets default to empty, and `.env` is read for `${VAR}` interpolation. Put it behind a reverse proxy that routes `/insprastatus` to port 8080 without stripping the prefix. For a local run publish a port:
 
 ```bash
 docker compose -f docker-compose.yml -f docker-compose.local.yml up --build
 ```
 
-Dashboard: `http://localhost:4180/insprastatus/` (`LOCAL_PORT` changes the port; `APP_URL` defaults to match). Data lives in the `status-data` volume.
+Dashboard: `http://localhost:4180/insprastatus/` (`LOCAL_PORT` changes the port; the local override sets `APP_URL` itself from `LOCAL_PORT`, so a production `APP_URL` in a shared `.env` is ignored). Data lives in the `status-data` volume.
 
 ## Vendors
 
@@ -238,7 +238,7 @@ Matches `vendors.yaml`. Endpoints were fetched and verified on 2026-11-04.
 
 ## Known limitations and tech debt
 
-- The incident.io-hosted pages (OpenAI, Telnyx, ElevenLabs, Cartesia) have no unresolved-incidents endpoint, so incident titles may be missing there.
+- The incident.io-hosted pages (OpenAI, Telnyx, ElevenLabs, Cartesia) have a summary but no `unresolved.json` supplement, so incidents come from `summary.json` only.
 - AWS uses RSS heuristics, filtered to `ap-southeast-2`.
 - The Twilio component filter is an assumption to tune.
 - The Docker image has not been built or run, because Docker is not installed on the dev machine.

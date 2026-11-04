@@ -1,4 +1,5 @@
 # No host port mapping on purpose: Coolify's Traefik routes by domain to the exposed port.
+# PORT is pinned to 8080 so a local .env PORT cannot move the container off the exposed port.
 # For a local run publish a port with docker-compose.local.yml.
 services:
   vendor-status-monitor:
@@ -7,7 +8,7 @@ services:
     expose:
       - "8080"
     environment:
-      - PORT=${PORT:-8080}
+      - PORT=8080
       - HOST=${HOST:-0.0.0.0}
       - APP_URL=${APP_URL:-https://hub.automateaccelerator.com/insprastatus}
       # Dash without colon: an explicit empty BASE_PATH means "serve at root".
@@ -19,14 +20,14 @@ services:
       - HISTORY_RETENTION_DAYS=${HISTORY_RETENTION_DAYS:-30}
       - DATA_DIR=/data
       - VENDORS_FILE=${VENDORS_FILE:-/app/vendors.yaml}
-      - SLACK_WEBHOOK_URL=${SLACK_WEBHOOK_URL}
-      - SMTP_HOST=${SMTP_HOST}
+      - SLACK_WEBHOOK_URL=${SLACK_WEBHOOK_URL:-}
+      - SMTP_HOST=${SMTP_HOST:-}
       - SMTP_PORT=${SMTP_PORT:-587}
       - SMTP_SECURE=${SMTP_SECURE:-false}
-      - SMTP_USER=${SMTP_USER}
-      - SMTP_PASS=${SMTP_PASS}
-      - SMTP_FROM=${SMTP_FROM}
-      - SMTP_TO=${SMTP_TO}
+      - SMTP_USER=${SMTP_USER:-}
+      - SMTP_PASS=${SMTP_PASS:-}
+      - SMTP_FROM=${SMTP_FROM:-}
+      - SMTP_TO=${SMTP_TO:-}
     volumes:
       - status-data:/data
     healthcheck:
