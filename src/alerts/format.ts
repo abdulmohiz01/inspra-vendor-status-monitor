@@ -21,66 +21,92 @@ const EMOJI: Record<Status, string> = {
 
 const MAX_INCIDENTS = 5;
 const MAX_COMPONENTS = 10;
+const MAX_ERROR = 500;
+const MAX_TITLE = 200;
+const MAX_BLOCK_TEXT = 2900; // Slack section/context text limit is 3000
 
 export function statusLabel(s: Status): string {
   return LABELS[s];
 }
 
-export function headline(e: AlertEvent): string {
+export function escapeMrkdwn(s: string): string {
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+function truncate(s: string, max: number): string {
+  return s.length <= max ? s : s.slice(0, max - 1) + '…';
+}
+
+const HTTP_URL = /^https?:\/\//i;
+const UNSAFE_IN_LINK = /[<>|\s]/;
+
+function safeUrl(u: string | undefined): string | undefined {
+  if (!u || !HTTP_URL.test(u) || UNSAFE_IN_LINK.test(u)) return undefined;
+  return u;
+}
+
+function buildHeadline(e: AlertEvent, esc: (s: string) => string): string {
   const emoji = e.kind === 'recovered' ? ':large_green_circle:' : EMOJI[e.to];
+  const name = esc(e.checkName);
   switch (e.kind) {
     case 'recovered':
-      return `${emoji} ${e.checkName} recovered (was ${e.from ? statusLabel(e.from) : 'unknown'})`;
+      return `${emoji} ${name} recovered (was ${statusLabel(e.from ?? 'unknown')})`;
     case 'unreachable':
-      return `${emoji} ${e.checkName}: status unavailable`;
+      return `${emoji} ${name}: status unavailable`;
     case 'new_incident':
-      return `${emoji} ${e.checkName}: new incident`;
+      return `${emoji} ${name}: new incident`;
     case 'reminder':
-      return `${emoji} Reminder: ${e.checkName} still ${statusLabel(e.to)} since ${e.since}`;
+      return `${emoji} Reminder: ${name} still ${statusLabel(e.to)} since ${e.since}`;
     default:
-      return `${emoji} ${e.checkName}: ${statusLabel(e.to)}`;
+      return `${emoji} ${name}: ${statusLabel(e.to)}`;
   }
+}
+
+export function headline(e: AlertEvent): string {
+  return buildHeadline(e, (x) => x);
 }
 
 function dashboardUrl(e: AlertEvent, appUrl: string): string {
   return `${appUrl.replace(/\/+$/, '')}/#${e.checkId}`;
 }
 
-function incidentLine(i: Incident): string {
-  const title = i.url ? `<${i.url}|${i.title}>` : i.title;
-  return `${title} (${statusLabel(i.status)})`;
+function slackIncidentLine(i: Incident): string {
+  const label = escapeMrkdwn(truncate(i.title, MAX_TITLE)).replace(/\|/g, '¦');
+  const url = safeUrl(i.url);
+  return `${url ? `<${url}|${label}>` : label} (${statusLabel(i.status)})`;
 }
 
 function plainIncidentLine(i: Incident): string {
-  return `${i.title} (${statusLabel(i.status)})${i.url ? ` - ${i.url}` : ''}`;
+  return `${truncate(i.title, MAX_TITLE)} (${statusLabel(i.status)})${i.url ? ` - ${i.url}` : ''}`;
 }
 
 export function buildSlackPayload(e: AlertEvent, appUrl: string): { text: string; blocks: unknown[] } {
-  const text = headline(e);
-  const blocks: unknown[] = [{ type: 'section', text: { type: 'mrkdwn', text: `*${text}*` } }];
+  const text = buildHeadline(e, escapeMrkdwn);
+  const mrkdwn = (t: string) => ({ type: 'mrkdwn', text: truncate(t, MAX_BLOCK_TEXT) });
+  const blocks: unknown[] = [{ type: 'section', text: mrkdwn(`*${text}*`) }];
 
   if (e.incidents.length > 0) {
-    const lines = e.incidents.slice(0, MAX_INCIDENTS).map((i) => `- ${incidentLine(i)}`);
-    blocks.push({ type: 'section', text: { type: 'mrkdwn', text: lines.join('\n') } });
+    const lines = e.incidents.slice(0, MAX_INCIDENTS).map((i) => `- ${slackIncidentLine(i)}`);
+    blocks.push({ type: 'section', text: mrkdwn(lines.join('\n')) });
   }
 
   if (e.components.length > 0) {
-    const names = e.components.slice(0, MAX_COMPONENTS).map((c) => c.name);
-    blocks.push({
-      type: 'context',
-      elements: [{ type: 'mrkdwn', text: `Affected: ${names.join(', ')}` }],
-    });
+    const names = e.components.slice(0, MAX_COMPONENTS).map((c) => escapeMrkdwn(c.name));
+    blocks.push({ type: 'context', elements: [mrkdwn(`Affected: ${names.join(', ')}`)] });
   }
 
   if (e.kind === 'unreachable' && e.error) {
-    blocks.push({ type: 'section', text: { type: 'mrkdwn', text: `Error: ${e.error}` } });
+    blocks.push({ type: 'section', text: mrkdwn(`Error: ${escapeMrkdwn(truncate(e.error, MAX_ERROR))}`) });
   }
 
-  const links = [`<${dashboardUrl(e, appUrl)}|View dashboard>`];
-  if (e.pageUrl) links.push(`<${e.pageUrl}|Vendor status page>`);
-  blocks.push({ type: 'section', text: { type: 'mrkdwn', text: links.join('  |  ') } });
+  const links: string[] = [];
+  const dash = safeUrl(dashboardUrl(e, appUrl));
+  if (dash) links.push(`<${dash}|View dashboard>`);
+  const page = safeUrl(e.pageUrl);
+  if (page) links.push(`<${page}|Vendor status page>`);
+  if (links.length > 0) blocks.push({ type: 'section', text: mrkdwn(links.join('  |  ')) });
 
-  return { text, blocks };
+  return { text: truncate(text, MAX_BLOCK_TEXT), blocks };
 }
 
 export function buildEmail(e: AlertEvent, appUrl: string): { subject: string; text: string } {
@@ -94,7 +120,7 @@ export function buildEmail(e: AlertEvent, appUrl: string): { subject: string; te
   if (e.components.length > 0) {
     lines.push('', `Affected components: ${e.components.slice(0, MAX_COMPONENTS).map((c) => c.name).join(', ')}`);
   }
-  if (e.kind === 'unreachable' && e.error) lines.push('', `Error: ${e.error}`);
+  if (e.kind === 'unreachable' && e.error) lines.push('', `Error: ${truncate(e.error, MAX_ERROR)}`);
   lines.push('', `Dashboard: ${dashboardUrl(e, appUrl)}`);
   if (e.pageUrl) lines.push(`Vendor status page: ${e.pageUrl}`);
   return { subject, text: lines.join('\n') + '\n' };

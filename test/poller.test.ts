@@ -1,7 +1,7 @@
 import { mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { AlertEvent } from '../src/alerts/decide.js';
 import type { Notifier } from '../src/alerts/notifier.js';
 import { nextDelayMs, Poller } from '../src/poller.js';
@@ -10,7 +10,11 @@ import type { Check, CheckOutcome, Status } from '../src/types.js';
 
 const stores: Store[] = [];
 const dirs: string[] = [];
+beforeEach(() => {
+  vi.clearAllMocks();
+});
 afterEach(() => {
+  vi.useRealTimers();
   for (const s of stores.splice(0)) {
     try {
       s.close();
@@ -180,6 +184,7 @@ describe('Poller', () => {
     const p = poller([check('a', () => 'operational'), check('b', () => 'operational')], store, notifier());
     await p.runCycle();
     expect(store.latestResults().has('b')).toBe(true);
+    expect(log.error).toHaveBeenCalled();
   });
 
   it('prunes at most once per hour', async () => {
@@ -196,11 +201,65 @@ describe('Poller', () => {
     expect(prune).toHaveBeenCalledTimes(2);
   });
 
-  it('stop() waits for the in-flight cycle and cancels the timer', async () => {
+  it('start() runs a cycle then arms one timer; the timer runs another; stop() clears it', async () => {
+    vi.useFakeTimers();
+    const p = poller([check('a', () => 'operational')], mem(), notifier(), { random: () => 0 });
+    p.start();
+    await vi.advanceTimersByTimeAsync(0);
+    expect(p.liveness().cycles).toBe(1);
+    expect(vi.getTimerCount()).toBe(1);
+    await vi.advanceTimersByTimeAsync(180_000);
+    expect(p.liveness().cycles).toBe(2);
+    expect(vi.getTimerCount()).toBe(1);
+    await p.stop();
+    expect(vi.getTimerCount()).toBe(0);
+    await vi.advanceTimersByTimeAsync(600_000);
+    expect(p.liveness().cycles).toBe(2);
+  });
+
+  it('stop() waits for the in-flight cycle', async () => {
     const p = poller([check('a', () => 'operational')], mem(), notifier(), { random: () => 0 });
     p.start();
     await p.stop();
     expect(p.liveness().cycles).toBe(1);
     expect(p.liveness().running).toBe(false);
+  });
+
+  it('keeps notifying other events and checks when one notify fails', async () => {
+    const seen: string[] = [];
+    const n: Notifier = {
+      notify: async (e) => {
+        if (e.checkId === 'a') throw new Error('rejects');
+        seen.push(e.checkId);
+      },
+    };
+    const sync: Notifier = {
+      notify: (e) => {
+        if (e.checkId === 'a') throw new Error('sync throw');
+        seen.push(e.checkId);
+        return Promise.resolve();
+      },
+    };
+    for (const notif of [n, sync]) {
+      seen.length = 0;
+      const p = poller([check('a', () => 'major_outage'), check('b', () => 'major_outage')], mem(), notif);
+      const results = await p.runCycle();
+      expect(results).toHaveLength(2);
+      expect(seen).toEqual(['b']);
+      expect(log.error).toHaveBeenCalled();
+      expect(p.liveness().cycles).toBe(1);
+    }
+  });
+
+  it('saves alert state before notifying and logs each event once', async () => {
+    const store = mem();
+    const order: string[] = [];
+    vi.spyOn(store, 'saveAlertState').mockImplementation(() => void order.push('save'));
+    const logAlert = vi.spyOn(store, 'logAlert').mockImplementation(() => void order.push('log'));
+    const n: Notifier = { notify: async () => void order.push('notify') };
+    await poller([check('a', () => 'major_outage')], store, n).runCycle();
+    expect(order[0]).toBe('save');
+    expect(order.indexOf('save')).toBeLessThan(order.indexOf('notify'));
+    expect(logAlert).toHaveBeenCalledTimes(1);
   });
 });

@@ -78,4 +78,24 @@ describe('createNotifier', () => {
     ).notify(event);
     expect(log.error).toHaveBeenCalled();
   });
+
+  it('does not let a hung sendMail hold the caller beyond the deadline', async () => {
+    vi.useFakeTimers();
+    try {
+      const done = vi.fn();
+      const log = silent();
+      const p = createNotifier(
+        { appUrl: APP, smtp },
+        { fetch: vi.fn() as never, log, sendMail: () => new Promise<void>(() => undefined) },
+      )
+        .notify(event)
+        .then(done);
+      await vi.advanceTimersByTimeAsync(15_001);
+      await p;
+      expect(done).toHaveBeenCalled();
+      expect(log.error).toHaveBeenCalled();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 });

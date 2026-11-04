@@ -86,13 +86,20 @@ export class Poller {
           const prev = store.getAlertState(check.id) ?? initialAlertState();
           const { events, next } = decideAlerts(check, prev, result, policy);
           store.saveAlertState(check.id, next);
-          for (const e of events) store.logAlert(e);
-          const settled = await Promise.allSettled(events.map((e) => notifier.notify(e)));
-          for (const s of settled) {
-            if (s.status === 'rejected') {
-              log.error('notify failed', { checkId: check.id, error: String(s.reason) });
-            }
-          }
+          await Promise.allSettled(
+            events.map(async (e) => {
+              try {
+                store.logAlert(e);
+              } catch (err) {
+                log.error('failed to log alert', { checkId: check.id, dedupeKey: e.dedupeKey, error: String(err) });
+              }
+              try {
+                await notifier.notify(e);
+              } catch (err) {
+                log.error('notify failed', { checkId: check.id, dedupeKey: e.dedupeKey, error: String(err) });
+              }
+            }),
+          );
         } catch (err) {
           log.error('failed to process check result', {
             checkId: check.id,

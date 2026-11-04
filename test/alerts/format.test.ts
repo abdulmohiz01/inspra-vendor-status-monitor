@@ -113,6 +113,50 @@ describe('buildSlackPayload', () => {
   });
 });
 
+describe('slack safety', () => {
+  it('escapes mrkdwn and keeps links well-formed', () => {
+    const e = ev({
+      checkName: 'A&B <x>',
+      incidents: [
+        { id: '1', title: 'Elevated errors <API> & DB | x', status: 'degraded', url: 'https://s.test/i/1' },
+        { id: '2', title: 'Bad url', status: 'degraded', url: 'https://s.test/a|b>c' },
+        { id: '3', title: 'JS', status: 'degraded', url: 'javascript:alert(1)' },
+      ],
+      components: [{ name: '<b>', status: 'degraded' }],
+    });
+    const p = buildSlackPayload(e, HUB);
+    expect(p.text).toContain('A&amp;B &lt;x&gt;');
+    const s = JSON.stringify(p.blocks);
+    expect(s).toContain('<https://s.test/i/1|Elevated errors &lt;API&gt; &amp; DB ¦ x>');
+    expect(s).not.toContain('a|b');
+    expect(s).not.toContain('javascript:');
+    expect(s).toContain('Bad url (Degraded)');
+    expect(s).toContain('&lt;b&gt;');
+  });
+
+  it('truncates a huge error below the Slack section limit', () => {
+    const p = buildSlackPayload(
+      ev({ kind: 'unreachable', to: 'unknown', incidents: [], components: [], error: 'x'.repeat(10_000) }),
+      HUB,
+    );
+    for (const b of p.blocks as Array<{ text?: { text: string } }>) {
+      if (b.text) expect(b.text.text.length).toBeLessThan(3000);
+    }
+    expect(JSON.stringify(p.blocks)).toContain('…');
+  });
+
+  it('renders a recovery with null from as Unknown', () => {
+    expect(headline(ev({ kind: 'recovered', from: null, to: 'operational' }))).toBe(
+      ':large_green_circle: Northflank recovered (was Unknown)',
+    );
+  });
+
+  it('caps long error and title in email', () => {
+    const m = buildEmail(ev({ kind: 'unreachable', to: 'unknown', error: 'y'.repeat(10_000) }), HUB);
+    expect(m.text.length).toBeLessThan(2000);
+  });
+});
+
 describe('buildEmail', () => {
   it('has no emoji in the subject and an absolute dashboard link in the body', () => {
     const m = buildEmail(ev(), HUB);

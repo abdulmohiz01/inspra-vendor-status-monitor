@@ -12,6 +12,8 @@ export interface Notifier {
 type SendMail = (m: { from: string; to: string[]; subject: string; text: string }) => Promise<void>;
 
 const SLACK_TIMEOUT_MS = 10_000;
+const SMTP_TIMEOUT_MS = 10_000;
+const SEND_MAIL_DEADLINE_MS = 15_000;
 
 function errMsg(e: unknown): string {
   return e instanceof Error ? e.message : String(e);
@@ -31,6 +33,9 @@ export function createNotifier(
           host: smtp.host,
           port: smtp.port,
           secure: smtp.secure,
+          connectionTimeout: SMTP_TIMEOUT_MS,
+          greetingTimeout: SMTP_TIMEOUT_MS,
+          socketTimeout: SMTP_TIMEOUT_MS,
           ...(smtp.user ? { auth: { user: smtp.user, pass: smtp.pass ?? '' } } : {}),
         });
         await transport.sendMail(m);
@@ -38,12 +43,12 @@ export function createNotifier(
     : undefined;
 
   async function slack(e: AlertEvent): Promise<void> {
-    const payload = buildSlackPayload(e, cfg.appUrl);
-    if (!cfg.slackWebhookUrl) {
-      log.info('slack webhook not configured; alert payload', { payload });
-      return;
-    }
     try {
+      const payload = buildSlackPayload(e, cfg.appUrl);
+      if (!cfg.slackWebhookUrl) {
+        log.info('slack webhook not configured; alert payload', { payload });
+        return;
+      }
       const res = await deps.fetch(cfg.slackWebhookUrl, {
         method: 'POST',
         headers: { 'content-type': 'application/json', 'user-agent': 'inspra-vendor-status-monitor/1.0' },
@@ -51,6 +56,7 @@ export function createNotifier(
         signal: AbortSignal.timeout(SLACK_TIMEOUT_MS),
       });
       if (!res.ok) {
+        await res.body?.cancel().catch(() => undefined);
         log.error('slack alert failed', { checkId: e.checkId, dedupeKey: e.dedupeKey, status: res.status });
       }
     } catch (err) {
@@ -62,7 +68,15 @@ export function createNotifier(
     if (!smtp || !sendMail) return;
     try {
       const { subject, text } = buildEmail(e, cfg.appUrl);
-      await sendMail({ from: smtp.from, to: smtp.to, subject, text });
+      let timer: NodeJS.Timeout | undefined;
+      const deadline = new Promise<never>((_, reject) => {
+        timer = setTimeout(() => reject(new Error(`sendMail timed out after ${SEND_MAIL_DEADLINE_MS} ms`)), SEND_MAIL_DEADLINE_MS);
+      });
+      try {
+        await Promise.race([sendMail({ from: smtp.from, to: smtp.to, subject, text }), deadline]);
+      } finally {
+        clearTimeout(timer);
+      }
     } catch (err) {
       log.error('email alert failed', { checkId: e.checkId, dedupeKey: e.dedupeKey, error: errMsg(err) });
     }
