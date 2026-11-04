@@ -357,6 +357,26 @@ describe('Poller', () => {
       expect(order).toEqual(['notify:a', 'run:b', 'notify:b']);
     });
 
+    it('never sends a stale degraded alert after the recovery was delivered', async () => {
+      const c = clock();
+      const store = mem();
+      // degraded fails, its retry fails, recovered succeeds; everything after that succeeds.
+      const n = flaky([
+        { ok: false, error: 'slack: HTTP 503' },
+        { ok: false, error: 'slack: HTTP 503' },
+      ]);
+      let status: Status = 'major_outage';
+      const p = poller([check('a', () => status)], store, n, { now: c.now });
+      await p.runCycle();
+      c.advance(180_000);
+      status = 'operational';
+      await p.runCycle();
+      c.advance(180_000);
+      await p.runCycle();
+      expect(n.calls.map((e) => e.kind)).toEqual(['degraded', 'degraded', 'recovered']);
+      expect(pending(store, c)).toEqual([]);
+    });
+
     it('marks a thrown notify as failed and retries it', async () => {
       const c = clock();
       const store = mem();

@@ -148,9 +148,9 @@ describe('Store', () => {
   describe('alert outbox', () => {
     const NOW = new Date('2026-11-04T12:00:00Z');
     const hoursAgo = (h: number) => new Date(NOW.getTime() - h * 3_600_000).toISOString();
-    const ev = (at: string, key: string): AlertEvent => ({
-      kind: 'degraded',
-      checkId: 'a',
+    const ev = (at: string, key: string, checkId = 'a', kind: AlertEvent['kind'] = 'degraded'): AlertEvent => ({
+      kind,
+      checkId,
       checkName: 'A',
       from: 'operational',
       to: 'major_outage',
@@ -191,10 +191,23 @@ describe('Store', () => {
 
     it('excludes alerts older than minCreatedAt and returns the rest oldest first', () => {
       const s = mem();
-      s.logAlert(ev(hoursAgo(25), 'too-old'));
-      const newer = s.logAlert(ev(hoursAgo(1), 'newer'));
-      const older = s.logAlert(ev(hoursAgo(23), 'older'));
+      s.logAlert(ev(hoursAgo(25), 'too-old', 'x'));
+      const newer = s.logAlert(ev(hoursAgo(1), 'newer', 'b'));
+      const older = s.logAlert(ev(hoursAgo(23), 'older', 'c'));
       expect(s.pendingAlerts(opts).map((p) => p.id)).toEqual([older, newer]);
+    });
+
+    it('drops an unsent alert once a newer alert exists for the same check (no stale degraded after recovered)', () => {
+      const s = mem();
+      s.logAlert(ev(hoursAgo(3), 'a:state:major_outage'));
+      const recovered = s.logAlert(ev(hoursAgo(2), 'a:state:operational', 'a', 'recovered'));
+      s.markAlertSent(recovered, NOW);
+      const other = s.logAlert(ev(hoursAgo(3), 'b:state:major_outage', 'b'));
+      expect(s.pendingAlerts(opts).map((p) => p.id)).toEqual([other]);
+
+      // The newest alert for a check stays retryable while it is unsent.
+      const worse = s.logAlert(ev(hoursAgo(1), 'a:state:degraded', 'a'));
+      expect(s.pendingAlerts(opts).map((p) => p.id)).toEqual([other, worse]);
     });
 
     it('prune deletes old alerts whether sent or not', () => {

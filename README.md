@@ -124,6 +124,7 @@ Delivery:
 - An alert counts as delivered only if every configured channel (Slack, email) succeeded.
 - Failed sends are retried at the start of each poll cycle, before the checks run, up to 5 attempts in total and only while the alert is less than 24 hours old.
 - A retry re-sends to every configured channel, not only the one that failed.
+- A failed alert is dropped, not retried, once a newer alert exists for the same vendor, so a stale "degraded" never arrives after the "recovered" that followed it.
 - Log-only mode (no `SLACK_WEBHOOK_URL`, no SMTP) counts as delivered, so nothing is retried.
 - Up to 4 alerts are sent at once.
 

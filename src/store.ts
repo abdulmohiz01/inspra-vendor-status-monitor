@@ -69,6 +69,7 @@ CREATE TABLE IF NOT EXISTS alerts (
   attempts INTEGER NOT NULL DEFAULT 0,
   last_error TEXT
 );
+CREATE INDEX IF NOT EXISTS idx_alerts_check_time ON alerts (check_id, at);
 `;
 
 export interface PendingAlert {
@@ -180,11 +181,21 @@ export class Store {
     this.db.prepare('UPDATE alerts SET attempts = attempts + 1, last_error = ? WHERE id = ?').run(error, id);
   }
 
-  /** Unsent alerts with fewer than `maxAttempts` failed attempts, created at or after `minCreatedAt`, oldest first. */
+  /**
+   * Unsent alerts with fewer than `maxAttempts` failed attempts, created at or after `minCreatedAt`, oldest first.
+   * An alert is stale, and never retried, once a newer alert exists for the same check: re-sending it would
+   * report an old state (e.g. "degraded" after "recovered"). A check emits at most one alert per cycle.
+   */
   pendingAlerts(opts: { maxAttempts: number; minCreatedAt: Date }): PendingAlert[] {
     const rows = this.db
       .prepare(
-        'SELECT id, attempts, event_json FROM alerts WHERE sent_at IS NULL AND attempts < ? AND at >= ? ORDER BY at, id',
+        `SELECT a.id, a.attempts, a.event_json FROM alerts a
+         WHERE a.sent_at IS NULL AND a.attempts < ? AND a.at >= ?
+           AND NOT EXISTS (
+             SELECT 1 FROM alerts b
+             WHERE b.check_id = a.check_id AND (b.at > a.at OR (b.at = a.at AND b.id > a.id))
+           )
+         ORDER BY a.at, a.id`,
       )
       .all(opts.maxAttempts, opts.minCreatedAt.toISOString()) as Array<{
       id: number;
