@@ -13,8 +13,8 @@ function res(status: Status, minute: number, incidents: Incident[] = []): CheckR
     checkedAt: new Date(base + minute * 60_000).toISOString(),
     durationMs: 1,
     status,
-    components: status === 'operational' ? [] : [{ name: 'API', status }],
-    incidents,
+    components: status === 'operational' || status === 'unknown' ? [] : [{ name: 'API', status }],
+    incidents: status === 'unknown' ? [] : incidents,
     ...(status === 'unknown' ? { error: 'boom' } : {}),
   };
 }
@@ -139,5 +139,63 @@ describe('decideAlerts', () => {
     expect(r[4]).toHaveLength(1);
     expect(r[4]![0]!.kind).toBe('reminder');
     expect(r[4]![0]!.to).toBe('unknown');
+  });
+  it('does not remind from an unknown poll while alerted on another status', () => {
+    const r = run([res('major_outage', 0, [inc('a')]), res('unknown', 60), res('major_outage', 61, [inc('a')])]);
+    expect(r[1]).toEqual([]);
+    expect(r[2]).toHaveLength(1);
+    expect(r[2]![0]!.kind).toBe('reminder');
+    expect(r[2]![0]!.incidents.map((i) => i.id)).toEqual(['a']);
+  });
+
+  it('does not re-alert an incident that flickers out and back', () => {
+    const r = run([
+      res('degraded', 0, [inc('a')]),
+      res('degraded', 1),
+      res('degraded', 2, [inc('a')]),
+    ]);
+    expect(r[1]).toEqual([]);
+    expect(r[2]).toEqual([]);
+  });
+
+  it('alerts an incident again after recovery', () => {
+    const r = run([
+      res('degraded', 0, [inc('a')]),
+      res('operational', 1),
+      res('degraded', 2, [inc('a')]),
+    ]);
+    expect(r[2]).toHaveLength(1);
+    expect(r[2]![0]!.kind).toBe('degraded');
+    const r2 = run([
+      res('degraded', 0, [inc('a')]),
+      res('operational', 1),
+      res('operational', 2),
+      res('degraded', 3),
+      res('degraded', 4, [inc('a')]),
+    ]);
+    expect(r2[4]![0]!.kind).toBe('new_incident');
+  });
+
+  it('flapping gives degraded, recovered, degraded', () => {
+    const r = run([res('operational', 0), res('degraded', 1), res('operational', 2), res('degraded', 3)]);
+    expect(r.flat().map((e) => e.kind)).toEqual(['degraded', 'recovered', 'degraded']);
+  });
+
+  it('unreachable from a non-operational status carries that status as from', () => {
+    const r = run([res('major_outage', 0), res('unknown', 1), res('unknown', 2), res('unknown', 3)]);
+    expect(r[3]![0]!.kind).toBe('unreachable');
+    expect(r[3]![0]!.from).toBe('major_outage');
+  });
+
+  it('unreachable then major_outage is degraded from unknown', () => {
+    const r = run([
+      res('operational', 0),
+      res('unknown', 1),
+      res('unknown', 2),
+      res('unknown', 3),
+      res('major_outage', 4),
+    ]);
+    expect(r[4]![0]!.kind).toBe('degraded');
+    expect(r[4]![0]!.from).toBe('unknown');
   });
 });

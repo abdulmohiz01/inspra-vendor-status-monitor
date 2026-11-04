@@ -2,6 +2,7 @@ import { existsSync, mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
+import type { AlertEvent } from '../src/alerts/decide.js';
 import { Store } from '../src/store.js';
 import type { CheckResult, Incident, Status } from '../src/types.js';
 
@@ -116,14 +117,30 @@ describe('Store', () => {
     ]);
   });
 
-  it('prune deletes old history only', () => {
+  it('prune deletes old history, old alerts and old resolved incidents; keeps open ones', () => {
     const s = mem();
     const now = new Date('2026-11-04T12:00:00Z');
-    const old = new Date(now.getTime() - 31 * 86_400_000).toISOString();
-    const recent = new Date(now.getTime() - 29 * 86_400_000).toISOString();
-    s.recordResult(res('operational', old));
-    s.recordResult(res('operational', recent));
-    expect(s.prune(30, now)).toBe(1);
+    const ago = (d: number) => new Date(now.getTime() - d * 86_400_000).toISOString();
+    s.recordResult(res('operational', ago(31)));
+    s.recordResult(res('operational', ago(29)));
+    // resolved long ago
+    s.recordResult(res('degraded', ago(40), { checkId: 'b', incidents: [inc] }));
+    s.recordResult(res('operational', ago(35), { checkId: 'b' }));
+    // open and old
+    s.recordResult(res('degraded', ago(40), { checkId: 'c', incidents: [inc] }));
+    // resolved recently
+    s.recordResult(res('degraded', ago(40), { checkId: 'd', incidents: [inc] }));
+    s.recordResult(res('operational', ago(5), { checkId: 'd' }));
+    const ev = (at: string, key: string): AlertEvent =>
+      ({ kind: 'degraded', checkId: 'a', checkName: 'A', from: null, to: 'degraded', since: at, at, incidents: [], components: [], dedupeKey: key });
+    s.logAlert(ev(ago(31), 'old'));
+    s.logAlert(ev(ago(1), 'new'));
+
+    expect(s.prune(30, now)).toBe(5);
+    expect(s.recentAlerts(10).map((a) => a.dedupeKey)).toEqual(['new']);
+    expect(s.incidents('b')).toHaveLength(0);
+    expect(s.incidents('c', { openOnly: true })).toHaveLength(1);
+    expect(s.incidents('d')).toHaveLength(1);
     expect(s.dailyHistory(60, now).get('a')).toHaveLength(1);
   });
 
