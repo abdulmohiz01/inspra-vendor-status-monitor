@@ -1,0 +1,41 @@
+{
+  "name": "vendor-status-monitor",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@10.33.0",
+  "engines": {
+    "node": ">=22"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "better-sqlite3",
+      "esbuild"
+    ]
+  },
+  "scripts": {
+    "dev": "tsx watch src/main.ts",
+    "start": "node dist/main.js",
+    "build": "tsc -p tsconfig.build.json",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "sample:slack": "tsx scripts/sample-payloads.ts"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^9.6.0",
+    "@types/node": "^26.6.6",
+    "@types/nodemailer": "^8.0.2",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2",
+    "vitest": "^5.1.0"
+  },
+  "dependencies": {
+    "@hono/node-server": "^2.1.6",
+    "better-sqlite3": "12.11.1",
+    "fast-xml-parser": "^5.12.0",
+    "hono": "^4.13.16",
+    "nodemailer": "^10.3.1",
+    "yaml": "^2.9.1",
+    "zod": "^4.6.7"
+  }
+}
