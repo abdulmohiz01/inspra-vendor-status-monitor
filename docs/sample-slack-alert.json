@@ -1,0 +1,56 @@
+{
+  "degradation": {
+    "text": ":red_circle: Northflank: Major outage",
+    "blocks": [
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "*:red_circle: Northflank: Major outage*"
+        }
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "- <https://status.northflank.com/cmvv0rn5a092f14rutwccodpp|Security incident> (Major outage)"
+        }
+      },
+      {
+        "type": "context",
+        "elements": [
+          {
+            "type": "mrkdwn",
+            "text": "Affected: Networking, Certificates, Services"
+          }
+        ]
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "<https://hub.automateaccelerator.com/insprastatus/#northflank|View dashboard>  |  <https://status.northflank.com|Vendor status page>"
+        }
+      }
+    ]
+  },
+  "recovery": {
+    "text": ":large_green_circle: Northflank recovered (was Major outage)",
+    "blocks": [
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "*:large_green_circle: Northflank recovered (was Major outage)*"
+        }
+      },
+      {
+        "type": "section",
+        "text": {
+          "type": "mrkdwn",
+          "text": "<https://hub.automateaccelerator.com/insprastatus/#northflank|View dashboard>  |  <https://status.northflank.com|Vendor status page>"
+        }
+      }
+    ]
+  }
+}
