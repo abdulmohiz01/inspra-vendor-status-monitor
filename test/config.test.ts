@@ -7,7 +7,8 @@ describe('loadConfig', () => {
     expect(c).toMatchObject({
       port: 8080,
       host: '0.0.0.0',
-      appUrl: 'https://status.automateaccelerator.com',
+      appUrl: 'https://hub.automateaccelerator.com/insprastatus',
+      basePath: '/insprastatus',
       pollIntervalSeconds: 180,
       fetchTimeoutMs: 10000,
       alertReminderMinutes: 60,
@@ -22,6 +23,19 @@ describe('loadConfig', () => {
 
   it('strips trailing slashes from APP_URL', () => {
     expect(loadConfig({ APP_URL: 'http://localhost:4180/' }).appUrl).toBe('http://localhost:4180');
+  });
+
+  it('normalises BASE_PATH', () => {
+    expect(loadConfig({ BASE_PATH: '' }).basePath).toBe('');
+    expect(loadConfig({ BASE_PATH: '/' }).basePath).toBe('');
+    expect(loadConfig({ BASE_PATH: 'foo/' }).basePath).toBe('/foo');
+    expect(() => loadConfig({ BASE_PATH: '/a b' })).toThrow(/BASE_PATH/);
+  });
+
+  it('strips trailing slash from a path-bearing APP_URL', () => {
+    expect(loadConfig({ APP_URL: 'http://localhost:4180/insprastatus/' }).appUrl).toBe(
+      'http://localhost:4180/insprastatus',
+    );
   });
 
   it('rejects out-of-range values and names the variable', () => {

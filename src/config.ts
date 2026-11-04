@@ -2,6 +2,7 @@ export interface AppConfig {
   port: number;
   host: string;
   appUrl: string;
+  basePath: string;
   pollIntervalSeconds: number;
   fetchTimeoutMs: number;
   alertReminderMinutes: number;
@@ -70,12 +71,25 @@ export function loadConfig(env: Env = process.env): AppConfig {
     return raw;
   };
 
-  const appUrl = (url('APP_URL') ?? 'https://status.automateaccelerator.com').replace(/\/+$/, '');
+  const appUrl = (url('APP_URL') ?? 'https://hub.automateaccelerator.com/insprastatus').replace(/\/+$/, '');
+
+  // Unlike other vars, an explicit empty BASE_PATH means "serve at root".
+  const rawBase = env['BASE_PATH']?.trim();
+  let basePath = '/insprastatus';
+  if (rawBase !== undefined) {
+    const segments = rawBase.split('/').filter(Boolean);
+    if (segments.every((seg) => /^[A-Za-z0-9._~-]+$/.test(seg))) {
+      basePath = segments.length === 0 ? '' : '/' + segments.join('/');
+    } else {
+      errors.push(`BASE_PATH segments may only contain letters, digits, ".", "_", "~" and "-" (got "${rawBase}")`);
+    }
+  }
 
   const config: AppConfig = {
     port: int('PORT', 8080, 1, 65535),
     host: str('HOST') ?? '0.0.0.0',
     appUrl,
+    basePath,
     pollIntervalSeconds: int('POLL_INTERVAL_SECONDS', 180, 60, 600),
     fetchTimeoutMs: int('FETCH_TIMEOUT_MS', 10000, 1000, 60000),
     alertReminderMinutes: int('ALERT_REMINDER_MINUTES', 60, 5, 1440),
