@@ -16,7 +16,7 @@ cp .env.example .env
 pnpm dev
 ```
 
-`pnpm dev` and `pnpm start` load `.env` automatically (Node's `--env-file-if-exists`). Set a local `APP_URL` and `PORT` in `.env`, for example `PORT=4180` and `APP_URL=http://localhost:4180/insprastatus`. The dashboard is then at `http://localhost:4180/insprastatus/`. `APP_URL` must include the base path, because alert links are built from it.
+`pnpm dev` and `pnpm start` load `.env` automatically (Node's `--env-file-if-exists`, Node 22.9+). Variables already set in the shell take precedence over `.env`. Set a local `APP_URL` and `PORT` in `.env`, for example `PORT=4180` and `APP_URL=http://localhost:4180/insprastatus`. The dashboard is then at `http://localhost:4180/insprastatus/`. `APP_URL` must include the base path, because alert links are built from it.
 
 Git Bash note: running with `BASE_PATH=/insprastatus` inline needs `MSYS_NO_PATHCONV=1`, or MSYS rewrites the path into a Windows path.
 
