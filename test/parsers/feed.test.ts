@@ -104,19 +104,34 @@ describe('parseFeed', () => {
     expect(r.status).toBe('partial_outage');
   });
 
-  it('groups the real AWS me-central-1 updates into one incident', () => {
-    const now = new Date('2026-03-02T18:00:00Z');
-    // The feed as it stood at `now`: the fixture was fetched later, so drop items published after it.
-    const asOfNow = aws.replace(/<item>[\s\S]*?<\/item>/g, (it) => {
+  // The fixture was fetched months later. Parsing all of it at a past `now` would clamp later items
+  // to `now` (the clock-skew rule) and pull future updates into the window, so slice it to the feed
+  // as it stood at `now`.
+  const feedAsOf = (now: Date): string =>
+    aws.replace(/<item>[\s\S]*?<\/item>/g, (it) => {
       const pub = Date.parse(/<pubDate>([^<]*)<\/pubDate>/.exec(it)?.[1] ?? '');
       return pub > now.getTime() ? '' : it;
     });
-    const r = parseFeed(asOfNow, { now, lookbackHours: 24, components: ['me-central-1'] });
+
+  it('groups the real AWS me-central-1 updates into one incident', () => {
+    const now = new Date('2026-03-02T18:00:00Z');
+    const r = parseFeed(feedAsOf(now), { now, lookbackHours: 24, components: ['me-central-1'] });
     expect(r.incidents).toHaveLength(1);
     expect(r.incidents[0]).toMatchObject({
       id: 'https://status.aws.amazon.com/#multipleservices-me-central-1',
       startedAt: '2026-03-02T17:59:49.000Z',
     });
+  });
+
+  it('also counts another region\'s event once its update names the filtered region', () => {
+    // At 2026-03-03T00:22:31Z AWS posted a me-south-1 update that says it affects ME-CENTRAL-1 too.
+    // From then on, a me-central-1 filter correctly sees two events: its own and the joint one.
+    const now = new Date('2026-03-03T01:00:00Z');
+    const r = parseFeed(feedAsOf(now), { now, lookbackHours: 24, components: ['me-central-1'] });
+    expect(r.incidents.map((i) => i.id).sort()).toEqual([
+      'https://status.aws.amazon.com/#multipleservices-me-central-1',
+      'https://status.aws.amazon.com/#multipleservices-me-south-1',
+    ]);
   });
 
   it('treats an unparseable date as now (fails closed)', () => {
