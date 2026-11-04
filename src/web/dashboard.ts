@@ -108,7 +108,7 @@ ${v.checks.map(renderCard).join('\n')}
 </div>
 </main>
 <footer class="muted">
-<div>Poller: last cycle completed ${esc(fmtTime(l.lastCycleCompletedAt))}, every ${esc(String(l.intervalSeconds))}s${v.healthy ? '' : ' (stalled)'}</div>
+<div>Poller: last cycle completed ${esc(fmtTime(l.lastCycleCompletedAt))}, every ${esc(String(l.intervalSeconds))}s${v.healthy ? '' : l.lastCycleCompletedAt === null ? ' (awaiting first poll)' : ' (stalled)'}</div>
 <div><a href="${bp}/api/status">JSON</a> · <a href="${bp}/healthz">Health</a></div>
 </footer>
 </body>

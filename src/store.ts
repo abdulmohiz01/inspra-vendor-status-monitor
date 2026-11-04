@@ -1,6 +1,8 @@
+import { randomUUID } from 'node:crypto';
 import { mkdirSync } from 'node:fs';
 import { dirname } from 'node:path';
-import Database from 'better-sqlite3';
+import { fileURLToPath } from 'node:url';
+import type { Client, Config, InStatement } from '@libsql/client';
 import type { AlertEvent, AlertKind, AlertState } from './alerts/decide.js';
 import { SEVERITY } from './types.js';
 import type { CheckResult, Status } from './types.js';
@@ -70,7 +72,18 @@ CREATE TABLE IF NOT EXISTS alerts (
   last_error TEXT
 );
 CREATE INDEX IF NOT EXISTS idx_alerts_check_time ON alerts (check_id, at);
+CREATE TABLE IF NOT EXISTS poller_state (
+  id INTEGER PRIMARY KEY CHECK (id = 1),
+  lock_until INTEGER,
+  lock_owner TEXT,
+  last_started_at TEXT,
+  last_completed_at TEXT,
+  last_pruned_at INTEGER,
+  cycles INTEGER NOT NULL DEFAULT 0
+);
 `;
+
+const OUTBOX_COLUMNS = ['sent_at', 'attempts', 'last_error'] as const;
 
 export interface PendingAlert {
   id: number;
@@ -78,107 +91,205 @@ export interface PendingAlert {
   event: AlertEvent;
 }
 
-export class Store {
-  private readonly db: Database.Database;
+/** Poll-cycle bookkeeping shared by every process that uses the database. */
+export interface PollerRecord {
+  lastCycleStartedAt: string | null;
+  lastCycleCompletedAt: string | null;
+  cycles: number;
+  /** True while a cycle holds an unexpired lock. */
+  running: boolean;
+}
 
-  constructor(dbPath: string) {
-    if (dbPath !== ':memory:') mkdirSync(dirname(dbPath), { recursive: true });
-    this.db = new Database(dbPath);
-    this.db.pragma('journal_mode = WAL');
-    this.db.exec(SCHEMA);
-    this.migrateAlerts();
+export interface StoreOptions {
+  /** `file:<path>`, `:memory:`, or a remote libSQL/Turso URL (`libsql://…`, `https://…`). */
+  url: string;
+  authToken?: string;
+  /** Aborts each request to a remote database after this long. Unset = no limit. Ignored for local databases. */
+  requestTimeoutMs?: number;
+}
+
+/** The local path behind a `file:` URL, or undefined for memory and remote databases. */
+export function localDbPath(url: string): string | undefined {
+  if (!url.startsWith('file:')) return undefined;
+  if (url.startsWith('file://')) return fileURLToPath(url);
+  const path = url.slice('file:'.length).split('?')[0]!;
+  return path === '' || path === ':memory:' ? undefined : path;
+}
+
+/** True for databases the native driver must open: `file:` URLs and `:memory:`. */
+export function isLocalDbUrl(url: string): boolean {
+  return url === ':memory:' || url.startsWith('file:');
+}
+
+/**
+ * Local databases use the native driver. Remote ones use the pure-JS web client (HTTP/WebSocket),
+ * so a serverless bundle never loads libsql's native binary, which it resolves with a dynamic
+ * require that bundlers cannot trace.
+ */
+async function connect(opts: StoreOptions): Promise<Client> {
+  const config: Config = { url: opts.url, ...(opts.authToken ? { authToken: opts.authToken } : {}) };
+  if (isLocalDbUrl(opts.url)) return (await import('@libsql/client')).createClient(config);
+  const { requestTimeoutMs } = opts;
+  if (requestTimeoutMs !== undefined) {
+    // The web client calls this with a single Request; a hung database round trip must not eat the cycle.
+    config.fetch = (req: Request) => fetch(req, { signal: AbortSignal.timeout(requestTimeoutMs) });
+  }
+  return (await import('@libsql/client/web')).createClient(config);
+}
+
+const str = (v: unknown): string | null => (v === null || v === undefined ? null : String(v));
+
+export class Store {
+  private constructor(private readonly db: Client) {}
+
+  /** Opens the database and applies the schema and migrations. Idempotent; safe on every cold start. */
+  static async open(opts: StoreOptions): Promise<Store> {
+    const path = localDbPath(opts.url);
+    if (path !== undefined) mkdirSync(dirname(path), { recursive: true });
+    const db = await connect(opts);
+    const store = new Store(db);
+    try {
+      // WAL only applies to local files; remote databases manage their own journal.
+      if (path !== undefined) await db.execute('PRAGMA journal_mode = WAL');
+      await db.executeMultiple(SCHEMA);
+      await store.migrateAlerts();
+    } catch (err) {
+      db.close();
+      throw err;
+    }
+    return store;
   }
 
   /** Adds the outbox columns to an `alerts` table created by a version without them. Idempotent. */
-  private migrateAlerts(): void {
-    const cols = new Set(
-      (this.db.prepare('PRAGMA table_info(alerts)').all() as Array<{ name: string }>).map((c) => c.name),
-    );
-    const tx = this.db.transaction(() => {
-      if (!cols.has('sent_at')) {
-        this.db.exec('ALTER TABLE alerts ADD COLUMN sent_at INTEGER');
-        // Rows from before the outbox already had their single delivery attempt; never re-send them.
-        this.db.exec("UPDATE alerts SET sent_at = COALESCE(CAST(strftime('%s', at) AS INTEGER) * 1000, 0)");
-      }
-      if (!cols.has('attempts')) this.db.exec('ALTER TABLE alerts ADD COLUMN attempts INTEGER NOT NULL DEFAULT 0');
-      if (!cols.has('last_error')) this.db.exec('ALTER TABLE alerts ADD COLUMN last_error TEXT');
-    });
-    tx();
+  private async migrateAlerts(): Promise<void> {
+    const cols = await this.alertColumns();
+    const steps: InStatement[] = [];
+    if (!cols.has('sent_at')) {
+      steps.push('ALTER TABLE alerts ADD COLUMN sent_at INTEGER');
+      // Rows from before the outbox already had their single delivery attempt; never re-send them.
+      steps.push("UPDATE alerts SET sent_at = COALESCE(CAST(strftime('%s', at) AS INTEGER) * 1000, 0)");
+    }
+    if (!cols.has('attempts')) steps.push('ALTER TABLE alerts ADD COLUMN attempts INTEGER NOT NULL DEFAULT 0');
+    if (!cols.has('last_error')) steps.push('ALTER TABLE alerts ADD COLUMN last_error TEXT');
+    if (steps.length === 0) return;
+    try {
+      await this.db.batch(steps, 'write');
+    } catch (err) {
+      // Two cold starts can migrate at once; the loser's batch rolls back on "duplicate column name".
+      // That is fine as long as the winner's migration is now in place.
+      const now = await this.alertColumns();
+      if (!OUTBOX_COLUMNS.every((c) => now.has(c))) throw err;
+    }
   }
 
-  recordResult(r: CheckResult): void {
-    const tx = this.db.transaction(() => {
-      this.db
-        .prepare(
-          'INSERT INTO check_history (check_id, checked_at, status, summary, error, duration_ms) VALUES (?, ?, ?, ?, ?, ?)',
-        )
-        .run(r.checkId, r.checkedAt, r.status, r.summary ?? null, r.error ?? null, r.durationMs);
-      this.db
-        .prepare('INSERT OR REPLACE INTO check_latest (check_id, result_json) VALUES (?, ?)')
-        .run(r.checkId, JSON.stringify(r));
-      if (r.status !== 'unknown') this.reconcileIncidents(r);
-    });
-    tx();
+  private async alertColumns(): Promise<Set<string>> {
+    const info = await this.db.execute('PRAGMA table_info(alerts)');
+    return new Set(info.rows.map((c) => String(c['name'])));
   }
 
-  private reconcileIncidents(r: CheckResult): void {
-    const upsert = this.db.prepare(
-      `INSERT INTO incidents (check_id, incident_id, title, url, status, started_at, last_seen_at, resolved_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?, NULL)
-       ON CONFLICT (check_id, incident_id) DO UPDATE SET
-         title = excluded.title, url = excluded.url, status = excluded.status,
-         last_seen_at = excluded.last_seen_at, resolved_at = NULL`,
-    );
+  /** Statements that record one result: history row, latest result, and incident reconciliation. */
+  private recordStatements(r: CheckResult): InStatement[] {
+    const stmts: InStatement[] = [
+      {
+        sql: 'INSERT INTO check_history (check_id, checked_at, status, summary, error, duration_ms) VALUES (?, ?, ?, ?, ?, ?)',
+        args: [r.checkId, r.checkedAt, r.status, r.summary ?? null, r.error ?? null, r.durationMs],
+      },
+      {
+        sql: 'INSERT OR REPLACE INTO check_latest (check_id, result_json) VALUES (?, ?)',
+        args: [r.checkId, JSON.stringify(r)],
+      },
+    ];
+    // A fetch failure says nothing about incidents: keep them as they were.
+    if (r.status === 'unknown') return stmts;
     for (const i of r.incidents) {
-      upsert.run(r.checkId, i.id, i.title, i.url ?? null, i.status, i.startedAt ?? r.checkedAt, r.checkedAt);
+      stmts.push({
+        sql: `INSERT INTO incidents (check_id, incident_id, title, url, status, started_at, last_seen_at, resolved_at)
+              VALUES (?, ?, ?, ?, ?, ?, ?, NULL)
+              ON CONFLICT (check_id, incident_id) DO UPDATE SET
+                title = excluded.title, url = excluded.url, status = excluded.status,
+                last_seen_at = excluded.last_seen_at, resolved_at = NULL`,
+        args: [r.checkId, i.id, i.title, i.url ?? null, i.status, i.startedAt ?? r.checkedAt, r.checkedAt],
+      });
     }
-    const seen = new Set(r.incidents.map((i) => i.id));
-    const open = this.db
-      .prepare('SELECT incident_id FROM incidents WHERE check_id = ? AND resolved_at IS NULL')
-      .all(r.checkId) as Array<{ incident_id: string }>;
-    const resolve = this.db.prepare(
-      'UPDATE incidents SET resolved_at = ? WHERE check_id = ? AND incident_id = ?',
-    );
-    for (const o of open) {
-      if (!seen.has(o.incident_id)) resolve.run(r.checkedAt, r.checkId, o.incident_id);
-    }
+    stmts.push({
+      sql: `UPDATE incidents SET resolved_at = ?
+            WHERE check_id = ? AND resolved_at IS NULL
+              AND incident_id NOT IN (SELECT value FROM json_each(?))`,
+      args: [r.checkedAt, r.checkId, JSON.stringify(r.incidents.map((i) => i.id))],
+    });
+    return stmts;
   }
 
-  latestResults(): Map<string, CheckResult> {
-    const rows = this.db.prepare('SELECT check_id, result_json FROM check_latest').all() as Array<{
-      check_id: string;
-      result_json: string;
-    }>;
-    return new Map(rows.map((row) => [row.check_id, JSON.parse(row.result_json) as CheckResult]));
+  /** Records one result atomically. */
+  async recordResult(r: CheckResult): Promise<void> {
+    await this.db.batch(this.recordStatements(r), 'write');
   }
 
-  getAlertState(checkId: string): AlertState | undefined {
-    const row = this.db.prepare('SELECT state_json FROM alert_state WHERE check_id = ?').get(checkId) as
-      | { state_json: string }
-      | undefined;
-    return row ? (JSON.parse(row.state_json) as AlertState) : undefined;
+  /**
+   * Records a result, saves the check's next alert state and logs its alerts as unsent, all in one
+   * atomic round trip. Returns the outbox row id of each event, in order.
+   */
+  async commitCycleResult(r: CheckResult, state: AlertState, events: AlertEvent[]): Promise<number[]> {
+    const record = this.recordStatements(r);
+    const stmts: InStatement[] = [
+      ...record,
+      this.saveAlertStateStatement(r.checkId, state),
+      ...events.map((e) => this.logAlertStatement(e)),
+    ];
+    const results = await this.db.batch(stmts, 'write');
+    return results.slice(record.length + 1).map((res) => Number(res.lastInsertRowid));
   }
 
-  saveAlertState(checkId: string, s: AlertState): void {
-    this.db
-      .prepare('INSERT OR REPLACE INTO alert_state (check_id, state_json) VALUES (?, ?)')
-      .run(checkId, JSON.stringify(s));
+  async latestResults(): Promise<Map<string, CheckResult>> {
+    const res = await this.db.execute('SELECT check_id, result_json FROM check_latest');
+    return new Map(res.rows.map((row) => [String(row['check_id']), JSON.parse(String(row['result_json'])) as CheckResult]));
+  }
+
+  async getAlertState(checkId: string): Promise<AlertState | undefined> {
+    const res = await this.db.execute({ sql: 'SELECT state_json FROM alert_state WHERE check_id = ?', args: [checkId] });
+    const row = res.rows[0];
+    return row ? (JSON.parse(String(row['state_json'])) as AlertState) : undefined;
+  }
+
+  /** Every saved alert state, keyed by check id. */
+  async alertStates(): Promise<Map<string, AlertState>> {
+    const res = await this.db.execute('SELECT check_id, state_json FROM alert_state');
+    return new Map(res.rows.map((row) => [String(row['check_id']), JSON.parse(String(row['state_json'])) as AlertState]));
+  }
+
+  private saveAlertStateStatement(checkId: string, s: AlertState): InStatement {
+    return {
+      sql: 'INSERT OR REPLACE INTO alert_state (check_id, state_json) VALUES (?, ?)',
+      args: [checkId, JSON.stringify(s)],
+    };
+  }
+
+  async saveAlertState(checkId: string, s: AlertState): Promise<void> {
+    await this.db.execute(this.saveAlertStateStatement(checkId, s));
+  }
+
+  private logAlertStatement(e: AlertEvent): InStatement {
+    return {
+      sql: 'INSERT INTO alerts (dedupe_key, kind, check_id, at, event_json) VALUES (?, ?, ?, ?, ?)',
+      args: [e.dedupeKey, e.kind, e.checkId, e.at, JSON.stringify(e)],
+    };
   }
 
   /** Persists the alert with its full payload as unsent; returns the row id. */
-  logAlert(e: AlertEvent): number {
-    const info = this.db
-      .prepare('INSERT INTO alerts (dedupe_key, kind, check_id, at, event_json) VALUES (?, ?, ?, ?, ?)')
-      .run(e.dedupeKey, e.kind, e.checkId, e.at, JSON.stringify(e));
-    return Number(info.lastInsertRowid);
+  async logAlert(e: AlertEvent): Promise<number> {
+    const res = await this.db.execute(this.logAlertStatement(e));
+    return Number(res.lastInsertRowid);
   }
 
-  markAlertSent(id: number, now: Date): void {
-    this.db.prepare('UPDATE alerts SET sent_at = ? WHERE id = ?').run(now.getTime(), id);
+  async markAlertSent(id: number, now: Date): Promise<void> {
+    await this.db.execute({ sql: 'UPDATE alerts SET sent_at = ? WHERE id = ?', args: [now.getTime(), id] });
   }
 
-  markAlertFailed(id: number, error: string): void {
-    this.db.prepare('UPDATE alerts SET attempts = attempts + 1, last_error = ? WHERE id = ?').run(error, id);
+  async markAlertFailed(id: number, error: string): Promise<void> {
+    await this.db.execute({
+      sql: 'UPDATE alerts SET attempts = attempts + 1, last_error = ? WHERE id = ?',
+      args: [error, id],
+    });
   }
 
   /**
@@ -186,38 +297,39 @@ export class Store {
    * An alert is stale, and never retried, once a newer alert exists for the same check: re-sending it would
    * report an old state (e.g. "degraded" after "recovered"). A check emits at most one alert per cycle.
    */
-  pendingAlerts(opts: { maxAttempts: number; minCreatedAt: Date }): PendingAlert[] {
-    const rows = this.db
-      .prepare(
-        `SELECT a.id, a.attempts, a.event_json FROM alerts a
-         WHERE a.sent_at IS NULL AND a.attempts < ? AND a.at >= ?
-           AND NOT EXISTS (
-             SELECT 1 FROM alerts b
-             WHERE b.check_id = a.check_id AND (b.at > a.at OR (b.at = a.at AND b.id > a.id))
-           )
-         ORDER BY a.at, a.id`,
-      )
-      .all(opts.maxAttempts, opts.minCreatedAt.toISOString()) as Array<{
-      id: number;
-      attempts: number;
-      event_json: string;
-    }>;
-    return rows.map((r) => ({ id: r.id, attempts: r.attempts, event: JSON.parse(r.event_json) as AlertEvent }));
+  async pendingAlerts(opts: { maxAttempts: number; minCreatedAt: Date }): Promise<PendingAlert[]> {
+    const res = await this.db.execute({
+      sql: `SELECT a.id, a.attempts, a.event_json FROM alerts a
+            WHERE a.sent_at IS NULL AND a.attempts < ? AND a.at >= ?
+              AND NOT EXISTS (
+                SELECT 1 FROM alerts b
+                WHERE b.check_id = a.check_id AND (b.at > a.at OR (b.at = a.at AND b.id > a.id))
+              )
+            ORDER BY a.at, a.id`,
+      args: [opts.maxAttempts, opts.minCreatedAt.toISOString()],
+    });
+    return res.rows.map((r) => ({
+      id: Number(r['id']),
+      attempts: Number(r['attempts']),
+      event: JSON.parse(String(r['event_json'])) as AlertEvent,
+    }));
   }
 
-  recentAlerts(limit: number): Array<{ dedupeKey: string; kind: AlertKind; checkId: string; at: string }> {
-    const rows = this.db
-      .prepare('SELECT dedupe_key, kind, check_id, at FROM alerts ORDER BY at DESC, id DESC LIMIT ?')
-      .all(limit) as Array<{ dedupe_key: string; kind: AlertKind; check_id: string; at: string }>;
-    return rows.map((r) => ({ dedupeKey: r.dedupe_key, kind: r.kind, checkId: r.check_id, at: r.at }));
+  async recentAlerts(limit: number): Promise<Array<{ dedupeKey: string; kind: AlertKind; checkId: string; at: string }>> {
+    const res = await this.db.execute({
+      sql: 'SELECT dedupe_key, kind, check_id, at FROM alerts ORDER BY at DESC, id DESC LIMIT ?',
+      args: [limit],
+    });
+    return res.rows.map((r) => ({
+      dedupeKey: String(r['dedupe_key']),
+      kind: String(r['kind']) as AlertKind,
+      checkId: String(r['check_id']),
+      at: String(r['at']),
+    }));
   }
 
-  incidents(checkId: string, opts?: { openOnly?: boolean }): StoredIncident[] {
-    const sql = `SELECT * FROM incidents WHERE check_id = ?${
-      opts?.openOnly ? ' AND resolved_at IS NULL' : ''
-    } ORDER BY started_at DESC, incident_id`;
-    const rows = this.db.prepare(sql).all(checkId) as IncidentRow[];
-    return rows.map((r) => ({
+  private static toIncident(r: IncidentRow): StoredIncident {
+    return {
       checkId: r.check_id,
       incidentId: r.incident_id,
       title: r.title,
@@ -226,23 +338,61 @@ export class Store {
       startedAt: r.started_at,
       lastSeenAt: r.last_seen_at,
       resolvedAt: r.resolved_at,
-    }));
+    };
   }
 
-  dailyHistory(days: number, now: Date): Map<string, Array<{ day: string; status: Status }>> {
+  private static incidentRow(row: Record<string, unknown>): IncidentRow {
+    return {
+      check_id: String(row['check_id']),
+      incident_id: String(row['incident_id']),
+      title: String(row['title']),
+      url: str(row['url']),
+      status: String(row['status']) as Status,
+      started_at: String(row['started_at']),
+      last_seen_at: String(row['last_seen_at']),
+      resolved_at: str(row['resolved_at']),
+    };
+  }
+
+  async incidents(checkId: string, opts?: { openOnly?: boolean }): Promise<StoredIncident[]> {
+    const sql = `SELECT * FROM incidents WHERE check_id = ?${
+      opts?.openOnly ? ' AND resolved_at IS NULL' : ''
+    } ORDER BY started_at DESC, incident_id`;
+    const res = await this.db.execute({ sql, args: [checkId] });
+    return res.rows.map((row) => Store.toIncident(Store.incidentRow(row)));
+  }
+
+  /** Open incidents of every check, keyed by check id, newest first. */
+  async openIncidents(): Promise<Map<string, StoredIncident[]>> {
+    const res = await this.db.execute(
+      'SELECT * FROM incidents WHERE resolved_at IS NULL ORDER BY check_id, started_at DESC, incident_id',
+    );
+    const out = new Map<string, StoredIncident[]>();
+    for (const row of res.rows) {
+      const i = Store.toIncident(Store.incidentRow(row));
+      let list = out.get(i.checkId);
+      if (!list) out.set(i.checkId, (list = []));
+      list.push(i);
+    }
+    return out;
+  }
+
+  async dailyHistory(days: number, now: Date): Promise<Map<string, Array<{ day: string; status: Status }>>> {
     const start = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - (days - 1)));
-    const rows = this.db
-      .prepare(
-        'SELECT check_id, substr(checked_at, 1, 10) AS day, status FROM check_history WHERE checked_at >= ?',
-      )
-      .all(start.toISOString()) as Array<{ check_id: string; day: string; status: Status }>;
+    const res = await this.db.execute({
+      sql: 'SELECT check_id, substr(checked_at, 1, 10) AS day, status FROM check_history WHERE checked_at >= ?',
+      args: [start.toISOString()],
+    });
     const worst = new Map<string, Map<string, Status>>();
-    for (const r of rows) {
-      let perDay = worst.get(r.check_id);
-      if (!perDay) worst.set(r.check_id, (perDay = new Map()));
-      const cur = perDay.get(r.day);
-      if (cur === undefined || (cur === 'unknown' && r.status !== 'unknown') || (r.status !== 'unknown' && SEVERITY[r.status] > SEVERITY[cur])) {
-        perDay.set(r.day, r.status);
+    for (const row of res.rows) {
+      const checkId = String(row['check_id']);
+      const day = String(row['day']);
+      const status = String(row['status']) as Status;
+      let perDay = worst.get(checkId);
+      if (!perDay) worst.set(checkId, (perDay = new Map()));
+      const cur = perDay.get(day);
+      if (cur === undefined || (cur === 'unknown' && status !== 'unknown') || (status !== 'unknown' && SEVERITY[status] > SEVERITY[cur])) {
+        perDay.set(day, status);
       }
     }
     const out = new Map<string, Array<{ day: string; status: Status }>>();
@@ -255,15 +405,71 @@ export class Store {
     return out;
   }
 
-  prune(retentionDays: number, now: Date): number {
+  async prune(retentionDays: number, now: Date): Promise<number> {
     const cutoff = new Date(now.getTime() - retentionDays * 86_400_000).toISOString();
-    const tx = this.db.transaction(() => {
-      const deleted = this.db.prepare('DELETE FROM check_history WHERE checked_at < ?').run(cutoff).changes;
-      this.db.prepare('DELETE FROM alerts WHERE at < ?').run(cutoff);
-      this.db.prepare('DELETE FROM incidents WHERE resolved_at IS NOT NULL AND resolved_at < ?').run(cutoff);
-      return deleted;
+    const [history] = await this.db.batch(
+      [
+        { sql: 'DELETE FROM check_history WHERE checked_at < ?', args: [cutoff] },
+        { sql: 'DELETE FROM alerts WHERE at < ?', args: [cutoff] },
+        { sql: 'DELETE FROM incidents WHERE resolved_at IS NOT NULL AND resolved_at < ?', args: [cutoff] },
+      ],
+      'write',
+    );
+    return history!.rowsAffected;
+  }
+
+  /**
+   * Takes the cross-process poll lock until `now + ttlMs` and records the cycle start. Returns the lock's owner
+   * token, or null, changing nothing, while another holder's lock is unexpired. Two serverless invocations can
+   * overlap; only one polls.
+   */
+  async tryStartCycle(now: Date, ttlMs: number): Promise<string | null> {
+    const owner = randomUUID();
+    const res = await this.db.execute({
+      sql: `INSERT INTO poller_state (id, lock_until, lock_owner, last_started_at) VALUES (1, ?, ?, ?)
+            ON CONFLICT (id) DO UPDATE SET
+              lock_until = excluded.lock_until, lock_owner = excluded.lock_owner, last_started_at = excluded.last_started_at
+            WHERE poller_state.lock_until IS NULL OR poller_state.lock_until <= ?`,
+      args: [now.getTime() + ttlMs, owner, now.toISOString(), now.getTime()],
     });
-    return tx();
+    return res.rowsAffected === 1 ? owner : null;
+  }
+
+  /**
+   * Records a completed cycle and releases the poll lock if `owner` still holds it. A cycle that outlived its
+   * TTL may finish after another process took the lock over; that newer lock is left alone.
+   */
+  async finishCycle(now: Date, owner: string): Promise<void> {
+    await this.db.execute({
+      sql: `UPDATE poller_state SET
+              lock_until = CASE WHEN lock_owner = ? THEN NULL ELSE lock_until END,
+              lock_owner = CASE WHEN lock_owner = ? THEN NULL ELSE lock_owner END,
+              last_completed_at = ?, cycles = cycles + 1
+            WHERE id = 1`,
+      args: [owner, owner, now.toISOString()],
+    });
+  }
+
+  /** Claims the hourly prune for this cycle: true at most once per `everyMs` across all processes. */
+  async claimPrune(now: Date, everyMs: number): Promise<boolean> {
+    const res = await this.db.execute({
+      sql: 'UPDATE poller_state SET last_pruned_at = ? WHERE id = 1 AND (last_pruned_at IS NULL OR last_pruned_at <= ?)',
+      args: [now.getTime(), now.getTime() - everyMs],
+    });
+    return res.rowsAffected === 1;
+  }
+
+  async pollerRecord(now: Date): Promise<PollerRecord> {
+    const res = await this.db.execute('SELECT lock_until, last_started_at, last_completed_at, cycles FROM poller_state WHERE id = 1');
+    const row = res.rows[0];
+    if (!row) return { lastCycleStartedAt: null, lastCycleCompletedAt: null, cycles: 0, running: false };
+    const lockUntil = row['lock_until'] === null ? null : Number(row['lock_until']);
+    return {
+      lastCycleStartedAt: str(row['last_started_at']),
+      lastCycleCompletedAt: str(row['last_completed_at']),
+      cycles: Number(row['cycles']),
+      running: lockUntil !== null && lockUntil > now.getTime(),
+    };
   }
 
   close(): void {

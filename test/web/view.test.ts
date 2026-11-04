@@ -9,8 +9,8 @@ afterEach(() => {
   for (const s of stores.splice(0)) s.close();
 });
 
-function mkStore(): Store {
-  const s = new Store(':memory:');
+async function mkStore(): Promise<Store> {
+  const s = await Store.open({ url: ':memory:' });
   stores.push(s);
   return s;
 }
@@ -30,8 +30,7 @@ function result(checkId: string, status: Status, extra: Partial<CheckResult> = {
 }
 
 const poller = {
-  liveness: () => ({
-    startedAt: NOW.toISOString(),
+  liveness: async () => ({
     lastCycleStartedAt: null,
     lastCycleCompletedAt: null,
     cycles: 0,
@@ -42,8 +41,8 @@ const poller = {
 };
 
 describe('buildStatusView', () => {
-  it('reports never-polled checks as unknown with empty history', () => {
-    const v = buildStatusView({ checks: [mkCheck('a')], store: mkStore(), poller, now: NOW });
+  it('reports never-polled checks as unknown with empty history', async () => {
+    const v = await buildStatusView({ checks: [mkCheck('a')], store: await mkStore(), poller, now: NOW });
     const c = v.checks[0]!;
     expect(c.status).toBe('unknown');
     expect(c.checkedAt).toBeNull();
@@ -54,9 +53,9 @@ describe('buildStatusView', () => {
     expect(v.healthy).toBe(true);
   });
 
-  it('reflects a degraded result, history, issues and only non-operational components', () => {
-    const store = mkStore();
-    store.recordResult(
+  it('reflects a degraded result, history, issues and only non-operational components', async () => {
+    const store = await mkStore();
+    await store.recordResult(
       result('a', 'degraded', {
         components: [
           { name: 'API', status: 'degraded' },
@@ -64,8 +63,8 @@ describe('buildStatusView', () => {
         ],
       }),
     );
-    store.recordResult(result('b', 'operational'));
-    const v = buildStatusView({ checks: [mkCheck('a'), mkCheck('b')], store, poller, now: NOW });
+    await store.recordResult(result('b', 'operational'));
+    const v = await buildStatusView({ checks: [mkCheck('a'), mkCheck('b')], store, poller, now: NOW });
     expect(v.checks.map((c) => c.id)).toEqual(['a', 'b']);
     expect(v.checks[0]!.status).toBe('degraded');
     expect(v.checks[0]!.label).toBe('Degraded');
@@ -76,30 +75,30 @@ describe('buildStatusView', () => {
     expect(v.issues).toBe(1);
   });
 
-  it('flags awaiting first poll only when no check has a result', () => {
-    const store = mkStore();
+  it('flags awaiting first poll only when no check has a result', async () => {
+    const store = await mkStore();
     const checks = [mkCheck('a'), mkCheck('b')];
-    expect(buildStatusView({ checks, store, poller, now: NOW }).awaitingFirstPoll).toBe(true);
-    store.recordResult(result('a', 'operational'));
-    const v = buildStatusView({ checks, store, poller, now: NOW });
+    expect((await buildStatusView({ checks, store, poller, now: NOW })).awaitingFirstPoll).toBe(true);
+    await store.recordResult(result('a', 'operational'));
+    const v = await buildStatusView({ checks, store, poller, now: NOW });
     expect(v.awaitingFirstPoll).toBe(false);
     expect(v.issues).toBe(1);
   });
 
-  it('counts maintenance separately from issues; overall is unchanged', () => {
-    const store = mkStore();
-    store.recordResult(result('a', 'maintenance'));
-    store.recordResult(result('b', 'operational'));
-    store.recordResult(result('c', 'degraded'));
-    store.recordResult(result('d', 'maintenance'));
-    const v = buildStatusView({ checks: ['a', 'b', 'c', 'd'].map((id) => mkCheck(id)), store, poller, now: NOW });
+  it('counts maintenance separately from issues; overall is unchanged', async () => {
+    const store = await mkStore();
+    await store.recordResult(result('a', 'maintenance'));
+    await store.recordResult(result('b', 'operational'));
+    await store.recordResult(result('c', 'degraded'));
+    await store.recordResult(result('d', 'maintenance'));
+    const v = await buildStatusView({ checks: ['a', 'b', 'c', 'd'].map((id) => mkCheck(id)), store, poller, now: NOW });
     expect(v.issues).toBe(1);
     expect(v.maintenance).toBe(2);
     expect(v.overall).toBe('degraded');
   });
 
-  it('shows since only when the latest status matches the alerted status', () => {
-    const store = mkStore();
+  it('shows since only when the latest status matches the alerted status', async () => {
+    const store = await mkStore();
     const state = {
       alertedStatus: 'major_outage' as const,
       alertedIncidentIds: [],
@@ -107,24 +106,24 @@ describe('buildStatusView', () => {
       lastAlertAt: '2026-11-04T10:00:00.000Z',
       since: '2026-11-04T10:00:00.000Z',
     };
-    store.saveAlertState('a', state);
-    store.saveAlertState('b', state);
-    store.recordResult(result('a', 'major_outage'));
-    store.recordResult(result('b', 'unknown', { error: 'timeout' }));
-    const v = buildStatusView({ checks: [mkCheck('a'), mkCheck('b')], store, poller, now: NOW });
+    await store.saveAlertState('a', state);
+    await store.saveAlertState('b', state);
+    await store.recordResult(result('a', 'major_outage'));
+    await store.recordResult(result('b', 'unknown', { error: 'timeout' }));
+    const v = await buildStatusView({ checks: [mkCheck('a'), mkCheck('b')], store, poller, now: NOW });
     expect(v.checks[0]!.since).toBe('2026-11-04T10:00:00.000Z');
     expect(v.checks[1]!.since).toBeNull();
   });
 
-  it('keeps open incidents visible while the latest result is unknown', () => {
-    const store = mkStore();
-    store.recordResult(
+  it('keeps open incidents visible while the latest result is unknown', async () => {
+    const store = await mkStore();
+    await store.recordResult(
       result('a', 'degraded', {
         incidents: [{ id: 'i1', title: 'Ongoing', status: 'degraded', url: 'https://x.test/i1' }],
       }),
     );
-    store.recordResult(result('a', 'unknown', { error: 'timeout' }));
-    const v = buildStatusView({ checks: [mkCheck('a')], store, poller, now: NOW });
+    await store.recordResult(result('a', 'unknown', { error: 'timeout' }));
+    const v = await buildStatusView({ checks: [mkCheck('a')], store, poller, now: NOW });
     const c = v.checks[0]!;
     expect(c.status).toBe('unknown');
     expect(c.error).toBe('timeout');

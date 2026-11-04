@@ -2,7 +2,7 @@
 FROM node:24-bookworm-slim AS build
 WORKDIR /app
 RUN corepack enable
-# Toolchain fallback in case no better-sqlite3 prebuilt binary matches.
+# Toolchain fallback in case no libsql prebuilt binary matches.
 RUN apt-get update \
     && apt-get install -y --no-install-recommends python3 make g++ \
     && rm -rf /var/lib/apt/lists/*

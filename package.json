@@ -9,7 +9,6 @@
   },
   "pnpm": {
     "onlyBuiltDependencies": [
-      "better-sqlite3",
       "esbuild"
     ]
   },
@@ -22,7 +21,6 @@
     "sample:slack": "tsx scripts/sample-payloads.ts"
   },
   "devDependencies": {
-    "@types/better-sqlite3": "^9.6.0",
     "@types/node": "^26.6.6",
     "@types/nodemailer": "^8.0.2",
     "tsx": "^4.23.15",
@@ -31,7 +29,7 @@
   },
   "dependencies": {
     "@hono/node-server": "^2.1.6",
-    "better-sqlite3": "12.11.1",
+    "@libsql/client": "^0.18.0",
     "fast-xml-parser": "^5.12.0",
     "hono": "^4.13.16",
     "nodemailer": "^10.3.1",

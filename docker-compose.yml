@@ -1,4 +1,4 @@
-# No host port mapping on purpose: Coolify's Traefik routes by domain to the exposed port.
+# No host port mapping on purpose: put a reverse proxy in front that routes to the exposed port.
 # PORT is pinned to 8080 so a local .env PORT cannot move the container off the exposed port.
 # HOST is pinned to 0.0.0.0 for the same reason: a local .env HOST cannot make the app unreachable.
 # For a local run publish a port with docker-compose.local.yml.
@@ -14,7 +14,8 @@ services:
       - PORT=8080
       # Pinned: the app must listen on all interfaces in the container for the proxy and the healthcheck.
       - HOST=0.0.0.0
-      - APP_URL=${APP_URL:-https://hub.automateaccelerator.com/insprastatus}
+      # Empty = the app's default (http://localhost:8080 plus BASE_PATH); set APP_URL in .env for real links.
+      - APP_URL=${APP_URL:-}
       # Dash without colon: an explicit empty BASE_PATH means "serve at root".
       - BASE_PATH=${BASE_PATH-/insprastatus}
       - POLL_INTERVAL_SECONDS=${POLL_INTERVAL_SECONDS:-180}

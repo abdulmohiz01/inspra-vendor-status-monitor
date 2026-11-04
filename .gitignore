@@ -9,3 +9,4 @@ data/
 .superpowers/
 coverage/
 *.log
+.vercel/

@@ -9,6 +9,11 @@ export interface AppConfig {
   unknownAlertThreshold: number;
   historyRetentionDays: number;
   dataDir: string;
+  /** libSQL URL: `file:<path>` locally (default `file:<DATA_DIR>/status.db`) or Turso's `libsql://…`. */
+  databaseUrl: string;
+  databaseAuthToken?: string;
+  /** Bearer token required by /api/poll. Unset = the endpoint is disabled. */
+  cronSecret?: string;
   vendorsFile: string;
   slackWebhookUrl?: string;
   smtp?: {
@@ -82,11 +87,9 @@ export function loadConfig(env: Env = process.env): AppConfig {
     return raw;
   };
 
-  const appUrl = (url('APP_URL') ?? 'https://hub.automateaccelerator.com/insprastatus').replace(/\/+$/, '');
-
-  // Unlike other vars, an explicit empty BASE_PATH means "serve at root".
+  // Empty (the default) serves at the root; the Docker image sets /insprastatus.
   const rawBase = env['BASE_PATH']?.trim();
-  let basePath = '/insprastatus';
+  let basePath = '';
   if (rawBase !== undefined) {
     const segments = rawBase.split('/').filter(Boolean);
     if (segments.every((seg) => /^[A-Za-z0-9._~-]+$/.test(seg))) {
@@ -96,8 +99,21 @@ export function loadConfig(env: Env = process.env): AppConfig {
     }
   }
 
+  const port = int('PORT', 8080, 1, 65535);
+  // On Vercel, fall back to the production domain Vercel provides; elsewhere to the local server.
+  const vercelHost = str('VERCEL_PROJECT_PRODUCTION_URL');
+  const appUrl = (
+    url('APP_URL') ?? (vercelHost ? `https://${vercelHost}${basePath}` : `http://localhost:${port}${basePath}`)
+  ).replace(/\/+$/, '');
+
+  const dataDir = str('DATA_DIR') ?? './data';
+  const databaseUrl = str('DATABASE_URL') ?? `file:${dataDir.replaceAll('\\', '/').replace(/\/+$/, '')}/status.db`;
+  if (!/^(file:|libsql:|https?:|wss?:|:memory:$)/.test(databaseUrl)) {
+    errors.push('DATABASE_URL must start with file:, libsql:, https:, http:, wss: or ws:');
+  }
+
   const config: AppConfig = {
-    port: int('PORT', 8080, 1, 65535),
+    port,
     host: str('HOST') ?? '0.0.0.0',
     appUrl,
     basePath,
@@ -106,9 +122,18 @@ export function loadConfig(env: Env = process.env): AppConfig {
     alertReminderMinutes: int('ALERT_REMINDER_MINUTES', 60, 5, 1440),
     unknownAlertThreshold: int('UNKNOWN_ALERT_THRESHOLD', 3, 1, 20),
     historyRetentionDays: int('HISTORY_RETENTION_DAYS', 30, 1, 365),
-    dataDir: str('DATA_DIR') ?? './data',
+    dataDir,
+    databaseUrl,
     vendorsFile: str('VENDORS_FILE') ?? './vendors.yaml',
   };
+
+  const databaseAuthToken = str('DATABASE_AUTH_TOKEN');
+  if (databaseAuthToken) config.databaseAuthToken = databaseAuthToken;
+  const cronSecret = str('CRON_SECRET');
+  if (cronSecret) {
+    if (cronSecret.length < 16) errors.push('CRON_SECRET must be at least 16 characters');
+    config.cronSecret = cronSecret;
+  }
 
   const slackWebhookUrl = url('SLACK_WEBHOOK_URL');
   if (slackWebhookUrl) config.slackWebhookUrl = slackWebhookUrl;

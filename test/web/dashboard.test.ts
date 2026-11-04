@@ -29,7 +29,6 @@ function view(checks: CheckView[], extra: Partial<StatusView>): StatusView {
     awaitingFirstPoll: false,
     checks,
     liveness: {
-      startedAt: NOW,
       lastCycleStartedAt: null,
       lastCycleCompletedAt: null,
       cycles: 0,
