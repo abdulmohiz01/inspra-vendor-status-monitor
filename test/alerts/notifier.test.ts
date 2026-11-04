@@ -79,6 +79,19 @@ describe('createNotifier', () => {
     expect(log.error).toHaveBeenCalled();
   });
 
+  it('clears the sendMail race timer after a successful send', async () => {
+    vi.useFakeTimers();
+    try {
+      await createNotifier(
+        { appUrl: APP, smtp },
+        { fetch: vi.fn() as never, log: silent(), sendMail: vi.fn().mockResolvedValue(undefined) },
+      ).notify(event);
+      expect(vi.getTimerCount()).toBe(0);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
   it('does not let a hung sendMail hold the caller beyond the deadline', async () => {
     vi.useFakeTimers();
     try {

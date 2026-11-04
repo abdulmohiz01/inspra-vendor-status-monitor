@@ -145,6 +145,48 @@ describe('slack safety', () => {
     expect(JSON.stringify(p.blocks)).toContain('…');
   });
 
+  it('budgets whole lines: no cut entities or links, every text under 3000', () => {
+    const incidents = Array.from({ length: 5 }, (_, i) => ({
+      id: `i${i}`,
+      title: '&'.repeat(200),
+      status: 'degraded' as const,
+      url: `https://s.test/i/${i}`,
+    }));
+    const components = Array.from({ length: 10 }, () => ({ name: '&'.repeat(300), status: 'degraded' as const }));
+    const p = buildSlackPayload(ev({ incidents, components, checkName: '<&>'.repeat(60) }), HUB);
+    const texts: string[] = [p.text];
+    for (const b of p.blocks as Array<{ text?: { text: string }; elements?: Array<{ text: string }> }>) {
+      if (b.text) texts.push(b.text.text);
+      for (const el of b.elements ?? []) texts.push(el.text);
+    }
+    for (const t of texts) {
+      expect(t.length).toBeLessThan(3000);
+      expect(t.replace(/&(amp|lt|gt);/g, '')).not.toMatch(/&/);
+      expect((t.match(/</g) ?? []).length).toBe((t.match(/>/g) ?? []).length);
+    }
+    const all = JSON.stringify(p.blocks);
+    expect(all).toContain('…and ');
+    const headlineBlock = (p.blocks[0] as { text: { text: string } }).text.text;
+    expect(headlineBlock.startsWith('*') && headlineBlock.endsWith('*')).toBe(true);
+  });
+
+  it('drops the link for an over-long incident URL and escapes error text', () => {
+    const long = `https://s.test/${'a'.repeat(600)}`;
+    const s = JSON.stringify(
+      buildSlackPayload(
+        ev({
+          incidents: [{ id: '1', title: 'T', status: 'degraded', url: long }],
+          kind: 'unreachable',
+          to: 'unknown',
+          error: 'a&b<c>',
+        }),
+        HUB,
+      ).blocks,
+    );
+    expect(s).not.toContain(long);
+    expect(s).toContain('a&amp;b&lt;c&gt;');
+  });
+
   it('renders a recovery with null from as Unknown', () => {
     expect(headline(ev({ kind: 'recovered', from: null, to: 'operational' }))).toBe(
       ':large_green_circle: Northflank recovered (was Unknown)',

@@ -225,30 +225,37 @@ describe('Poller', () => {
     expect(p.liveness().running).toBe(false);
   });
 
-  it('keeps notifying other events and checks when one notify fails', async () => {
+  it.each([
+    ['rejects', (m: string) => Promise.reject(new Error(m))],
+    ['throws synchronously', (m: string): Promise<void> => {
+      throw new Error(m);
+    }],
+  ] as const)('keeps notifying other checks when notify %s', async (_name, fail) => {
     const seen: string[] = [];
     const n: Notifier = {
-      notify: async (e) => {
-        if (e.checkId === 'a') throw new Error('rejects');
-        seen.push(e.checkId);
-      },
-    };
-    const sync: Notifier = {
       notify: (e) => {
-        if (e.checkId === 'a') throw new Error('sync throw');
+        if (e.checkId === 'a') return fail('notify boom');
         seen.push(e.checkId);
         return Promise.resolve();
       },
     };
-    for (const notif of [n, sync]) {
-      seen.length = 0;
-      const p = poller([check('a', () => 'major_outage'), check('b', () => 'major_outage')], mem(), notif);
-      const results = await p.runCycle();
-      expect(results).toHaveLength(2);
-      expect(seen).toEqual(['b']);
-      expect(log.error).toHaveBeenCalled();
-      expect(p.liveness().cycles).toBe(1);
-    }
+    const p = poller([check('a', () => 'major_outage'), check('b', () => 'major_outage')], mem(), n);
+    const results = await p.runCycle();
+    expect(results).toHaveLength(2);
+    expect(seen).toEqual(['b']);
+    expect(log.error).toHaveBeenCalledWith('notify failed', expect.objectContaining({ checkId: 'a' }));
+    expect(p.liveness().cycles).toBe(1);
+  });
+
+  it('still notifies when logAlert throws', async () => {
+    const store = mem();
+    vi.spyOn(store, 'logAlert').mockImplementation(() => {
+      throw new Error('log boom');
+    });
+    const n = notifier();
+    await poller([check('a', () => 'major_outage')], store, n).runCycle();
+    expect(n.events).toHaveLength(1);
+    expect(log.error).toHaveBeenCalledWith('failed to log alert', expect.objectContaining({ checkId: 'a' }));
   });
 
   it('saves alert state before notifying and logs each event once', async () => {

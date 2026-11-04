@@ -23,6 +23,8 @@ const MAX_INCIDENTS = 5;
 const MAX_COMPONENTS = 10;
 const MAX_ERROR = 500;
 const MAX_TITLE = 200;
+const MAX_NAME = 100;
+const MAX_URL = 500;
 const MAX_BLOCK_TEXT = 2900; // Slack section/context text limit is 3000
 
 export function statusLabel(s: Status): string {
@@ -33,21 +35,41 @@ export function escapeMrkdwn(s: string): string {
   return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
+/** Code-point safe: never splits a surrogate pair. */
 function truncate(s: string, max: number): string {
-  return s.length <= max ? s : s.slice(0, max - 1) + '…';
+  const chars = Array.from(s);
+  return chars.length <= max ? s : chars.slice(0, max - 1).join('') + '…';
+}
+
+/**
+ * Joins whole, already-escaped parts while the running length stays within the
+ * budget; dropped parts are summarised as "…and N more". Never cuts a part.
+ */
+function fitParts(parts: string[], sep: string, budget: number): string {
+  const reserve = 20;
+  let out = '';
+  let used = 0;
+  for (const p of parts) {
+    const next = used === 0 ? p : out + sep + p;
+    if (used > 0 && next.length > budget - reserve) break;
+    out = next;
+    used += 1;
+  }
+  const dropped = parts.length - used;
+  return dropped > 0 ? `${out}${used > 0 ? sep : ''}…and ${dropped} more` : out;
 }
 
 const HTTP_URL = /^https?:\/\//i;
 const UNSAFE_IN_LINK = /[<>|\s]/;
 
 function safeUrl(u: string | undefined): string | undefined {
-  if (!u || !HTTP_URL.test(u) || UNSAFE_IN_LINK.test(u)) return undefined;
+  if (!u || u.length > MAX_URL || !HTTP_URL.test(u) || UNSAFE_IN_LINK.test(u)) return undefined;
   return u;
 }
 
 function buildHeadline(e: AlertEvent, esc: (s: string) => string): string {
   const emoji = e.kind === 'recovered' ? ':large_green_circle:' : EMOJI[e.to];
-  const name = esc(e.checkName);
+  const name = esc(truncate(e.checkName, MAX_NAME));
   switch (e.kind) {
     case 'recovered':
       return `${emoji} ${name} recovered (was ${statusLabel(e.from ?? 'unknown')})`;
@@ -82,17 +104,23 @@ function plainIncidentLine(i: Incident): string {
 
 export function buildSlackPayload(e: AlertEvent, appUrl: string): { text: string; blocks: unknown[] } {
   const text = buildHeadline(e, escapeMrkdwn);
-  const mrkdwn = (t: string) => ({ type: 'mrkdwn', text: truncate(t, MAX_BLOCK_TEXT) });
+  // Every part is capped and escaped before it gets here, and whole parts are
+  // budgeted, so no text is ever cut mid-entity or mid-link.
+  const mrkdwn = (t: string) => ({ type: 'mrkdwn', text: t });
   const blocks: unknown[] = [{ type: 'section', text: mrkdwn(`*${text}*`) }];
 
   if (e.incidents.length > 0) {
     const lines = e.incidents.slice(0, MAX_INCIDENTS).map((i) => `- ${slackIncidentLine(i)}`);
-    blocks.push({ type: 'section', text: mrkdwn(lines.join('\n')) });
+    blocks.push({ type: 'section', text: mrkdwn(fitParts(lines, '\n', MAX_BLOCK_TEXT)) });
   }
 
   if (e.components.length > 0) {
-    const names = e.components.slice(0, MAX_COMPONENTS).map((c) => escapeMrkdwn(c.name));
-    blocks.push({ type: 'context', elements: [mrkdwn(`Affected: ${names.join(', ')}`)] });
+    const names = e.components.slice(0, MAX_COMPONENTS).map((c) => escapeMrkdwn(truncate(c.name, MAX_NAME)));
+    const prefix = 'Affected: ';
+    blocks.push({
+      type: 'context',
+      elements: [mrkdwn(prefix + fitParts(names, ', ', MAX_BLOCK_TEXT - prefix.length))],
+    });
   }
 
   if (e.kind === 'unreachable' && e.error) {
@@ -106,7 +134,7 @@ export function buildSlackPayload(e: AlertEvent, appUrl: string): { text: string
   if (page) links.push(`<${page}|Vendor status page>`);
   if (links.length > 0) blocks.push({ type: 'section', text: mrkdwn(links.join('  |  ')) });
 
-  return { text: truncate(text, MAX_BLOCK_TEXT), blocks };
+  return { text, blocks };
 }
 
 export function buildEmail(e: AlertEvent, appUrl: string): { subject: string; text: string } {
