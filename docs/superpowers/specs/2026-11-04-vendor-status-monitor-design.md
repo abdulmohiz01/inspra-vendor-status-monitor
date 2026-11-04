@@ -24,7 +24,7 @@ TypeScript on Node (pnpm). One process: Hono HTTP server with server-rendered HT
 3. **Normalise** to `operational | degraded | partial_outage | major_outage | maintenance | unknown`, keeping component detail and incident titles + links. Fetch failures → `unknown` with the error recorded (never "outage"). Per-check timeouts and isolation.
 4. **Polling** every `POLL_INTERVAL_SECONDS` (default 180, allowed 60–600) with a little jitter.
 5. **SQLite**: status check history, incidents with start/resolve times, prune history older than ~30 days.
-6. **Alerts** on any change of state (degradation and recovery) to Slack incoming webhook (`SLACK_WEBHOOK_URL`) and optional SMTP email (`SMTP_*`). Dedupe keyed on vendor + incident/state; reminder if still unresolved after `ALERT_REMINDER_MINUTES` (default 60). Require N consecutive unknowns before alerting on `unknown` (configurable). Webhook unset → log payload. Script prints sample Slack payloads (degradation + recovery) to stdout. Alerts carry absolute links built from `APP_URL` (default `https://status.automateaccelerator.com`).
+6. **Alerts** on any change of state (degradation and recovery) to Slack incoming webhook (`SLACK_WEBHOOK_URL`) and optional SMTP email (`SMTP_*`). Dedupe keyed on vendor + incident/state; reminder if still unresolved after `ALERT_REMINDER_MINUTES` (default 60). Require N consecutive unknowns before alerting on `unknown` (configurable). Webhook unset → log payload. Script prints sample Slack payloads (degradation + recovery) to stdout. Alerts carry absolute links built from `APP_URL` (default `https://hub.automateaccelerator.com/insprastatus`).
 7. **Dashboard** `/`: grid of vendors, colour badge, last checked, current incident title + link, 7-day history strip. Plain, minimal, few colours. `/api/status` JSON; `/healthz` reports poller liveness (not just 200).
 8. **Extension point**: one `Check` interface the scheduler, store, normaliser and alerter accept; vendor checks are one implementation. Per-client flow checks are design-only (README).
 9. **README**: setup, env vars, config, add a vendor, add a check, Coolify + generic compose deployment, before-first-deploy checklist, vendor table.
@@ -32,10 +32,12 @@ TypeScript on Node (pnpm). One process: Hono HTTP server with server-rendered HT
 
 ## Deployment shape (Coolify, add-ons)
 
-- Coolify project **Internal Projects**, own resource, domain `https://status.automateaccelerator.com`. Dockerfile build pack primary, Docker Compose build pack secondary.
-- Dockerfile: multi-stage, non-root, `EXPOSE` app port, `HEALTHCHECK` on `/healthz` using `node` (present in image), listen `0.0.0.0`, `PORT` from env. No secrets in image.
+- Coolify project **Internal Projects**, own resource, hosted under a path: `https://hub.automateaccelerator.com/insprastatus` (supersedes the earlier `status.automateaccelerator.com` target). hub.automateaccelerator.com already resolves to the Coolify server (52.65.8.240); no DNS change. Dockerfile build pack primary, Docker Compose build pack secondary.
+- `BASE_PATH` (default `/insprastatus`, empty = root) and `APP_URL` default `https://hub.automateaccelerator.com/insprastatus`. The app serves everything natively under `BASE_PATH` (dashboard, `/api/status`, `/healthz`, static assets, every generated link and redirect); no reliance on proxy prefix-stripping. `GET /` redirects to the prefix. Coolify's "Strip Prefixes" must be off for this resource; no other app on the host may claim the path.
+- Dockerfile: multi-stage, non-root, `EXPOSE` app port, `HEALTHCHECK` on `${BASE_PATH}/healthz` using `node` (present in image), listen `0.0.0.0`, `PORT` from env. No secrets in image.
 - docker-compose.yml: no host `ports:` (Traefik routes by domain), `expose:` only, named volume for the data dir, env as `${VAR}`, healthcheck, `restart: unless-stopped`. `docker-compose.local.yml` override publishes a port for local runs.
-- README "Before first deploy": (1) push to a git repo Coolify can reach; (2) DNS A record `status.automateaccelerator.com` → Coolify app server IP (currently NXDOMAIN; `backend.automateaccelerator.com` resolves to 52.65.8.240 — confirm that is the server that will run it); (3) `SLACK_WEBHOOK_URL`; (4) optional SMTP.
+- README "Before first deploy": (1) push to a git repo Coolify can reach (private GitHub `abdulmohiz01/inspra-vendor-status-monitor`); (2) no DNS step: hub.* already resolves; Strip Prefixes off; (3) `SLACK_WEBHOOK_URL`; (4) optional SMTP.
+- Source control (supersedes "no remote"): once the build is verified, a private GitHub repo `abdulmohiz01/inspra-vendor-status-monitor` gets `main` as a one-time baseline push, gated on `gh auth status` showing abdulmohiz01 with repo scope. After that, feature branches and PRs only; never push to main again.
 
 ## Endpoint verification (fetched 2026-11-04)
 
