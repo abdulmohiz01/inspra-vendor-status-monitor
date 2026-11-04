@@ -5,8 +5,14 @@ import type { FetchFn } from '../types.js';
 import type { AlertEvent } from './decide.js';
 import { buildEmail, buildSlackPayload } from './format.js';
 
+/** `ok` is true only if every configured channel succeeded; log-only mode counts as delivered. */
+export interface DeliveryResult {
+  ok: boolean;
+  error?: string;
+}
+
 export interface Notifier {
-  notify(e: AlertEvent): Promise<void>;
+  notify(e: AlertEvent): Promise<DeliveryResult>;
 }
 
 type SendMail = (m: { from: string; to: string[]; subject: string; text: string }) => Promise<void>;
@@ -42,12 +48,13 @@ export function createNotifier(
       }))
     : undefined;
 
-  async function slack(e: AlertEvent): Promise<void> {
+  /** Resolves to an error message on failure, undefined on success (or when only logging). */
+  async function slack(e: AlertEvent): Promise<string | undefined> {
     try {
       const payload = buildSlackPayload(e, cfg.appUrl);
       if (!cfg.slackWebhookUrl) {
         log.info('slack webhook not configured; alert payload', { payload });
-        return;
+        return undefined;
       }
       const res = await deps.fetch(cfg.slackWebhookUrl, {
         method: 'POST',
@@ -58,14 +65,18 @@ export function createNotifier(
       if (!res.ok) {
         await res.body?.cancel().catch(() => undefined);
         log.error('slack alert failed', { checkId: e.checkId, dedupeKey: e.dedupeKey, status: res.status });
+        return `slack: HTTP ${res.status}`;
       }
+      return undefined;
     } catch (err) {
       log.error('slack alert failed', { checkId: e.checkId, dedupeKey: e.dedupeKey, error: errMsg(err) });
+      return `slack: ${errMsg(err)}`;
     }
   }
 
-  async function email(e: AlertEvent): Promise<void> {
-    if (!smtp || !sendMail) return;
+  /** Resolves to an error message on failure, undefined on success or when SMTP is not configured. */
+  async function email(e: AlertEvent): Promise<string | undefined> {
+    if (!smtp || !sendMail) return undefined;
     try {
       const { subject, text } = buildEmail(e, cfg.appUrl);
       let timer: NodeJS.Timeout | undefined;
@@ -77,14 +88,17 @@ export function createNotifier(
       } finally {
         clearTimeout(timer);
       }
+      return undefined;
     } catch (err) {
       log.error('email alert failed', { checkId: e.checkId, dedupeKey: e.dedupeKey, error: errMsg(err) });
+      return `email: ${errMsg(err)}`;
     }
   }
 
   return {
     async notify(e) {
-      await Promise.allSettled([slack(e), email(e)]);
+      const errors = (await Promise.all([slack(e), email(e)])).filter((x): x is string => x !== undefined);
+      return errors.length === 0 ? { ok: true } : { ok: false, error: errors.join('; ') };
     },
   };
 }

@@ -64,9 +64,19 @@ CREATE TABLE IF NOT EXISTS alerts (
   kind TEXT NOT NULL,
   check_id TEXT NOT NULL,
   at TEXT NOT NULL,
-  event_json TEXT NOT NULL
+  event_json TEXT NOT NULL,
+  sent_at INTEGER,
+  attempts INTEGER NOT NULL DEFAULT 0,
+  last_error TEXT
 );
+CREATE INDEX IF NOT EXISTS idx_alerts_check_time ON alerts (check_id, at);
 `;
+
+export interface PendingAlert {
+  id: number;
+  attempts: number;
+  event: AlertEvent;
+}
 
 export class Store {
   private readonly db: Database.Database;
@@ -76,6 +86,24 @@ export class Store {
     this.db = new Database(dbPath);
     this.db.pragma('journal_mode = WAL');
     this.db.exec(SCHEMA);
+    this.migrateAlerts();
+  }
+
+  /** Adds the outbox columns to an `alerts` table created by a version without them. Idempotent. */
+  private migrateAlerts(): void {
+    const cols = new Set(
+      (this.db.prepare('PRAGMA table_info(alerts)').all() as Array<{ name: string }>).map((c) => c.name),
+    );
+    const tx = this.db.transaction(() => {
+      if (!cols.has('sent_at')) {
+        this.db.exec('ALTER TABLE alerts ADD COLUMN sent_at INTEGER');
+        // Rows from before the outbox already had their single delivery attempt; never re-send them.
+        this.db.exec("UPDATE alerts SET sent_at = COALESCE(CAST(strftime('%s', at) AS INTEGER) * 1000, 0)");
+      }
+      if (!cols.has('attempts')) this.db.exec('ALTER TABLE alerts ADD COLUMN attempts INTEGER NOT NULL DEFAULT 0');
+      if (!cols.has('last_error')) this.db.exec('ALTER TABLE alerts ADD COLUMN last_error TEXT');
+    });
+    tx();
   }
 
   recordResult(r: CheckResult): void {
@@ -137,10 +165,44 @@ export class Store {
       .run(checkId, JSON.stringify(s));
   }
 
-  logAlert(e: AlertEvent): void {
-    this.db
+  /** Persists the alert with its full payload as unsent; returns the row id. */
+  logAlert(e: AlertEvent): number {
+    const info = this.db
       .prepare('INSERT INTO alerts (dedupe_key, kind, check_id, at, event_json) VALUES (?, ?, ?, ?, ?)')
       .run(e.dedupeKey, e.kind, e.checkId, e.at, JSON.stringify(e));
+    return Number(info.lastInsertRowid);
+  }
+
+  markAlertSent(id: number, now: Date): void {
+    this.db.prepare('UPDATE alerts SET sent_at = ? WHERE id = ?').run(now.getTime(), id);
+  }
+
+  markAlertFailed(id: number, error: string): void {
+    this.db.prepare('UPDATE alerts SET attempts = attempts + 1, last_error = ? WHERE id = ?').run(error, id);
+  }
+
+  /**
+   * Unsent alerts with fewer than `maxAttempts` failed attempts, created at or after `minCreatedAt`, oldest first.
+   * An alert is stale, and never retried, once a newer alert exists for the same check: re-sending it would
+   * report an old state (e.g. "degraded" after "recovered"). A check emits at most one alert per cycle.
+   */
+  pendingAlerts(opts: { maxAttempts: number; minCreatedAt: Date }): PendingAlert[] {
+    const rows = this.db
+      .prepare(
+        `SELECT a.id, a.attempts, a.event_json FROM alerts a
+         WHERE a.sent_at IS NULL AND a.attempts < ? AND a.at >= ?
+           AND NOT EXISTS (
+             SELECT 1 FROM alerts b
+             WHERE b.check_id = a.check_id AND (b.at > a.at OR (b.at = a.at AND b.id > a.id))
+           )
+         ORDER BY a.at, a.id`,
+      )
+      .all(opts.maxAttempts, opts.minCreatedAt.toISOString()) as Array<{
+      id: number;
+      attempts: number;
+      event_json: string;
+    }>;
+    return rows.map((r) => ({ id: r.id, attempts: r.attempts, event: JSON.parse(r.event_json) as AlertEvent }));
   }
 
   recentAlerts(limit: number): Array<{ dedupeKey: string; kind: AlertKind; checkId: string; at: string }> {

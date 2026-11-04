@@ -3,7 +3,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { AlertEvent } from '../src/alerts/decide.js';
-import type { Notifier } from '../src/alerts/notifier.js';
+import { createNotifier, type DeliveryResult, type Notifier } from '../src/alerts/notifier.js';
 import { nextDelayMs, Poller } from '../src/poller.js';
 import { Store } from '../src/store.js';
 import type { Check, CheckOutcome, Status } from '../src/types.js';
@@ -48,6 +48,7 @@ function notifier(): Notifier & { events: AlertEvent[] } {
     events,
     notify: async (e) => {
       events.push(e);
+      return { ok: true };
     },
   };
 }
@@ -227,7 +228,7 @@ describe('Poller', () => {
 
   it.each([
     ['rejects', (m: string) => Promise.reject(new Error(m))],
-    ['throws synchronously', (m: string): Promise<void> => {
+    ['throws synchronously', (m: string): Promise<DeliveryResult> => {
       throw new Error(m);
     }],
   ] as const)('keeps notifying other checks when notify %s', async (_name, fail) => {
@@ -236,7 +237,7 @@ describe('Poller', () => {
       notify: (e) => {
         if (e.checkId === 'a') return fail('notify boom');
         seen.push(e.checkId);
-        return Promise.resolve();
+        return Promise.resolve({ ok: true });
       },
     };
     const p = poller([check('a', () => 'major_outage'), check('b', () => 'major_outage')], mem(), n);
@@ -262,11 +263,212 @@ describe('Poller', () => {
     const store = mem();
     const order: string[] = [];
     vi.spyOn(store, 'saveAlertState').mockImplementation(() => void order.push('save'));
-    const logAlert = vi.spyOn(store, 'logAlert').mockImplementation(() => void order.push('log'));
-    const n: Notifier = { notify: async () => void order.push('notify') };
+    const logAlert = vi.spyOn(store, 'logAlert').mockImplementation(() => order.push('log'));
+    const n: Notifier = {
+      notify: async () => {
+        order.push('notify');
+        return { ok: true };
+      },
+    };
     await poller([check('a', () => 'major_outage')], store, n).runCycle();
     expect(order[0]).toBe('save');
     expect(order.indexOf('save')).toBeLessThan(order.indexOf('notify'));
     expect(logAlert).toHaveBeenCalledTimes(1);
+  });
+
+  describe('alert outbox', () => {
+    const DAY = 24 * 3_600_000;
+    const pending = (store: Store, c: { now: () => Date }) =>
+      store.pendingAlerts({ maxAttempts: 5, minCreatedAt: new Date(c.now().getTime() - DAY) });
+
+    function flaky(results: DeliveryResult[]): Notifier & { calls: AlertEvent[] } {
+      const calls: AlertEvent[] = [];
+      return {
+        calls,
+        notify: async (e) => {
+          calls.push(e);
+          return results.shift() ?? { ok: true };
+        },
+      };
+    }
+
+    it('marks a delivered alert sent', async () => {
+      const c = clock();
+      const store = mem();
+      await poller([check('a', () => 'major_outage')], store, notifier(), { now: c.now }).runCycle();
+      expect(pending(store, c)).toEqual([]);
+    });
+
+    it('retries a failed alert at the start of the next cycle and marks it sent', async () => {
+      const c = clock();
+      const store = mem();
+      const n = flaky([{ ok: false, error: 'slack: HTTP 503' }]);
+      const p = poller([check('a', () => 'major_outage')], store, n, { now: c.now });
+      await p.runCycle();
+      expect(n.calls.map((e) => e.dedupeKey)).toEqual(['a:state:major_outage']);
+      expect(pending(store, c)).toMatchObject([{ attempts: 1, event: { dedupeKey: 'a:state:major_outage' } }]);
+
+      c.advance(180_000);
+      await p.runCycle();
+      expect(n.calls.map((e) => e.dedupeKey)).toEqual(['a:state:major_outage', 'a:state:major_outage']);
+      expect(n.calls[1]).toEqual(n.calls[0]);
+      expect(pending(store, c)).toEqual([]);
+      expect(log.info).toHaveBeenCalledWith(
+        'retrying alert',
+        expect.objectContaining({ checkId: 'a', dedupeKey: 'a:state:major_outage', attempts: 1 }),
+      );
+
+      c.advance(180_000);
+      await p.runCycle();
+      expect(n.calls).toHaveLength(2);
+    });
+
+    it('retries pending alerts before the checks run', async () => {
+      const c = clock();
+      const store = mem();
+      const order: string[] = [];
+      let first = true;
+      const n: Notifier = {
+        notify: async (e) => {
+          order.push(`notify:${e.checkId}`);
+          if (first) {
+            first = false;
+            return { ok: false, error: 'x' };
+          }
+          return { ok: true };
+        },
+      };
+      let bStatus: Status = 'operational';
+      const b: Check = {
+        id: 'b',
+        name: 'B',
+        kind: 'fake',
+        run: async () => {
+          order.push('run:b');
+          return { status: bStatus, components: [], incidents: [] };
+        },
+      };
+      const p = poller([check('a', () => 'major_outage'), b], store, n, { now: c.now });
+      await p.runCycle();
+      order.length = 0;
+      bStatus = 'major_outage';
+      c.advance(180_000);
+      await p.runCycle();
+      expect(order).toEqual(['notify:a', 'run:b', 'notify:b']);
+    });
+
+    it('never sends a stale degraded alert after the recovery was delivered', async () => {
+      const c = clock();
+      const store = mem();
+      // degraded fails, its retry fails, recovered succeeds; everything after that succeeds.
+      const n = flaky([
+        { ok: false, error: 'slack: HTTP 503' },
+        { ok: false, error: 'slack: HTTP 503' },
+      ]);
+      let status: Status = 'major_outage';
+      const p = poller([check('a', () => status)], store, n, { now: c.now });
+      await p.runCycle();
+      c.advance(180_000);
+      status = 'operational';
+      await p.runCycle();
+      c.advance(180_000);
+      await p.runCycle();
+      expect(n.calls.map((e) => e.kind)).toEqual(['degraded', 'degraded', 'recovered']);
+      expect(pending(store, c)).toEqual([]);
+    });
+
+    it('marks a thrown notify as failed and retries it', async () => {
+      const c = clock();
+      const store = mem();
+      let calls = 0;
+      const n: Notifier = {
+        notify: async () => {
+          calls += 1;
+          if (calls === 1) throw new Error('boom');
+          return { ok: true };
+        },
+      };
+      const p = poller([check('a', () => 'major_outage')], store, n, { now: c.now });
+      await p.runCycle();
+      expect(pending(store, c)).toHaveLength(1);
+      c.advance(180_000);
+      await p.runCycle();
+      expect(calls).toBe(2);
+      expect(pending(store, c)).toEqual([]);
+    });
+
+    it('gives up after 5 attempts', async () => {
+      const c = clock();
+      const store = mem();
+      const n = flaky(Array.from({ length: 20 }, () => ({ ok: false, error: 'down' })));
+      const p = poller([check('a', () => 'major_outage')], store, n, { now: c.now });
+      for (let i = 0; i < 8; i++) {
+        await p.runCycle();
+        c.advance(180_000);
+      }
+      expect(n.calls.filter((e) => e.dedupeKey === 'a:state:major_outage')).toHaveLength(5);
+      expect(pending(store, c)).toEqual([]);
+    });
+
+    it('does not retry alerts older than 24h', async () => {
+      const c = clock();
+      const store = mem();
+      const n = flaky([{ ok: false, error: 'down' }]);
+      const p = poller([check('a', () => 'major_outage')], store, n, { now: c.now });
+      await p.runCycle();
+      c.advance(DAY + 1);
+      await p.runCycle();
+      expect(n.calls.filter((e) => e.dedupeKey === 'a:state:major_outage')).toHaveLength(1);
+    });
+
+    it('marks alerts sent in log-only mode (no channels configured)', async () => {
+      const c = clock();
+      const store = mem();
+      const n = createNotifier({ appUrl: 'https://x.test/insprastatus' }, { fetch: fakeFetch, log });
+      await poller([check('a', () => 'major_outage')], store, n, { now: c.now }).runCycle();
+      expect(pending(store, c)).toEqual([]);
+      expect(log.info).toHaveBeenCalledWith('slack webhook not configured; alert payload', expect.anything());
+    });
+  });
+
+  describe('concurrent sends', () => {
+    function slowNotifier(ms: number, ok = true) {
+      const st = { inFlight: 0, max: 0, calls: 0 };
+      const n: Notifier = {
+        notify: async () => {
+          st.calls += 1;
+          st.inFlight += 1;
+          st.max = Math.max(st.max, st.inFlight);
+          await new Promise((r) => setTimeout(r, ms));
+          st.inFlight -= 1;
+          return ok ? { ok: true } : { ok: false, error: 'down' };
+        },
+      };
+      return { n, st };
+    }
+    const eight = () => Array.from({ length: 8 }, (_, i) => check(`c${i}`, () => 'major_outage'));
+
+    it('sends a cycle of 8 events at most 4 at a time, well under 8 x the send time', async () => {
+      const { n, st } = slowNotifier(100);
+      const p = poller(eight(), mem(), n);
+      const t0 = performance.now();
+      await p.runCycle();
+      const elapsed = performance.now() - t0;
+      expect(st.calls).toBe(8);
+      expect(st.max).toBe(4);
+      expect(elapsed).toBeLessThan(500);
+    });
+
+    it('bounds the retry batch to 4 in flight too', async () => {
+      const c = clock();
+      const store = mem();
+      const failing = slowNotifier(10, false);
+      await poller(eight(), store, failing.n, { now: c.now }).runCycle();
+      const retry = slowNotifier(20);
+      c.advance(180_000);
+      await poller(eight(), store, retry.n, { now: c.now }).runCycle();
+      expect(retry.st.calls).toBe(8);
+      expect(retry.st.max).toBe(4);
+    });
   });
 });

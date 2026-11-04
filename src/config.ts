@@ -33,6 +33,17 @@ function isHttpUrl(v: string): boolean {
   }
 }
 
+/**
+ * Alert links are built from APP_URL, so its path should end with BASE_PATH.
+ * Returns a warning message when it does not; an empty BASE_PATH is always fine.
+ */
+export function appUrlWarning(cfg: Pick<AppConfig, 'appUrl' | 'basePath'>): string | undefined {
+  if (cfg.basePath === '') return undefined;
+  const path = new URL(cfg.appUrl).pathname.replace(/\/+$/, '');
+  if (path.endsWith(cfg.basePath)) return undefined;
+  return `APP_URL path "${path || '/'}" does not end with BASE_PATH "${cfg.basePath}"; alert links may not reach the dashboard`;
+}
+
 export function loadConfig(env: Env = process.env): AppConfig {
   const errors: string[] = [];
 

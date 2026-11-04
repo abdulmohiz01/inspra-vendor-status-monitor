@@ -1,6 +1,7 @@
 import { existsSync, mkdtempSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import Database from 'better-sqlite3';
 import { afterEach, describe, expect, it } from 'vitest';
 import type { AlertEvent } from '../src/alerts/decide.js';
 import { Store } from '../src/store.js';
@@ -142,6 +143,115 @@ describe('Store', () => {
     expect(s.incidents('c', { openOnly: true })).toHaveLength(1);
     expect(s.incidents('d')).toHaveLength(1);
     expect(s.dailyHistory(60, now).get('a')).toHaveLength(1);
+  });
+
+  describe('alert outbox', () => {
+    const NOW = new Date('2026-11-04T12:00:00Z');
+    const hoursAgo = (h: number) => new Date(NOW.getTime() - h * 3_600_000).toISOString();
+    const ev = (at: string, key: string, checkId = 'a', kind: AlertEvent['kind'] = 'degraded'): AlertEvent => ({
+      kind,
+      checkId,
+      checkName: 'A',
+      from: 'operational',
+      to: 'major_outage',
+      since: at,
+      at,
+      incidents: [inc],
+      components: [{ name: 'API', status: 'major_outage' }],
+      pageUrl: 'https://status.a.test',
+      dedupeKey: key,
+    });
+    const opts = { maxAttempts: 5, minCreatedAt: new Date(NOW.getTime() - 24 * 3_600_000) };
+
+    it('logAlert returns the row id; a new alert is pending with its full event payload', () => {
+      const s = mem();
+      const e = ev(hoursAgo(1), 'k1');
+      const id = s.logAlert(e);
+      expect(typeof id).toBe('number');
+      expect(s.pendingAlerts(opts)).toEqual([{ id, attempts: 0, event: e }]);
+    });
+
+    it('markAlertSent removes it from pending', () => {
+      const s = mem();
+      const id = s.logAlert(ev(hoursAgo(1), 'k1'));
+      s.markAlertSent(id, NOW);
+      expect(s.pendingAlerts(opts)).toEqual([]);
+    });
+
+    it('markAlertFailed increments attempts and keeps it pending until the cap', () => {
+      const s = mem();
+      const id = s.logAlert(ev(hoursAgo(1), 'k1'));
+      for (let i = 1; i <= 4; i++) {
+        s.markAlertFailed(id, `boom ${i}`);
+        expect(s.pendingAlerts(opts).map((p) => p.attempts)).toEqual([i]);
+      }
+      s.markAlertFailed(id, 'boom 5');
+      expect(s.pendingAlerts(opts)).toEqual([]);
+    });
+
+    it('excludes alerts older than minCreatedAt and returns the rest oldest first', () => {
+      const s = mem();
+      s.logAlert(ev(hoursAgo(25), 'too-old', 'x'));
+      const newer = s.logAlert(ev(hoursAgo(1), 'newer', 'b'));
+      const older = s.logAlert(ev(hoursAgo(23), 'older', 'c'));
+      expect(s.pendingAlerts(opts).map((p) => p.id)).toEqual([older, newer]);
+    });
+
+    it('drops an unsent alert once a newer alert exists for the same check (no stale degraded after recovered)', () => {
+      const s = mem();
+      s.logAlert(ev(hoursAgo(3), 'a:state:major_outage'));
+      const recovered = s.logAlert(ev(hoursAgo(2), 'a:state:operational', 'a', 'recovered'));
+      s.markAlertSent(recovered, NOW);
+      const other = s.logAlert(ev(hoursAgo(3), 'b:state:major_outage', 'b'));
+      expect(s.pendingAlerts(opts).map((p) => p.id)).toEqual([other]);
+
+      // The newest alert for a check stays retryable while it is unsent.
+      const worse = s.logAlert(ev(hoursAgo(1), 'a:state:degraded', 'a'));
+      expect(s.pendingAlerts(opts).map((p) => p.id)).toEqual([other, worse]);
+    });
+
+    it('prune deletes old alerts whether sent or not', () => {
+      const s = mem();
+      const sent = s.logAlert(ev(hoursAgo(31 * 24), 'old-sent'));
+      s.markAlertSent(sent, NOW);
+      s.logAlert(ev(hoursAgo(31 * 24), 'old-unsent'));
+      s.logAlert(ev(hoursAgo(1), 'new'));
+      s.prune(30, NOW);
+      expect(s.recentAlerts(10).map((a) => a.dedupeKey)).toEqual(['new']);
+    });
+
+    it('migrates an old-schema alerts table idempotently without re-sending its rows', () => {
+      const dir = mkdtempSync(join(tmpdir(), 'vsm-'));
+      dirs.push(dir);
+      const file = join(dir, 'old.db');
+      const old = new Database(file);
+      old.exec(`CREATE TABLE alerts (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        dedupe_key TEXT NOT NULL,
+        kind TEXT NOT NULL,
+        check_id TEXT NOT NULL,
+        at TEXT NOT NULL,
+        event_json TEXT NOT NULL
+      )`);
+      const e = ev(hoursAgo(1), 'pre-outbox');
+      old.prepare('INSERT INTO alerts (dedupe_key, kind, check_id, at, event_json) VALUES (?, ?, ?, ?, ?)')
+        .run(e.dedupeKey, e.kind, e.checkId, e.at, JSON.stringify(e));
+      old.close();
+
+      const s1 = new Store(file);
+      stores.push(s1);
+      s1.close();
+      const s = new Store(file);
+      stores.push(s);
+      const inspect = new Database(file, { readonly: true });
+      const cols = (inspect.prepare('PRAGMA table_info(alerts)').all() as Array<{ name: string }>).map((c) => c.name);
+      inspect.close();
+      expect(cols).toEqual(expect.arrayContaining(['sent_at', 'attempts', 'last_error']));
+      // Rows written before the outbox existed already had their one delivery attempt.
+      expect(s.pendingAlerts(opts)).toEqual([]);
+      const id = s.logAlert(ev(hoursAgo(1), 'post-outbox'));
+      expect(s.pendingAlerts(opts).map((p) => p.id)).toEqual([id]);
+    });
   });
 
   it('creates the parent directory', () => {

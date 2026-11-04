@@ -26,7 +26,11 @@ export interface CheckView {
 export interface StatusView {
   generatedAt: string;
   overall: Status;
+  /** Checks that are neither operational nor in maintenance. */
   issues: number;
+  maintenance: number;
+  /** True until any check has a latest result. */
+  awaitingFirstPoll: boolean;
   checks: CheckView[];
   liveness: Liveness;
   healthy: boolean;
@@ -71,13 +75,16 @@ export function buildStatusView(deps: {
           }))
         : (r?.incidents ?? []);
     const perDay = new Map((history.get(check.id) ?? []).map((h) => [h.day, h.status]));
+    // `since` belongs to the alerted status; hide it when the badge shows something else.
+    const alert = store.getAlertState(check.id);
+    const since = r && alert?.alertedStatus === status ? alert.since : null;
     const view: CheckView = {
       id: check.id,
       name: check.name,
       kind: check.kind,
       status,
       label: statusLabel(status),
-      since: store.getAlertState(check.id)?.since ?? null,
+      since,
       checkedAt: r?.checkedAt ?? null,
       incidents,
       components: (r?.components ?? []).filter((c) => c.status !== 'operational'),
@@ -95,7 +102,9 @@ export function buildStatusView(deps: {
   return {
     generatedAt: now.toISOString(),
     overall: worstStatus(views.map((v) => v.status)),
-    issues: views.filter((v) => v.status !== 'operational').length,
+    issues: views.filter((v) => v.status !== 'operational' && v.status !== 'maintenance').length,
+    maintenance: views.filter((v) => v.status === 'maintenance').length,
+    awaitingFirstPoll: views.every((v) => v.checkedAt === null),
     checks: views,
     liveness: poller.liveness(),
     healthy: poller.isHealthy(),
