@@ -115,7 +115,7 @@ export function decideAlerts(
       next.alertedStatus = s;
       next.since = t;
       next.lastAlertAt = t;
-      next.alertedIncidentIds = ids;
+      next.alertedIncidentIds = operational ? [] : [...new Set([...prev.alertedIncidentIds, ...ids])];
     } else {
       const known = new Set(prev.alertedIncidentIds);
       const fresh = result.incidents.filter((i) => !known.has(i.id));
@@ -124,13 +124,14 @@ export function decideAlerts(
         events.push(make('new_incident', s, s, prev.since ?? t, fresh, key));
         next.lastAlertAt = t;
       }
-      next.alertedIncidentIds = ids;
+      next.alertedIncidentIds = operational ? [] : [...new Set([...prev.alertedIncidentIds, ...ids])];
     }
   }
 
   const a = next.alertedStatus;
   if (
     events.length === 0 &&
+    !(result.status === 'unknown' && a !== 'unknown') &&
     a !== null &&
     a !== 'operational' &&
     a !== 'maintenance' &&

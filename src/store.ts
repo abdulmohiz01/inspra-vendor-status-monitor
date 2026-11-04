@@ -38,6 +38,7 @@ CREATE TABLE IF NOT EXISTS check_history (
   duration_ms INTEGER NOT NULL
 );
 CREATE INDEX IF NOT EXISTS idx_history_check_time ON check_history (check_id, checked_at);
+CREATE INDEX IF NOT EXISTS idx_history_time ON check_history (checked_at);
 CREATE TABLE IF NOT EXISTS check_latest (
   check_id TEXT PRIMARY KEY,
   result_json TEXT NOT NULL
@@ -170,7 +171,7 @@ export class Store {
     const start = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - (days - 1)));
     const rows = this.db
       .prepare(
-        'SELECT check_id, substr(checked_at, 1, 10) AS day, status FROM check_history WHERE checked_at >= ? ORDER BY checked_at',
+        'SELECT check_id, substr(checked_at, 1, 10) AS day, status FROM check_history WHERE checked_at >= ?',
       )
       .all(start.toISOString()) as Array<{ check_id: string; day: string; status: Status }>;
     const worst = new Map<string, Map<string, Status>>();
