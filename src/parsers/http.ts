@@ -24,7 +24,7 @@ export function parseHttp(
   if (statusCode >= 400) {
     return finish('degraded', { id: `http-${statusCode}`, title: `HTTP ${statusCode} from ${opts.url}`, status: 'degraded' });
   }
-  if (statusCode < 200 || statusCode >= 400) {
+  if (statusCode < 200) {
     return finish('unknown', undefined, `Unexpected HTTP ${statusCode} from ${opts.url}`);
   }
 

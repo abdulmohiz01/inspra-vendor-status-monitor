@@ -54,6 +54,17 @@ describe('parseSlack', () => {
     );
   });
 
+  it('merges service names case-insensitively into one component', () => {
+    const doc = load('slack-current-active.json');
+    const base = doc.active_incidents[0];
+    doc.active_incidents = [
+      { ...base, id: 1, type: 'notice', services: ['Messaging'] },
+      { ...base, id: 2, type: 'outage', services: ['messaging'] },
+    ];
+    const r = parseSlack(doc, {});
+    expect(r.components).toEqual([{ name: 'Messaging', status: 'major_outage' }]);
+  });
+
   it('throws ParseError on a bad shape', () => {
     expect(() => parseSlack({ nope: true }, {})).toThrow(ParseError);
   });

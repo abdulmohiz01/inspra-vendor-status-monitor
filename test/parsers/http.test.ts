@@ -49,4 +49,15 @@ describe('parseHttp', () => {
     const r = parseHttp({ statusCode: 200, body: odoo, latencyMs: 80 }, { ...base, expectBody: '"pass"' });
     expect(r.status).toBe('operational');
   });
+
+  it('is operational for a 3xx response', () => {
+    expect(parseHttp({ statusCode: 301, body: '', latencyMs: 50 }, base).status).toBe('operational');
+  });
+
+  it('reports one incident (body mismatch) when body is wrong and response is slow', () => {
+    const r = parseHttp({ statusCode: 200, body: inspra, latencyMs: 9000 }, { ...base, expectBody: '"status":"down"' });
+    expect(r.status).toBe('degraded');
+    expect(r.incidents).toHaveLength(1);
+    expect(r.incidents[0]!.id).toBe('http-body');
+  });
 });

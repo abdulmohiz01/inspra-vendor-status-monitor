@@ -94,28 +94,35 @@ export function parseFeed(
   if (!root['rss'] && !root['feed']) throw new ParseError('Invalid feed: expected an RSS or Atom document');
 
   const needles = opts.components?.map((c) => c.toLowerCase());
-  const items = readItems(root).filter((i) => {
+  const nowMs = opts.now.getTime();
+  const matches = (i: FeedItem): boolean => {
     if (!needles) return true;
     const hay = `${i.guid} ${i.title} ${i.description}`.toLowerCase();
     return needles.some((n) => hay.includes(n));
-  });
+  };
+  // Unparseable dates count as now (fail closed); future dates are clamped to now (clock skew).
+  const effDate = (i: FeedItem): number => (Number.isNaN(i.date) ? nowMs : Math.min(i.date, nowMs));
 
-  // Newest item per group; ties keep feed order (feeds are newest-first).
-  const groups = new Map<string, FeedItem>();
-  for (const item of items) {
+  // Group first; keep a group if any item matches the filter; the newest item decides.
+  // Ties keep feed order (feeds are newest-first).
+  const groups = new Map<string, { newest: FeedItem; matched: boolean }>();
+  for (const item of readItems(root)) {
     const key = item.guid.replace(/#[0-9a-f]{40,}$/i, '');
     const cur = groups.get(key);
-    const itemDate = Number.isNaN(item.date) ? -Infinity : item.date;
-    const curDate = cur ? (Number.isNaN(cur.date) ? -Infinity : cur.date) : -Infinity;
-    if (!cur || itemDate > curDate) groups.set(key, item);
+    if (!cur) {
+      groups.set(key, { newest: item, matched: matches(item) });
+      continue;
+    }
+    if (effDate(item) > effDate(cur.newest)) cur.newest = item;
+    if (!cur.matched && matches(item)) cur.matched = true;
   }
 
-  const cutoff = opts.now.getTime() - opts.lookbackHours * 3_600_000;
+  const cutoff = nowMs - opts.lookbackHours * 3_600_000;
   const incidents: Incident[] = [];
-  for (const [key, item] of groups) {
-    if (Number.isNaN(item.date) || item.date < cutoff || item.date > opts.now.getTime()) continue;
+  for (const [key, { newest: item, matched }] of groups) {
+    if (!matched || effDate(item) < cutoff) continue;
     if (RESOLVED.test(`${item.title} ${item.description}`)) continue;
-    const iso = new Date(item.date).toISOString();
+    const iso = new Date(effDate(item)).toISOString();
     incidents.push({
       id: key,
       title: item.title,

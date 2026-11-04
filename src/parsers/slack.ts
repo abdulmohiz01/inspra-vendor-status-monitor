@@ -52,16 +52,18 @@ export function parseSlack(current: unknown, opts: { components?: string[] }): C
     ...(i.date_updated ? { updatedAt: i.date_updated } : {}),
   }));
 
-  const byService = new Map<string, Status>();
+  const byService = new Map<string, ComponentStatus>();
   kept.forEach((raw, idx) => {
     const status = incidents[idx]!.status;
     for (const svc of raw.services ?? []) {
       if (!matchesFilter([svc], filter)) continue;
-      const prev = byService.get(svc);
-      if (prev === undefined || SEVERITY[status] > SEVERITY[prev]) byService.set(svc, status);
+      const key = svc.trim().toLowerCase();
+      const prev = byService.get(key);
+      if (prev === undefined) byService.set(key, { name: svc, status });
+      else if (SEVERITY[status] > SEVERITY[prev.status]) prev.status = status;
     }
   });
-  const components: ComponentStatus[] = [...byService].map(([name, status]) => ({ name, status }));
+  const components: ComponentStatus[] = [...byService.values()];
 
   const outcome: CheckOutcome = {
     status: worstStatus(incidents.map((i) => i.status)),
