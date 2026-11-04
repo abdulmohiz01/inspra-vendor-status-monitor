@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { loadConfig } from '../src/config.js';
+import { appUrlWarning, loadConfig } from '../src/config.js';
 
 describe('loadConfig', () => {
   it('returns defaults for an empty env', () => {
@@ -78,5 +78,27 @@ describe('loadConfig', () => {
       from: 'status@x.com',
       to: ['a@x.com', 'b@x.com'],
     });
+  });
+});
+
+describe('appUrlWarning', () => {
+  const w = (appUrl: string, basePath: string) => appUrlWarning({ appUrl, basePath });
+
+  it('is silent when the APP_URL path ends with BASE_PATH', () => {
+    expect(appUrlWarning(loadConfig({}))).toBeUndefined();
+    expect(w('https://hub.example.com/insprastatus/', '/insprastatus')).toBeUndefined();
+    expect(w('https://hub.example.com/tools/insprastatus', '/insprastatus')).toBeUndefined();
+    expect(w('https://hub.example.com/a/b', '/a/b')).toBeUndefined();
+  });
+
+  it('is always silent for an empty BASE_PATH', () => {
+    expect(w('https://status.example.com', '')).toBeUndefined();
+    expect(w('https://status.example.com/anything', '')).toBeUndefined();
+  });
+
+  it('warns when the APP_URL path does not end with BASE_PATH', () => {
+    expect(w('http://localhost:4180', '/insprastatus')).toMatch(/APP_URL.*BASE_PATH/);
+    expect(w('https://hub.example.com/otherinsprastatus', '/insprastatus')).toBeDefined();
+    expect(w('https://hub.example.com/insprastatus/extra', '/insprastatus')).toBeDefined();
   });
 });

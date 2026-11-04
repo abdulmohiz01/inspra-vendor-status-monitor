@@ -2,7 +2,7 @@ import { join } from 'node:path';
 import { serve } from '@hono/node-server';
 import { createNotifier } from './alerts/notifier.js';
 import { createVendorChecks } from './checks/vendor.js';
-import { loadConfig } from './config.js';
+import { appUrlWarning, loadConfig } from './config.js';
 import { createLogger } from './log.js';
 import { Poller } from './poller.js';
 import { createApp } from './server.js';
@@ -21,6 +21,8 @@ function main(): void {
     log.error('startup failed', { error: err instanceof Error ? err.message : String(err) });
     process.exit(1);
   }
+  const urlWarning = appUrlWarning(config);
+  if (urlWarning) log.warn(urlWarning, { appUrl: config.appUrl, basePath: config.basePath });
 
   const store = new Store(join(config.dataDir, 'status.db'));
   const checks = createVendorChecks(vendors);

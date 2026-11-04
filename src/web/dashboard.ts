@@ -73,10 +73,17 @@ function renderCard(c: CheckView): string {
   return `<section class="card" id="${esc(c.id)}">${parts.join('')}</section>`;
 }
 
+function headline(v: StatusView): { text: string; tone: 'neutral' | 'ok' | 'bad' | 'maintenance' } {
+  if (v.awaitingFirstPoll) return { text: 'Awaiting first poll', tone: 'neutral' };
+  const parts: string[] = [];
+  if (v.issues > 0) parts.push(`${v.issues} need attention`);
+  if (v.maintenance > 0) parts.push(`${v.maintenance} in maintenance`);
+  if (parts.length === 0) return { text: 'All systems operational', tone: 'ok' };
+  return { text: parts.join(' · '), tone: v.issues > 0 ? 'bad' : 'maintenance' };
+}
+
 export function renderDashboard(v: StatusView, basePath: string): string {
-  const total = v.checks.length;
-  const ok = v.issues === 0;
-  const overall = ok ? 'All systems operational' : `${v.issues} of ${total} need attention`;
+  const overall = headline(v);
   const l = v.liveness;
   const bp = esc(basePath);
   return `<!doctype html>
@@ -92,7 +99,7 @@ export function renderDashboard(v: StatusView, basePath: string): string {
 <body>
 <header>
 <h1>Inspra vendor status</h1>
-<div class="overall ${ok ? 'ok' : 'bad'}">${esc(overall)}</div>
+<div class="overall ${overall.tone}">${esc(overall.text)}</div>
 <div class="muted">Generated ${esc(fmtTime(v.generatedAt))}</div>
 </header>
 <main>

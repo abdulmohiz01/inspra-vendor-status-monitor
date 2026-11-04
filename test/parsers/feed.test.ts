@@ -76,6 +76,49 @@ describe('parseFeed', () => {
     expect(r.incidents).toEqual([]);
   });
 
+  const awsGuid = (ts: number): string => `https://status.aws.amazon.com/#ec2-ap-southeast-2_${ts}`;
+
+  it('groups AWS updates by service-region: a newer [RESOLVED] item supersedes earlier updates', () => {
+    const xml = rss(
+      item(awsGuid(1793800800), '[RESOLVED] Increased API error rates', 'Wed, 04 Nov 2026 12:40:00 GMT', 'ap-southeast-2 recovered') +
+        item(awsGuid(1793799000), 'Increased API error rates', 'Wed, 04 Nov 2026 12:10:00 GMT', 'still investigating in ap-southeast-2') +
+        item(awsGuid(1793797200), 'Increased API error rates', 'Wed, 04 Nov 2026 11:40:00 GMT', 'investigating in ap-southeast-2'),
+    );
+    const r = parseFeed(xml, { now: new Date('2026-11-04T13:00:00Z'), lookbackHours: 24, components: ['ap-southeast-2'] });
+    expect(r.status).toBe('operational');
+    expect(r.incidents).toEqual([]);
+  });
+
+  it('groups unresolved AWS updates into one incident: the newest', () => {
+    const xml = rss(
+      item(awsGuid(1793797200), 'Increased API error rates', 'Wed, 04 Nov 2026 11:40:00 GMT', 'investigating in ap-southeast-2') +
+        item(awsGuid(1793799000), 'Service disruption: API errors', 'Wed, 04 Nov 2026 12:10:00 GMT', 'ap-southeast-2 impact'),
+    );
+    const r = parseFeed(xml, { now: new Date('2026-11-04T13:00:00Z'), lookbackHours: 24, components: ['ap-southeast-2'] });
+    expect(r.incidents).toHaveLength(1);
+    expect(r.incidents[0]).toMatchObject({
+      id: 'https://status.aws.amazon.com/#ec2-ap-southeast-2',
+      title: 'Service disruption: API errors',
+      startedAt: '2026-11-04T12:10:00.000Z',
+    });
+    expect(r.status).toBe('partial_outage');
+  });
+
+  it('groups the real AWS me-central-1 updates into one incident', () => {
+    const now = new Date('2026-03-02T18:00:00Z');
+    // The feed as it stood at `now`: the fixture was fetched later, so drop items published after it.
+    const asOfNow = aws.replace(/<item>[\s\S]*?<\/item>/g, (it) => {
+      const pub = Date.parse(/<pubDate>([^<]*)<\/pubDate>/.exec(it)?.[1] ?? '');
+      return pub > now.getTime() ? '' : it;
+    });
+    const r = parseFeed(asOfNow, { now, lookbackHours: 24, components: ['me-central-1'] });
+    expect(r.incidents).toHaveLength(1);
+    expect(r.incidents[0]).toMatchObject({
+      id: 'https://status.aws.amazon.com/#multipleservices-me-central-1',
+      startedAt: '2026-03-02T17:59:49.000Z',
+    });
+  });
+
   it('treats an unparseable date as now (fails closed)', () => {
     const xml = rss(item('g3', 'Service disruption', 'not a date'));
     const r = parseFeed(xml, { now: new Date('2026-11-04T13:00:00Z'), lookbackHours: 24 });

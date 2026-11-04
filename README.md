@@ -38,7 +38,7 @@ Empty values are treated as unset, except `BASE_PATH`, where an explicit empty v
 | Variable | Default | Range / notes |
 |---|---|---|
 | `PORT` | `8080` | 1-65535. Affects `pnpm dev`/`start` only; Compose pins the container to 8080 |
-| `HOST` | `0.0.0.0` | Bind address. The container healthcheck probes 127.0.0.1, so keep this `0.0.0.0` or loopback |
+| `HOST` | `0.0.0.0` | Bind address for `pnpm dev`/`start` only. In a container it must be `0.0.0.0`; Compose pins it, and the Dockerfile sets it |
 | `APP_URL` | `https://hub.automateaccelerator.com/insprastatus` | http(s) URL including the base path; used for absolute links in alerts |
 | `BASE_PATH` | `/insprastatus` | Prefix everything is served under; empty = root |
 | `POLL_INTERVAL_SECONDS` | `180` | 60-600, with a little jitter |
@@ -71,7 +71,7 @@ A top-level `vendors:` list. The file is validated on load (unknown keys, bad UR
 | `url` | yes | Base URL of the status page, or the feed/endpoint itself for `slack`, `google_workspace`, `rss`, `atom`, `http` |
 | `pageUrl` | no | Human-facing page to link to when `url` is not one |
 | `components` | no | Component filter (below) |
-| `notes` | no | Free text shown with the vendor |
+| `notes` | no | Free text, included in `/api/status` (not rendered on the dashboard) |
 | `feed` | no | `none` marks a vendor with no machine-readable feed; it is monitored with an HTTP ping, never scraped |
 | `lookbackHours` | no | Feed types only: how far back to consider items active (1-168, default 24) |
 | `expectBody` | no | `http` only: substring the response body must contain, else `degraded` |
@@ -117,6 +117,15 @@ Alerts go to the Slack webhook and, if configured, SMTP email. If `SLACK_WEBHOOK
 | `new_incident` | Same status, but a new incident id appeared |
 | `reminder` | Still non-operational `ALERT_REMINDER_MINUTES` after the last alert |
 | `unreachable` | `UNKNOWN_ALERT_THRESHOLD` consecutive unknown results |
+
+Delivery:
+
+- Every alert is written to the `alerts` table before it is sent, then marked sent or failed.
+- An alert counts as delivered only if every configured channel (Slack, email) succeeded.
+- Failed sends are retried at the start of each poll cycle, before the checks run, up to 5 attempts in total and only while the alert is less than 24 hours old.
+- A retry re-sends to every configured channel, not only the one that failed.
+- Log-only mode (no `SLACK_WEBHOOK_URL`, no SMTP) counts as delivered, so nothing is retried.
+- Up to 4 alerts are sent at once.
 
 Dedupe keys: `<id>:state:<status>` for state changes and `unreachable`, `<id>:incident:<incident ids>` for `new_incident`, `<id>:reminder:<status>:<timestamp>` for reminders. A vendor first seen as operational produces no alert.
 
@@ -205,7 +214,7 @@ cp .env.example .env   # edit values
 docker compose up -d --build
 ```
 
-`docker-compose.yml` publishes no host port (`expose` only) and pins the container `PORT` to 8080, so a `PORT` in `.env` only affects `pnpm dev`/`start`. Unset secrets default to empty, and `.env` is read for `${VAR}` interpolation. Put it behind a reverse proxy that routes `/insprastatus` to port 8080 without stripping the prefix. For a local run publish a port:
+`docker-compose.yml` publishes no host port (`expose` only) and pins the container `PORT` to 8080 and `HOST` to `0.0.0.0`, so a `PORT` or `HOST` in `.env` only affects `pnpm dev`/`start`. It allows a 30s `stop_grace_period` so an in-flight poll cycle and its alert sends can finish. Unset secrets default to empty, and `.env` is read for `${VAR}` interpolation. Put it behind a reverse proxy that routes `/insprastatus` to port 8080 without stripping the prefix. For a local run publish a port:
 
 ```bash
 docker compose -f docker-compose.yml -f docker-compose.local.yml up --build
@@ -244,3 +253,7 @@ Matches `vendors.yaml`. Endpoints were fetched and verified on 2026-11-04.
 - The Docker image has not been built or run, because Docker is not installed on the dev machine.
 - The setting name for Coolify's "Strip Prefixes" needs checking in the UI.
 - Per-client checks are design-only.
+- No connectivity suppression: if the monitor itself loses network, every vendor goes `unknown`, then fires `unreachable` and later `recovered` (16 of each with the current vendor list).
+- HTTP checks have no hysteresis: a single 502 alerts, and the next good response recovers.
+- Each new maintenance window fires a `new_incident` alert.
+- A retry after a partial failure re-sends to every configured channel, so a Slack-only failure can produce a duplicate email.

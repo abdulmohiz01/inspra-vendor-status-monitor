@@ -1,15 +1,19 @@
 # No host port mapping on purpose: Coolify's Traefik routes by domain to the exposed port.
 # PORT is pinned to 8080 so a local .env PORT cannot move the container off the exposed port.
+# HOST is pinned to 0.0.0.0 for the same reason: a local .env HOST cannot make the app unreachable.
 # For a local run publish a port with docker-compose.local.yml.
 services:
   vendor-status-monitor:
     build: .
     restart: unless-stopped
+    # Lets the in-flight poll cycle and its alert sends finish on shutdown.
+    stop_grace_period: 30s
     expose:
       - "8080"
     environment:
       - PORT=8080
-      - HOST=${HOST:-0.0.0.0}
+      # Pinned: the app must listen on all interfaces in the container for the proxy and the healthcheck.
+      - HOST=0.0.0.0
       - APP_URL=${APP_URL:-https://hub.automateaccelerator.com/insprastatus}
       # Dash without colon: an explicit empty BASE_PATH means "serve at root".
       - BASE_PATH=${BASE_PATH-/insprastatus}
@@ -35,8 +39,9 @@ services:
         - CMD
         - node
         - -e
+        # Normalises BASE_PATH like src/config.ts and the Dockerfile HEALTHCHECK. Escape any $ as $$.
         - |-
-          fetch('http://127.0.0.1:'+(process.env.PORT||8080)+(process.env.BASE_PATH??'/insprastatus').replace(/\/+$$/,'')+'/healthz').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))
+          fetch('http://127.0.0.1:'+(process.env.PORT||8080)+(process.env.BASE_PATH??'/insprastatus').trim().split('/').filter(Boolean).map(s=>'/'+s).join('')+'/healthz').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))
       interval: 30s
       timeout: 5s
       start_period: 60s

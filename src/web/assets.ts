@@ -11,6 +11,8 @@ header h1 { margin: 0 0 4px; font-size: 24px; }
 .overall { font-weight: 600; }
 .overall.ok { color: #1a7f37; }
 .overall.bad { color: #cf222e; }
+.overall.maintenance { color: #0969da; }
+.overall.neutral { color: #59636e; }
 .muted { color: #59636e; font-size: 13px; }
 .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; }
 .card { background: #fff; border: 1px solid #d1d9e0; border-radius: 8px; padding: 14px; }

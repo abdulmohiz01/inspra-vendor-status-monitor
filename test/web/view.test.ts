@@ -76,6 +76,46 @@ describe('buildStatusView', () => {
     expect(v.issues).toBe(1);
   });
 
+  it('flags awaiting first poll only when no check has a result', () => {
+    const store = mkStore();
+    const checks = [mkCheck('a'), mkCheck('b')];
+    expect(buildStatusView({ checks, store, poller, now: NOW }).awaitingFirstPoll).toBe(true);
+    store.recordResult(result('a', 'operational'));
+    const v = buildStatusView({ checks, store, poller, now: NOW });
+    expect(v.awaitingFirstPoll).toBe(false);
+    expect(v.issues).toBe(1);
+  });
+
+  it('counts maintenance separately from issues; overall is unchanged', () => {
+    const store = mkStore();
+    store.recordResult(result('a', 'maintenance'));
+    store.recordResult(result('b', 'operational'));
+    store.recordResult(result('c', 'degraded'));
+    store.recordResult(result('d', 'maintenance'));
+    const v = buildStatusView({ checks: ['a', 'b', 'c', 'd'].map((id) => mkCheck(id)), store, poller, now: NOW });
+    expect(v.issues).toBe(1);
+    expect(v.maintenance).toBe(2);
+    expect(v.overall).toBe('degraded');
+  });
+
+  it('shows since only when the latest status matches the alerted status', () => {
+    const store = mkStore();
+    const state = {
+      alertedStatus: 'major_outage' as const,
+      alertedIncidentIds: [],
+      consecutiveUnknown: 0,
+      lastAlertAt: '2026-11-04T10:00:00.000Z',
+      since: '2026-11-04T10:00:00.000Z',
+    };
+    store.saveAlertState('a', state);
+    store.saveAlertState('b', state);
+    store.recordResult(result('a', 'major_outage'));
+    store.recordResult(result('b', 'unknown', { error: 'timeout' }));
+    const v = buildStatusView({ checks: [mkCheck('a'), mkCheck('b')], store, poller, now: NOW });
+    expect(v.checks[0]!.since).toBe('2026-11-04T10:00:00.000Z');
+    expect(v.checks[1]!.since).toBeNull();
+  });
+
   it('keeps open incidents visible while the latest result is unknown', () => {
     const store = mkStore();
     store.recordResult(
