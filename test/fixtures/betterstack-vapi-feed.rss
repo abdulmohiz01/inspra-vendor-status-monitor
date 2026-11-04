@@ -1,0 +1,2507 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Status updates | Vapi</title>
+    <description>Incidents and maintenance reported on status page for Vapi</description>
+    <link>https://status.vapi.ai/</link>
+    <language>en</language>
+    <atom:link rel="self" type="application/rss+xml" href="https://status.vapi.ai/feed"/>
+    <item>
+      <title>Scheduled maintenance: SIP Infrastructure Scheduled Maintenance</title>
+      <link>https://status.vapi.ai/maintenance/1108915</link>
+      <pubDate>Fri, 30 Oct 2026 15:52:38 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/1108915#9f3c5a145f89be64302bafea699b2db9ed208a96590abd1b1ea75613c25de34a</guid>
+      <category>Maintenance</category>
+      <description>We will be performing scheduled maintenance on the SIP infrastructure to ensure performance and reliability. Connected calls may be interrupted for 5-10 minutes. However, the platform will be able to take new calls throughout the maintenance period.</description>
+    </item>
+    <item>
+      <title>Maintenance: Cert renewal for Australia SIP Infra</title>
+      <link>https://status.vapi.ai/maintenance/1095047</link>
+      <pubDate>Tue, 20 Oct 2026 09:07:49 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/1095047#c482e99c82b867a2f76b2f03754dd6d6477a01d0f98bc5e4130b5cb53cfb0c83</guid>
+      <category>Maintenance</category>
+      <description>Maintenance completed</description>
+    </item>
+    <item>
+      <title>Maintenance: Cert renewal for Australia SIP Infra</title>
+      <link>https://status.vapi.ai/maintenance/1095047</link>
+      <pubDate>Tue, 20 Oct 2026 09:07:49 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/1095047#873658c934e347b6e63d5a2e75dd606559184a1d6cb23368bfc95534c522276c</guid>
+      <category>Maintenance</category>
+      <description>Australia SBC was rebooted successfully with less than a minute of interruption.</description>
+    </item>
+    <item>
+      <title>Maintenance: US SIP Infrastructure maintenance</title>
+      <link>https://status.vapi.ai/maintenance/1095049</link>
+      <pubDate>Tue, 20 Oct 2026 04:15:07 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/1095049#94977996a8fb8236b67b3ce43880d704cc3778e6e22011f923c5cad99634a092</guid>
+      <category>Maintenance</category>
+      <description>Maintenance completed</description>
+    </item>
+    <item>
+      <title>Maintenance: US SIP Infrastructure maintenance</title>
+      <link>https://status.vapi.ai/maintenance/1095049</link>
+      <pubDate>Tue, 20 Oct 2026 04:15:07 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/1095049#603ae74c81349637166c0e6f91b798931ea4de5a0f93793a08030193ca8d5180</guid>
+      <category>Maintenance</category>
+      <description>SIP maintenance complete with limited to no impact on calls. We will continue to monitor for the next two hours to confirm.</description>
+    </item>
+    <item>
+      <title>Maintenance: US SIP Infrastructure maintenance</title>
+      <link>https://status.vapi.ai/maintenance/1095049</link>
+      <pubDate>Tue, 20 Oct 2026 04:15:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/1095049#cbdb2f6168e250e01081f2d350b4706b137c8bd5f4bebac69069b7c5fe42bffa</guid>
+      <category>Maintenance</category>
+      <description>Maintenance ended</description>
+    </item>
+    <item>
+      <title>Maintenance: US SIP Infrastructure maintenance</title>
+      <link>https://status.vapi.ai/maintenance/1095049</link>
+      <pubDate>Mon, 19 Oct 2026 22:22:02 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/1095049#23728b9dc4648e5d85ecfdc4fb7f4f44e397d548fd9e1c6799c9066573757956</guid>
+      <category>Maintenance</category>
+      <description>We will be installing SIP monitoring probes to the SIP infrastructure which will disrupt in progress calls for 5 minutes.</description>
+    </item>
+    <item>
+      <title>Maintenance: Cert renewal for Australia SIP Infra</title>
+      <link>https://status.vapi.ai/maintenance/1095047</link>
+      <pubDate>Mon, 19 Oct 2026 22:19:05 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/1095047#1578c46c585f1078855b3935c7803a34e27caf092f5f02bf30a612fc4445a0d3</guid>
+      <category>Maintenance</category>
+      <description>Calls will be disrupted for approximately 5 minutes due to an SBC restart. We will monitor calls once the server is restarted.</description>
+    </item>
+    <item>
+      <title>Maintenance: Upgrade to SIP infrastructure</title>
+      <link>https://status.vapi.ai/maintenance/1091231</link>
+      <pubDate>Mon, 19 Oct 2026 05:00:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/1091231#6cd29ad1976555000f80ea4a7a4905f37476c53e3bad96054ac82cb0346315d1</guid>
+      <category>Maintenance</category>
+      <description>Maintenance completed</description>
+    </item>
+    <item>
+      <title>Dashboard is unavailable</title>
+      <link>https://status.vapi.ai/incident/1092161</link>
+      <pubDate>Fri, 16 Oct 2026 15:01:33 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/1092161#249fdb7036e56aa02990d76dd4ac5771069545cb3e55e31ccb025116a6435568</guid>
+      <category>Incident</category>
+      <description>The issue is resolved and all services have returned to normal.</description>
+    </item>
+    <item>
+      <title>Dashboard is unavailable</title>
+      <link>https://status.vapi.ai/incident/1092161</link>
+      <pubDate>Fri, 16 Oct 2026 14:41:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/1092161#b35df4cb5c5cd8db1bb01d70961ce4b30ccf6900789b0e3724be97f0a97a649a</guid>
+      <category>Incident</category>
+      <description>We've found the root cause and starting to see recovery. Daily API success rate is increasing and dashboard is loading. We will continue to monitor.</description>
+    </item>
+    <item>
+      <title>Dashboard is unavailable</title>
+      <link>https://status.vapi.ai/incident/1092161</link>
+      <pubDate>Fri, 16 Oct 2026 14:35:18 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/1092161#022e91c178a659fa675f7d811521b6ca4bb8fd6ae4a78e369896f4c1be92ec52</guid>
+      <category>Incident</category>
+      <description>We have identified the impact is specific to API on Daily.
+
+Call creation is a separate service which is not impacted.</description>
+    </item>
+    <item>
+      <title>Dashboard is unavailable</title>
+      <link>https://status.vapi.ai/incident/1092161</link>
+      <pubDate>Fri, 16 Oct 2026 14:12:30 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/1092161#c3675f3578008012ed6903e9a77fd9b85d7392b1ab7fe52442762f312836b440</guid>
+      <category>Incident</category>
+      <description>Vapi dashboard is currently not loading. We are investigating the incident and affected services. </description>
+    </item>
+    <item>
+      <title>Maintenance: Upgrade to SIP infrastructure</title>
+      <link>https://status.vapi.ai/maintenance/1091231</link>
+      <pubDate>Thu, 15 Oct 2026 15:44:39 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/1091231#7ed06b130b1d8d7a3684fa9b73b02a9cf7b3e6e9ebd74190b664b6e642c4cc36</guid>
+      <category>Maintenance</category>
+      <description>We will be updating servers to increase resiliency. During this maintenance period, some in-progress calls may be disrupted. However new calls will still be answered.</description>
+    </item>
+    <item>
+      <title>Maintenance: Database maintenance</title>
+      <link>https://status.vapi.ai/maintenance/1072370</link>
+      <pubDate>Wed, 14 Oct 2026 06:00:35 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/1072370#36aa6ac1dca7d6bc7c137fccdf755ce0db0e3073a35665645cefad9d1b12731e</guid>
+      <category>Maintenance</category>
+      <description>Maintenance completed</description>
+    </item>
+    <item>
+      <title>Maintenance: Emergency maintenance on SIP monitoring server, US region</title>
+      <link>https://status.vapi.ai/maintenance/1088586</link>
+      <pubDate>Tue, 13 Oct 2026 04:25:12 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/1088586#f3d9b021e4eef01e1612ef9c3697c33c503e15b37c68237350e1a5df7f976c3a</guid>
+      <category>Maintenance</category>
+      <description>Maintenance completed</description>
+    </item>
+    <item>
+      <title>Maintenance: Emergency maintenance on SIP monitoring server, US region</title>
+      <link>https://status.vapi.ai/maintenance/1088586</link>
+      <pubDate>Tue, 13 Oct 2026 04:25:12 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/1088586#87401ac2ac514ed07165849c45bdaa6c7bf5bda5d2ac4872cdcc330b505ea607</guid>
+      <category>Maintenance</category>
+      <description>The monitoring server was successfully upgraded. We will continue to monitor. PCAP files are available for registered calls.</description>
+    </item>
+    <item>
+      <title>Maintenance: Emergency maintenance on SIP monitoring server, US region</title>
+      <link>https://status.vapi.ai/maintenance/1088586</link>
+      <pubDate>Tue, 13 Oct 2026 00:56:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/1088586#fbbfdcec79424c9a044d28d6ddd0639fff24c3c29fbb0faac61a625778bddc77</guid>
+      <category>Maintenance</category>
+      <description>We are doing an emergency upgrade to add capacity for the SIP monitoring server. During the period PCAP files will not be saved.</description>
+    </item>
+    <item>
+      <title>docs.vapi.ai is unavailable</title>
+      <link>https://status.vapi.ai/incident/1088347</link>
+      <pubDate>Mon, 12 Oct 2026 18:03:26 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/1088347#4a89fd46f0f229edf15525b15b8ce5115f6d887b376eeca31a343ccd867e1b6d</guid>
+      <category>Incident</category>
+      <description>The issue has been resolved upstream and documentation is available once again, we'll continue monitoring to ensure stability.</description>
+    </item>
+    <item>
+      <title>docs.vapi.ai is unavailable</title>
+      <link>https://status.vapi.ai/incident/1088347</link>
+      <pubDate>Mon, 12 Oct 2026 17:54:29 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/1088347#cdc4da7fb62bb00edf5984d6fa0b25154a9f34ff17550c36028aedbb85239715</guid>
+      <category>Incident</category>
+      <description>Our documentation is unavailable due to an upstream outage, we're tracking status closely ([Fern](https://status.buildwithfern.com/) -&gt; [Vercel](https://www.vercel-status.com/) -&gt; [GitHub](https://www.githubstatus.com/)) and will notify once service is restored</description>
+    </item>
+    <item>
+      <title>Maintenance: Emergency maintenance on SIP outbound dialing infrastructure, US region</title>
+      <link>https://status.vapi.ai/maintenance/1087717</link>
+      <pubDate>Mon, 12 Oct 2026 04:25:32 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/1087717#6eea5069dcfd4de797b35aa31fd0e5442be6059a8f947f6db7fdea489c639023</guid>
+      <category>Maintenance</category>
+      <description>Maintenance completed</description>
+    </item>
+    <item>
+      <title>Maintenance: Emergency maintenance on SIP outbound dialing infrastructure, US region</title>
+      <link>https://status.vapi.ai/maintenance/1087717</link>
+      <pubDate>Mon, 12 Oct 2026 04:25:32 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/1087717#e9a5b5645324596af5a05abb7f09600ed056a44c8c0c37318bc8ff3d46431750</guid>
+      <category>Maintenance</category>
+      <description>Outbound API server upgrade was successful. Outbound call is operational. We will continue to monitor for the next 2 hours.</description>
+    </item>
+    <item>
+      <title>Maintenance: Emergency maintenance on SIP outbound dialing infrastructure, US region</title>
+      <link>https://status.vapi.ai/maintenance/1087717</link>
+      <pubDate>Mon, 12 Oct 2026 03:05:56 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/1087717#2627492f39c7744cf75ebdd0e00f9af6c73abb394319d2ad817cff2bd3381813</guid>
+      <category>Maintenance</category>
+      <description>We will be upgrading the API server related to outbound calling. Outbound calling will be unavailable for approximately 30 minutes for new outbound call requests. We will validate for the remainder of the window to confirm calls are connecting normally, and update this page when connectivity returns and maintenance is complete.</description>
+    </item>
+    <item>
+      <title>Maintenance: SIP Infrastructure Maintenance</title>
+      <link>https://status.vapi.ai/maintenance/1108911</link>
+      <pubDate>Sun, 11 Oct 2026 04:15:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/1108911#37846dfeed54a4c3f8d9c63017578b8a864755c265e4ee1e9d8195f7eccfa0db</guid>
+      <category>Maintenance</category>
+      <description>Maintenance completed</description>
+    </item>
+    <item>
+      <title>Maintenance: SIP Infrastructure Maintenance</title>
+      <link>https://status.vapi.ai/maintenance/1108911</link>
+      <pubDate>Sun, 11 Oct 2026 04:00:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/1108911#c43406f975154bffb4db1d506e3a1024efacf72459910016fe303bbbee681352</guid>
+      <category>Maintenance</category>
+      <description>We will be performing scheduled maintenance on the SIP infrastructure to ensure performance and reliability. Connected calls may be interrupted for 5-10 minutes. However, the platform will be able to take new calls throughout the maintenance period.</description>
+    </item>
+    <item>
+      <title>Maintenance: Reactive maintenance on SIP outbound dialing infrastructure, US region</title>
+      <link>https://status.vapi.ai/maintenance/1086357</link>
+      <pubDate>Sat, 10 Oct 2026 04:15:01 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/1086357#21777561ed2216f2966535e26490b2ef1fd9be8b5f0c94276d334a007503178a</guid>
+      <category>Maintenance</category>
+      <description>Maintenance completed</description>
+    </item>
+    <item>
+      <title>Maintenance: Reactive maintenance on SIP outbound dialing infrastructure, US region</title>
+      <link>https://status.vapi.ai/maintenance/1086357</link>
+      <pubDate>Sat, 10 Oct 2026 04:15:01 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/1086357#c0c3b2a5960e2ee9929e95d8d5f382e418486b1ffba69a4675a96acfd7196de5</guid>
+      <category>Maintenance</category>
+      <description>Upgrade was successful. The API was unavailable for approximately one minute and is successfully sending outbound calls. Will continue to monitor health for the next 2 hours.</description>
+    </item>
+    <item>
+      <title>Maintenance: Reactive maintenance on SIP outbound dialing infrastructure, US region</title>
+      <link>https://status.vapi.ai/maintenance/1086357</link>
+      <pubDate>Fri, 09 Oct 2026 23:51:50 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/1086357#7d95c92ca26c86cbd3bc9add11862ff17ce4d5ebc31e88b95ba049214cc353e3</guid>
+      <category>Maintenance</category>
+      <description>What is affected: Outbound calling
+When: Tonight, Friday, October 9, 21:00–21:15 PT (04:00–04:15 UTC, October 10).
+What to expect: Non-Campaign Outbound calls may briefly stall or fail to connect during the patch over a 5-10 minute period. We will validate the remainder of the window to confirm calls connect normally, and update this page when connectivity returns and maintenance is complete.
+Action needed: None.</description>
+    </item>
+    <item>
+      <title>Degraded performance: SIP BYO trunk creation</title>
+      <link>https://status.vapi.ai/incident/1085254</link>
+      <pubDate>Fri, 09 Oct 2026 14:47:07 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/1085254#9652b438b927a265e845d7b8f14a58e04608c75d9930c9d1803060b8ea413008</guid>
+      <category>Incident</category>
+      <description>BYO SIP registration has been re-enabled during scheduled maintenanc and we were able to successfully place outbound calls</description>
+    </item>
+    <item>
+      <title>Maintenance: BYO SIP Registration</title>
+      <link>https://status.vapi.ai/maintenance/1085325</link>
+      <pubDate>Fri, 09 Oct 2026 04:15:17 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/1085325#910abc401a48d80b6dfe2516cc249892fcd5114ee4e95800a28b3b5a3de538a7</guid>
+      <category>Maintenance</category>
+      <description>Maintenance completed</description>
+    </item>
+    <item>
+      <title>Maintenance: BYO SIP Registration</title>
+      <link>https://status.vapi.ai/maintenance/1085325</link>
+      <pubDate>Fri, 09 Oct 2026 04:15:17 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/1085325#83ba94286ff49183874fdd5a6ab3970f1d84a6782806a14d31af00ace9c58285</guid>
+      <category>Maintenance</category>
+      <description>Maintenance ended. BYO SIP trunk registration has been restored.</description>
+    </item>
+    <item>
+      <title>Degraded performance: SIP BYO trunk creation</title>
+      <link>https://status.vapi.ai/incident/1085254</link>
+      <pubDate>Thu, 08 Oct 2026 20:08:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/1085254#d845a3d5f5d9ae03a04dd4b19d7c5dc62736cf02d06354cf6f507e00bd9f18af</guid>
+      <category>Incident</category>
+      <description>Cause Identified: applying a vendor software update to re-enable the functionality. The patch will be deployed during the dedicated maintenance window 21:00–21:15 PT on October 8 (04:00–04:15 UTC on October 9).</description>
+    </item>
+    <item>
+      <title>Maintenance: BYO SIP Registration</title>
+      <link>https://status.vapi.ai/maintenance/1085325</link>
+      <pubDate>Thu, 08 Oct 2026 20:04:17 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/1085325#48ddaf92546f17b7116a105d06d255b8dbb8ddc34928e1cf732b8459dbd0862a</guid>
+      <category>Maintenance</category>
+      <description>Users report error when registering BYO SIP trunk. A recent upgrade depreciated the functionality. Applying a vendor software update to re-enable the functionality.</description>
+    </item>
+    <item>
+      <title>Degraded performance: SIP BYO trunk creation</title>
+      <link>https://status.vapi.ai/incident/1085254</link>
+      <pubDate>Thu, 08 Oct 2026 18:57:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/1085254#999c0e939932d4f479f78dd6c3b3110f0c5aecf8c835147dc64d2fd71922b692</guid>
+      <category>Incident</category>
+      <description>We're continuing to investigate failures when creating BYO SIP trunks. Next update within 30 minutes, or sooner if the status changes.</description>
+    </item>
+    <item>
+      <title>Degraded performance: SIP BYO trunk creation</title>
+      <link>https://status.vapi.ai/incident/1085254</link>
+      <pubDate>Thu, 08 Oct 2026 18:27:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/1085254#105aa1370714ed763a07ad546cfb7e54bf43a70fb53f9db23ffc34b49fe5f5a0</guid>
+      <category>Incident</category>
+      <description>We're seeing failures when creating BYO SIP trunks. Existing trunks and calls on them aren't affected. Our team is actively investigating and we'll post an update as soon as we have more information.</description>
+    </item>
+    <item>
+      <title>Maintenance: Scheduled maintenance on SIP outbound dialing infrastructure, US region</title>
+      <link>https://status.vapi.ai/maintenance/1084518</link>
+      <pubDate>Thu, 08 Oct 2026 04:10:38 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/1084518#2c7ace91f3857b531016d6ae87426ce80eb30b1c32591f2d8dfcbb1b8d229b5d</guid>
+      <category>Maintenance</category>
+      <description>Maintenance completed</description>
+    </item>
+    <item>
+      <title>Maintenance: Scheduled maintenance on SIP outbound dialing infrastructure, US region</title>
+      <link>https://status.vapi.ai/maintenance/1084518</link>
+      <pubDate>Thu, 08 Oct 2026 04:10:38 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/1084518#950ed4100f969f70addeed6d24591649eff10b2c7954ec0f3a726fc00edd1d01</guid>
+      <category>Maintenance</category>
+      <description>The patch to the outbound server was applied and tested in approximately 5 minutes with no downtime. We will continue monitoring over the next few hours.</description>
+    </item>
+    <item>
+      <title>Maintenance: Scheduled maintenance on SIP outbound dialing infrastructure, US region</title>
+      <link>https://status.vapi.ai/maintenance/1084518</link>
+      <pubDate>Wed, 07 Oct 2026 23:56:12 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/1084518#df009c08e0554dc5ab91dba080b387630471dc6266160ea958a74dc66bb44169</guid>
+      <category>Maintenance</category>
+      <description>Status: Scheduled
+
+What is affected: We will apply a software patch to the web server/API that controls outbound dialing through our US SIP infrastructure.
+
+When: Tonight, Wednesday, October 7, 21:00–21:15 PT (04:00–04:15 UTC, Thursday, October 8).
+
+What to expect: Non-Campaign Outbound calls may briefly stall or fail to connect during the patch over a 5-10 minute period. We will validate for the remainder of the window to confirm calls are connecting normally and update this page when connectivity returns and maintenance is complete.
+
+Action needed: None.</description>
+    </item>
+    <item>
+      <title>Maintenance: Reactive maintenance on SIP outbound dialing infrastructure, US region</title>
+      <link>https://status.vapi.ai/maintenance/1083557</link>
+      <pubDate>Wed, 07 Oct 2026 04:32:22 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/1083557#d74fb5998e8f4e1d927b8eda0e7c73bbc4a64b343da1d7ab22c5982ab9f55b89</guid>
+      <category>Maintenance</category>
+      <description>Maintenance completed</description>
+    </item>
+    <item>
+      <title>Maintenance: Reactive maintenance on SIP outbound dialing infrastructure, US region</title>
+      <link>https://status.vapi.ai/maintenance/1083557</link>
+      <pubDate>Wed, 07 Oct 2026 04:32:22 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/1083557#9d2667959550b7929ec42faec9a36e2c2ae870f0bd17b9f2fb37b9f2a2c1ab49</guid>
+      <category>Maintenance</category>
+      <description>Maintenance was successfully complete. We verified that all servers are operating normally.</description>
+    </item>
+    <item>
+      <title>Maintenance: Reactive maintenance on SIP outbound dialing infrastructure, US region</title>
+      <link>https://status.vapi.ai/maintenance/1083557</link>
+      <pubDate>Wed, 07 Oct 2026 00:16:59 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/1083557#c8bcf8a1c7dfe89b1e83282acbbd0aabe0d0a3c9db6e3a02ada132d171950499</guid>
+      <category>Maintenance</category>
+      <description>This maintenance period is a reactive patch, as our SIP infrastructure provider will upgrade the web server/API that controls outbound dialing to remediate the root cause of today's incident. Inbound calls are not affected.
+
+When: Tuesday, October 6, 21:00–21:15 PT (04:00–04:00 UTC, Oct 7)
+
+What to expect: This work is not expected to be customer-impacting or noticeable. Outbound calls may briefly stall during the window; any impact should last less than 15 minutes. 
+
+Action needed: None</description>
+    </item>
+    <item>
+      <title>SIP Server downtime </title>
+      <link>https://status.vapi.ai/incident/1083466</link>
+      <pubDate>Wed, 07 Oct 2026 00:09:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/1083466#54a72f4cff0a63999a8bad1b03ab135978332339e84a856b777208df57dafe29</guid>
+      <category>Incident</category>
+      <description>There will be reactive maintenance on SIP outbound dialing infrastructure, US region
+
+Status: Scheduled
+
+What is affected: Our SIP infrastructure provider will upgrade the web server/API that controls outbound dialing, as part of remediating the root cause of today's incident. Inbound calls are not affected.
+
+When: Tuesday, October 6, 21:00–21:15 PT (04:00–04:15 UTC, Oct 7)
+
+What to expect: This work is not expected to be customer-impacting or noticeable. Outbound calls may briefly stall during the window; any impact should last less than 10 minutes. 
+
+Action needed: None</description>
+    </item>
+    <item>
+      <title>SIP Server downtime </title>
+      <link>https://status.vapi.ai/incident/1083466</link>
+      <pubDate>Tue, 06 Oct 2026 21:29:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/1083466#4c06c68c90101b6cda2247a05970e3f30620881bae825c73f8bdca90ed783196</guid>
+      <category>Incident</category>
+      <description>The root cause has been identified, and the issue has been resolved, with downtime experienced between 1:55 and ending at 2:07</description>
+    </item>
+    <item>
+      <title>SIP Server downtime </title>
+      <link>https://status.vapi.ai/incident/1083466</link>
+      <pubDate>Tue, 06 Oct 2026 21:04:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/1083466#3c6dfdfb397a9c7dbca5439765afc71a8395a90b7c24008be9995cc33100481b</guid>
+      <category>Incident</category>
+      <description>Outbound SIP Server downtime from 1:55 to 2:07, impacting outbound calls and call transfers. Currently seeing recovery, and the team is monitoring closely.</description>
+    </item>
+    <item>
+      <title>outbound SIP calls are failing</title>
+      <link>https://status.vapi.ai/incident/1080062</link>
+      <pubDate>Fri, 02 Oct 2026 12:33:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/1080062#151c18d534084e43e742ce85c0033a266b1e3ff70f24ec50c86f8db8bcb9ea02</guid>
+      <category>Incident</category>
+      <description>The issue has been resolved and calls are completing as expected. </description>
+    </item>
+    <item>
+      <title>outbound SIP calls are failing</title>
+      <link>https://status.vapi.ai/incident/1080062</link>
+      <pubDate>Fri, 02 Oct 2026 12:23:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/1080062#3bce4e8e290dfc8a97283bd9d9b5b8133612bc034911ae0a22ebbbb1a9c3c90b</guid>
+      <category>Incident</category>
+      <description>We have identified the root cause of the issue and the services are recovering. We are monitoring and will update shortly.</description>
+    </item>
+    <item>
+      <title>outbound SIP calls are failing</title>
+      <link>https://status.vapi.ai/incident/1080062</link>
+      <pubDate>Fri, 02 Oct 2026 12:12:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/1080062#64dd1677c176d16fd3da34156418166ed830ac52db5643c844db4b2e6a384979</guid>
+      <category>Incident</category>
+      <description>Calls currently failing for SIP and Vapi member outbound. We are investigating root cause and will update shortly.</description>
+    </item>
+    <item>
+      <title>New Vapi Phone Number creation degraded</title>
+      <link>https://status.vapi.ai/incident/1077399</link>
+      <pubDate>Wed, 30 Sep 2026 16:01:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/1077399#528bf4584276d611a3a751cea7bd2e78e37343d83840849120c2535c8f36281c</guid>
+      <category>Incident</category>
+      <description>New number provisioning has been restored as of 3:00 AM PT today. Creating Vapi phone numbers is working normally again. Thank you for your patience.</description>
+    </item>
+    <item>
+      <title>New Vapi Phone Number creation degraded</title>
+      <link>https://status.vapi.ai/incident/1077399</link>
+      <pubDate>Tue, 29 Sep 2026 22:18:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/1077399#2bc7fec606bb12860f7fe47c4c9e99f26442ca144a790b6e217b81084f3c62e6</guid>
+      <category>Incident</category>
+      <description>No change - we are still awaiting confirmation from our upstream provider to restore new number provisioning.
+
+Creating new Vapi phone numbers remains unavailable; existing numbers and imported numbers are unaffected. We will post another update as soon as we have news.</description>
+    </item>
+    <item>
+      <title>New Vapi Phone Number creation degraded</title>
+      <link>https://status.vapi.ai/incident/1077399</link>
+      <pubDate>Tue, 29 Sep 2026 21:05:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/1077399#8473596c89829a1bca2cc38af3b3e1e2172f93a8ead6185ffc0167b4980793c5</guid>
+      <category>Incident</category>
+      <description>We are currently working with our upstream provider to restore new number provisioning. Creating new Vapi phone numbers remains unavailable; existing numbers and imported numbers are unaffected. Next update within the hour or as soon as provisioning is restored.</description>
+    </item>
+    <item>
+      <title>New Vapi Phone Number creation degraded</title>
+      <link>https://status.vapi.ai/incident/1077399</link>
+      <pubDate>Tue, 29 Sep 2026 18:55:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/1077399#b3ce19002e7b4f27f24e9a281269a59d83bdf4057a9a6b5a365abc6ca7b0aacb</guid>
+      <category>Incident</category>
+      <description>The team has identified the cause and are actively working on a fix. Creating new Vapi phone numbers remains unavailable; while existing numbers and imported numbers are unaffected.</description>
+    </item>
+    <item>
+      <title>New Vapi Phone Number creation degraded</title>
+      <link>https://status.vapi.ai/incident/1077399</link>
+      <pubDate>Tue, 29 Sep 2026 17:16:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/1077399#889ca32e2aab52ddd7c0a918f5eac626a0fc5c956563c33a49ff914a644235f7</guid>
+      <category>Incident</category>
+      <description>We're aware of an issue provisioning new Vapi phone numbers - the team is actively looking into it. Calls to existing numbers and importing numbers from other providers are NOT impacted.</description>
+    </item>
+    <item>
+      <title>Maintenance: Database maintenance</title>
+      <link>https://status.vapi.ai/maintenance/1072370</link>
+      <pubDate>Wed, 23 Sep 2026 18:50:28 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/1072370#d6c468d05ae053c5504d0f01c12eb854f6a270db41cd53729322bb7127a59f0d</guid>
+      <category>Maintenance</category>
+      <description>We're doing scheduled maintenance on part of our database infrastructure.
+
+What to expect: Calls, API reads, and the dashboard will keep working normally. Some write operations may briefly fail or slow down during the window. This mainly affects campaigns, chat, and test suites.
+
+Action needed: None. If a request fails during the window, retry it. Clients that already retry failed requests should see little or no impact.</description>
+    </item>
+    <item>
+      <title>Maintenance: SIP US Maintenance</title>
+      <link>https://status.vapi.ai/maintenance/1064531</link>
+      <pubDate>Mon, 21 Sep 2026 06:12:21 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/1064531#12f968450ccc4f9d886744023037c3ea74306ad4d88cd1cd3e5b6c7d55b7827b</guid>
+      <category>Maintenance</category>
+      <description>Due to operational delays, the maintenance occurred at 10:50pm PT. We observed a decrease in the rate of outbound dials that returned to normal levels at 10:58pm PT. No on-going calls would have been impacted.</description>
+    </item>
+    <item>
+      <title>Maintenance: SIP US Maintenance</title>
+      <link>https://status.vapi.ai/maintenance/1064531</link>
+      <pubDate>Mon, 21 Sep 2026 05:10:16 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/1064531#87eba64e70f8eef7ad773f7648cbbf68510f014952450443833719773b0d0827</guid>
+      <category>Maintenance</category>
+      <description>Maintenance completed</description>
+    </item>
+    <item>
+      <title>Dashboard login is unavailable </title>
+      <link>https://status.vapi.ai/incident/1068531</link>
+      <pubDate>Fri, 18 Sep 2026 23:10:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/1068531#34c6ecc9cbaca37b12e63e59fce70c875faa3b1f17f271bec8585fc17dad6bd9</guid>
+      <category>Incident</category>
+      <description>Our login provider has recovered and the Vapi dashboard is fully operational again. </description>
+    </item>
+    <item>
+      <title>Dashboard login is unavailable </title>
+      <link>https://status.vapi.ai/incident/1068531</link>
+      <pubDate>Fri, 18 Sep 2026 23:00:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/1068531#3d3e7e12abde2f563d8dab648160a981f58ce4a99a41bb35596ed189a8465dcb</guid>
+      <category>Incident</category>
+      <description>Our dashboard login provider's service is degraded. Our API remains functional.</description>
+    </item>
+    <item>
+      <title>Maintenance: SIP US Maintenance</title>
+      <link>https://status.vapi.ai/maintenance/1064531</link>
+      <pubDate>Tue, 15 Sep 2026 17:15:23 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/1064531#7afcd2f03491db07680abdc538d783fb9ff8a68fe18f79c15d86379b87e3206c</guid>
+      <category>Maintenance</category>
+      <description>We are performing maintenance on our SIP infrastructure to improve monitoring and stability. This will result in ~1min downtime.
+
+Who is affected: Calls using Vapi numbers, SIP (sip.vapi.ai), or a BYO SIP trunk will be unable to connect during the maintenance.
+Who is not affected: Calls using a native Twilio, Telnyx, or Vonage number connected directly, web callers, or users in the Vapi EU or AUS regions.
+
+When: September 20, 2026, 10:00pm to 10:10pm PT
+
+What to expect: SIP calls will fail to connect for about 1 minute at 10:00pm PT and return the standard error response. We will then validate for the rest of the window while calls connect normally.
+
+Action needed: If one minute of failed calls is a concern, route through an alternate transport such as Twilio for the window.
+
+We will update this page when calls are connecting again and when the work is complete.</description>
+    </item>
+    <item>
+      <title>[Resolved] Vapi Chat service disruption</title>
+      <link>https://status.vapi.ai/incident/1062035</link>
+      <pubDate>Sun, 13 Sep 2026 18:00:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/1062035#1fc367f0db93052faeb980a4cc0ca6b2d76186fa6786ffbcaeca62fb1fc347fc</guid>
+      <category>Incident</category>
+      <description>On Sunday, September 13, 2026, from 8:24 a.m. to 10:55 a.m. Pacific Time, Vapi Chat experienced a service disruption on both daily and weekly channels.
+
+During this period, requests to `/session` and `/session/{id}` timed out or returned HTTP 504 (Gateway Timeout) and 500 (Internal Server Error) responses, affecting chat session creation, retrieval, and management.
+
+Service was restored at 10:55 a.m. Pacific Time. All other services, including voice calls, were unaffected on both channels.</description>
+    </item>
+    <item>
+      <title>Maintenance: EU SIP Maintenance</title>
+      <link>https://status.vapi.ai/maintenance/1049678</link>
+      <pubDate>Thu, 03 Sep 2026 23:08:02 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/1049678#65231c33a69c5a5a4de2a6654698df51369ef2f3fb3e835ec8c454f98c1951c0</guid>
+      <category>Maintenance</category>
+      <description>We're performing routine maintenance on our telephony infrastructure in the EU region.
+
+*Users of the US regional deployment will not be affected (dashboard.vapi.ai, api.vapi.ai, sip.vapi.ai)*
+
+When: Wednesday, September 9 2-2:15am CET (Tuesday, September 8 5-5:15pm PT)
+
+What to expect: There will be downtime at 2am in which calls made using Vapi Numbers, directly via our SIP infrastructure, or via SIP trunk will not connect and fail immediately. After, there will be a period where we monitor and validate the maintenance but calls will start connecting again.
+
+Action needed: If there are concerns around minutes of downtime, customers can configure an alternate transport (i.e. Twilio) for calls.
+
+We'll update this page as the maintenance progresses when SIP calls should be back online and when the update is completed altogether.</description>
+    </item>
+    <item>
+      <title>Maintenance: DB Maintenance</title>
+      <link>https://status.vapi.ai/maintenance/1037976</link>
+      <pubDate>Fri, 28 Aug 2026 18:19:02 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/1037976#f45339c239fa4d67cf237f8a3709b71cb1a84f0651d08c3870a542b7a8b54eab</guid>
+      <category>Maintenance</category>
+      <description>We're performing scheduled maintenance on our database layer, including a capacity upgrade to a read replica and configuration updates to improve connection handling under load.
+
+Brief elevated API latency is possible. Active calls are not affected.</description>
+    </item>
+    <item>
+      <title>Maintenance: SIP Maintenance</title>
+      <link>https://status.vapi.ai/maintenance/1034541</link>
+      <pubDate>Wed, 26 Aug 2026 17:20:03 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/1034541#1031df8d03f218f7865d51d948f7c00e387f520cfc9c31313955423336e663f5</guid>
+      <category>Maintenance</category>
+      <description>We're performing routine maintenance on our telephony infrastructure.
+
+When: Monday, August 31 9-10pm PT
+
+What to expect: There will be downtime for ~10min at 9pm in which calls made using Vapi Numbers, directly via our SIP infrastructure, or via SIP trunk will not connect and fail immediately. After, there will be a period where we monitor and validate the maintenance but calls will start connecting again.
+
+Action needed: If there are concerns around minutes of downtime, customers can configure an alternate transport (i.e. Twilio) for calls.
+
+We'll update this page as the maintenance progresses when SIP calls should be back online and when the update is completed altogether.</description>
+    </item>
+    <item>
+      <title>Increased rate of call failures</title>
+      <link>https://status.vapi.ai/incident/1021689</link>
+      <pubDate>Thu, 20 Aug 2026 17:20:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/1021689#efdd7299e910650f6d6a886a82b6e1f87697c68c158b55bd635c2590a43e6148</guid>
+      <category>Incident</category>
+      <description>Incident Report available at https://drive.google.com/file/d/1ORxSZb8NYgVlmPoqnUEdTmlIua3NSl_k/view</description>
+    </item>
+    <item>
+      <title>Increased rate of call failures</title>
+      <link>https://status.vapi.ai/incident/1021689</link>
+      <pubDate>Wed, 19 Aug 2026 20:19:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/1021689#9aaad74a2b45acc352703e4fd4e1a42d4d3eede463e71c2a91ea943de612e4d7</guid>
+      <category>Incident</category>
+      <description>The incident is resolved.</description>
+    </item>
+    <item>
+      <title>Increased rate of call failures</title>
+      <link>https://status.vapi.ai/incident/1021689</link>
+      <pubDate>Wed, 19 Aug 2026 20:02:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/1021689#95b25dbe143f433e5eace17ea4a48cb6fe1530c2ec67199ddc363a50ef3e7de9</guid>
+      <category>Incident</category>
+      <description>We are seeing recovery on all affected services and have moved to monitoring status.</description>
+    </item>
+    <item>
+      <title>Increased rate of call failures</title>
+      <link>https://status.vapi.ai/incident/1021689</link>
+      <pubDate>Wed, 19 Aug 2026 19:55:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/1021689#4ab6297cdf69f377629caccf86bfb1af63a2c23010976e0afa961ccab6886c2d</guid>
+      <category>Incident</category>
+      <description>Some customers are reporting concurrency limits issues. We are resetting all limits to zero for all subscriptions. This change will propagate over the next few minutes.</description>
+    </item>
+    <item>
+      <title>Increased rate of call failures</title>
+      <link>https://status.vapi.ai/incident/1021689</link>
+      <pubDate>Wed, 19 Aug 2026 19:26:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/1021689#ebdd5b90f7a0ea626ab146fe9c495de3e22fdcd9d13934679aefa4612912bee2</guid>
+      <category>Incident</category>
+      <description>We have rolled out a mitigation measure and are seeing improvements in call success rate.</description>
+    </item>
+    <item>
+      <title>Increased rate of call failures</title>
+      <link>https://status.vapi.ai/incident/1021689</link>
+      <pubDate>Wed, 19 Aug 2026 19:01:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/1021689#ffb573a9a59f6c3901af06ef3bfafae50ab67d95dbfdf0618f124123f283c8c2</guid>
+      <category>Incident</category>
+      <description>Calls are still failing to connect. Our team has a working hypothesis and we will post as soon as we can confirm the root cause. Next update will be in 30 min or earlier.</description>
+    </item>
+    <item>
+      <title>Increased rate of call failures</title>
+      <link>https://status.vapi.ai/incident/1021689</link>
+      <pubDate>Wed, 19 Aug 2026 18:36:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/1021689#36d5802904be0f49b025d9a45c54fab6b4327779060a6fb61e4c420be1062a49</guid>
+      <category>Incident</category>
+      <description>We are confirming that calls are not connecting in the US. Our team is still investigating. Next update in 30 min or sooner.</description>
+    </item>
+    <item>
+      <title>Increased rate of call failures</title>
+      <link>https://status.vapi.ai/incident/1021689</link>
+      <pubDate>Wed, 19 Aug 2026 18:16:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/1021689#c6c9e335c904dfafac098f7eab4658a86661da7fc6f551c3fdb0f4a1b7ceb4bb</guid>
+      <category>Incident</category>
+      <description>We're seeing an increased rate of call failures and the team is actively investigating</description>
+    </item>
+    <item>
+      <title>CallWebhook issues affecting some web calls</title>
+      <link>https://status.vapi.ai/incident/1009573</link>
+      <pubDate>Wed, 12 Aug 2026 11:50:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/1009573#2ca348e420ee01fc4ddfb3fdf81da6417b95edf16cccb5d510ef7c029f1cbf60</guid>
+      <category>Incident</category>
+      <description>We are investigating an issue affecting webhook behavior for a subset of web calls. Calls using private credentials and dashboard call flows are unaffected. We are deploying a fix and will provide another update once validation is complete.</description>
+    </item>
+    <item>
+      <title>Maintenance: Core database maintenance </title>
+      <link>https://status.vapi.ai/maintenance/1004936</link>
+      <pubDate>Fri, 07 Aug 2026 21:39:20 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/1004936#031d82c71d28ccba1f1ad63d8d3201b1d9ae0f20ea65b89f37888bca6fba5e8e</guid>
+      <category>Maintenance</category>
+      <description>We're performing scheduled maintenance on core database infrastructure.
+
+When: Tuesday, September 8st, 2026 — 9PM to 10PM PDT
+
+What to expect: Calls, API reads, and the dashboard continue to work normally throughout. During the window there are three brief periods, a couple of minutes each, where write operations may fail and need to be retried. This affects changes to assistants, phone numbers, and credentials.
+
+Action needed: None. Clients with standard retry behavior will not notice. If a write fails, retry it.
+
+We'll update this page as the maintenance progresses and post a final note when it's complete.</description>
+    </item>
+    <item>
+      <title>Documentation unavilable. </title>
+      <link>https://status.vapi.ai/incident/997125</link>
+      <pubDate>Wed, 05 Aug 2026 20:30:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/997125#470933652e3c940732c279ee16d69cb01e780fdb08e62dd4d02d1d1e8a018d12</guid>
+      <category>Incident</category>
+      <description>Our documentation vendor has resolved their issue and Vapi documentation is now fully available.</description>
+    </item>
+    <item>
+      <title>Documentation unavilable. </title>
+      <link>https://status.vapi.ai/incident/997125</link>
+      <pubDate>Wed, 05 Aug 2026 19:55:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/997125#3d4aeee5518a06624c64f6aeb02d0c982cae58f451fd42720dfba6f9b190eee8</guid>
+      <category>Incident</category>
+      <description>Our documentation hosting provider is currently experiencing an issue which is impacting the availability of Vapi documentation and MCP server. In the meantime you may directly view our documentation repo here: https://github.com/VapiAI/docs 
+
+At this time there is no evidence of impact to the Vapi dashboard, API, or other services. </description>
+    </item>
+    <item>
+      <title>API Degradation on Daily</title>
+      <link>https://status.vapi.ai/incident/996148</link>
+      <pubDate>Tue, 04 Aug 2026 20:20:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/996148#c71159722eab5256985975070d4e0ee5073520d868038410dba99e552ca8e259</guid>
+      <category>Incident</category>
+      <description>We have identified the root cause of this issue and implemented a fix. We've seen a full recovery across our systems and are continuing to monitor for any regressions. </description>
+    </item>
+    <item>
+      <title>API Degradation on Daily</title>
+      <link>https://status.vapi.ai/incident/996148</link>
+      <pubDate>Tue, 04 Aug 2026 19:52:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/996148#8037d4786f1bd3f4c1ef197a41406eb75ff5de6c422d444712c561c42572c3e8</guid>
+      <category>Incident</category>
+      <description>We are currently seeing recovery, we are actively monitoring the issue and will provide updates within the next 20 minutes.</description>
+    </item>
+    <item>
+      <title>API Degradation on Daily</title>
+      <link>https://status.vapi.ai/incident/996148</link>
+      <pubDate>Tue, 04 Aug 2026 19:41:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/996148#a9159aa197a1a0a9d0f7cb70a1a7e41e55df0071504ed3bbfa54ae14cbddd1fb</guid>
+      <category>Incident</category>
+      <description>We are experiencing API Degradation on the daily channel. The team is actively investigating.</description>
+    </item>
+    <item>
+      <title>Maintenance: Authentication System Maintenance</title>
+      <link>https://status.vapi.ai/maintenance/994732</link>
+      <pubDate>Tue, 04 Aug 2026 01:16:14 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/994732#430f2c806ee265270ae2947de626660b21c71bcd7ff08cc514eed09088c68635</guid>
+      <category>Maintenance</category>
+      <description>We're upgrading our authentication database as part of ongoing reliability work on the Vapi platform.
+
+**What to expect**
+
+• Most of this window is prep and verification. The part customers actually notice should only last a few minutes.
+
+• During those few minutes, requests that create or change account-level resources may briefly fail. That includes starting new calls and making organization or subscription changes.
+
+• Signing in, API key authentication, and read requests are not affected and will keep working throughout.
+
+• Calls already in progress won't be interrupted.
+
+• Any request that fails is safe to retry. Standard client retries will go through once the window closes.
+
+• No data will be lost, and there's nothing you need to do.
+
+We'll post updates here as the work progresses. If you run into any issues after the window closes, email us at support@vapi.ai.</description>
+    </item>
+    <item>
+      <title>Elevated API errors - US</title>
+      <link>https://status.vapi.ai/incident/976712</link>
+      <pubDate>Fri, 24 Jul 2026 11:44:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/976712#bdb5a5e45a4cfeade69c93b8ba758305fbf1b7c2342b1e48b51c6f189a6559b8</guid>
+      <category>Incident</category>
+      <description>Between 10:55 and 11:10 UTC, some API requests and calls failed due to a network performance issue at our upstream network provider affecting US west. EU and Australia regions were not impacted.
+
+Service recovered at 11:10 UTC. No action is required. We're continuing to monitor.</description>
+    </item>
+    <item>
+      <title>Maintenance: SIP Server Update</title>
+      <link>https://status.vapi.ai/maintenance/973555</link>
+      <pubDate>Wed, 22 Jul 2026 12:57:58 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/973555#e152ed5c063535bf2a1a67ba0c96be9934efe697228ae98d98891858b88b9b0e</guid>
+      <category>Maintenance</category>
+      <description>We will be performing a patch update on our SIP server. This maintenance requires a brief server restart and will be carried out during a low-traffic period to minimize any impact.
+
+We do not anticipate any significant disruption, and service will resume immediately after the restart.</description>
+    </item>
+    <item>
+      <title>Dashboard Access Degredation</title>
+      <link>https://status.vapi.ai/incident/965921</link>
+      <pubDate>Thu, 16 Jul 2026 10:17:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/965921#8c88280b148ed0e3cc0995d8e66a61dc27dcae88dc6f04e538d26ac87b2b48cf</guid>
+      <category>Incident</category>
+      <description>We have engaged our fallback authentication provider restoring access back to the Vapi Dashboard. We will continue to monitor but at this time, we are observing no further issues. </description>
+    </item>
+    <item>
+      <title>Dashboard Access Degredation</title>
+      <link>https://status.vapi.ai/incident/965921</link>
+      <pubDate>Thu, 16 Jul 2026 10:00:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/965921#380185847d9fc68510e359877edff0383b7442ffe724b71c433c86205abd2bb4</guid>
+      <category>Incident</category>
+      <description>We observed an increase in Dashboard Access degradation due to an outage with our downstream authentication provider. We are investigating the root cause and actively monitoring. </description>
+    </item>
+    <item>
+      <title>API Degradation </title>
+      <link>https://status.vapi.ai/incident/947546</link>
+      <pubDate>Wed, 08 Jul 2026 20:59:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/947546#594e87eb10534a0f11f3dd0328e973fb3f397426e7b9a572d10742f9c6caa682</guid>
+      <category>Incident</category>
+      <description>We have identified the root cause of this issue and successfully implemented a fix. We will continue to monitor but at this time are observing no further issue. </description>
+    </item>
+    <item>
+      <title>API Degradation </title>
+      <link>https://status.vapi.ai/incident/947546</link>
+      <pubDate>Wed, 08 Jul 2026 20:22:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/947546#af8eb295b9e13204bc00d52a78211eb98e0f765dc777010350a4e63874c390ad</guid>
+      <category>Incident</category>
+      <description>We observed an increase in API error rates between 12:30 and 1PM PT. Service recovered after 1PM PT. We are investigating the root cause and actively monitoring API health.</description>
+    </item>
+    <item>
+      <title>Errors updating Boards </title>
+      <link>https://status.vapi.ai/incident/945421</link>
+      <pubDate>Tue, 07 Jul 2026 07:06:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/945421#8e3744c18c30744e913335268b5020be5530a7ac04c5bd941a0a73d0cbcdadc7</guid>
+      <category>Incident</category>
+      <description>We performed critical maintenance on our analytics service, during which the Analytics charts and Insights (Boards) in the Vapi Dashboard were temporarily unavailable or returned errors. Voice calls, call handling, and all APIs operated normally throughout, with no impact to your account settings or call data. The affected features are now fully restored and we're actively monitoring. We apologize for the disruption.</description>
+    </item>
+    <item>
+      <title>Errors updating Boards </title>
+      <link>https://status.vapi.ai/incident/945421</link>
+      <pubDate>Tue, 07 Jul 2026 02:54:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/945421#5c25f2034b554db8ea07f3e6eddc1383f23d98aa2dd9dcd2e51abd880fcb7871</guid>
+      <category>Incident</category>
+      <description>We are deploying a fix into production. We will provide a final update once the fix is merged and the issue has been resolved.</description>
+    </item>
+    <item>
+      <title>Errors updating Boards </title>
+      <link>https://status.vapi.ai/incident/945421</link>
+      <pubDate>Tue, 07 Jul 2026 02:01:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/945421#ad6e244b4930277e6e6cc88cf8fddd4cd476f726f4543fe2187d4b71da8bc559</guid>
+      <category>Incident</category>
+      <description>We are continuing to deploy a fix for the degraded performance affecting Boards. We will provide our next update by 7:45 PM PT.</description>
+    </item>
+    <item>
+      <title>Errors updating Boards </title>
+      <link>https://status.vapi.ai/incident/945421</link>
+      <pubDate>Tue, 07 Jul 2026 01:14:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/945421#592b9c07a32cfecb01e5d4e6e4bfa8eaa304e821b1f54c2a2021a91d9247852a</guid>
+      <category>Incident</category>
+      <description>We have identified the root cause of the issue and are actively deploying a fix to restore normal performance to boards.</description>
+    </item>
+    <item>
+      <title>Errors updating Boards </title>
+      <link>https://status.vapi.ai/incident/945421</link>
+      <pubDate>Tue, 07 Jul 2026 00:30:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/945421#21e5bef6a09364f3ea5fc91d48cd8b93a5aaee526069135fb4ed944618a1b69d</guid>
+      <category>Incident</category>
+      <description>We are aware of an issue that is impacting the ability for users to create and in some cases view Boards or Insights within the dashboard. This issue is only impacting viewing analytical data and is not impacting live Assistants, Squads, Calls or Chats.</description>
+    </item>
+    <item>
+      <title>API Success Rate Degradation on Daily</title>
+      <link>https://status.vapi.ai/incident/945104</link>
+      <pubDate>Mon, 06 Jul 2026 18:15:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/945104#8a52bbc507486a1a4ff6987d58c725a18a5469ba3bd8c4abc9a623c2595fec60</guid>
+      <category>Incident</category>
+      <description>We noticed a degradation in API success rate only on the daily channel from 11 A.M to 11:04 A.M. Success rate has since recovered and we are not seeing any further degradation - the team will continue to monitor the issue. </description>
+    </item>
+    <item>
+      <title>API degradation</title>
+      <link>https://status.vapi.ai/incident/941850</link>
+      <pubDate>Thu, 02 Jul 2026 18:15:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/941850#f1de56e0ebbd5978daef43095d3ba3afeb7dcbb4836a91e97f70499bab696511</guid>
+      <category>Incident</category>
+      <description>We observed an increase in API error rates between 11:00 and 11:04 am PT, affecting only the daily channel. Service levels recovered after 11:04 m PT.
+We are investigating the root cause and actively monitoring API health.</description>
+    </item>
+    <item>
+      <title>API degradation</title>
+      <link>https://status.vapi.ai/incident/941850</link>
+      <pubDate>Thu, 02 Jul 2026 18:07:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/941850#ae24cfa8d580801bebcfceb317be4d054aadba787802125bc9c431f3383890ee</guid>
+      <category>Incident</category>
+      <description>We are aware of and are investigating degradation in API success rate in the daily channel.</description>
+    </item>
+    <item>
+      <title>High latency retrieving call logs </title>
+      <link>https://status.vapi.ai/incident/936394</link>
+      <pubDate>Sat, 27 Jun 2026 00:48:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/936394#810e2bdbe9008352accc6d508c69473411a38bddd98556c8ea2f51ccec90852e</guid>
+      <category>Incident</category>
+      <description>We have deployed a fix for this issue and are observing full resolution. All systems are fully operational. Our team will continue to monitor. </description>
+    </item>
+    <item>
+      <title>High latency retrieving call logs </title>
+      <link>https://status.vapi.ai/incident/936394</link>
+      <pubDate>Fri, 26 Jun 2026 23:03:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/936394#159e6f3530ceecd95940560a42e4b55e929b55f95ab161de48f4b757ab2d9da4</guid>
+      <category>Incident</category>
+      <description>We are continuing our work to deploy this fix across our services. Our next update will be once the fix is successfully deployed everywhere.</description>
+    </item>
+    <item>
+      <title>High latency retrieving call logs </title>
+      <link>https://status.vapi.ai/incident/936394</link>
+      <pubDate>Fri, 26 Jun 2026 20:51:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/936394#7f46fc0695ba6093c386abb43043c6eabce1623e506af6c878bd1b90fb570e5b</guid>
+      <category>Incident</category>
+      <description>We have identified the root cause of this issue and are working to deploy a fix.</description>
+    </item>
+    <item>
+      <title>High latency retrieving call logs </title>
+      <link>https://status.vapi.ai/incident/936394</link>
+      <pubDate>Fri, 26 Jun 2026 19:55:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/936394#2aa9525ebbd9fde4b700fa3e47e19024b8a34fb5b524256329ef7d1fce06e992</guid>
+      <category>Incident</category>
+      <description>We are investigating reports of high latency when viewing logs within the dashboard. At this time we do not see any impact to call success rate, this issue appears isolated to accessing logs of calls once completed.</description>
+    </item>
+    <item>
+      <title>Elevated API error rate on Weekly Channel</title>
+      <link>https://status.vapi.ai/incident/933768</link>
+      <pubDate>Wed, 24 Jun 2026 20:59:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/933768#f4819423ea0451891f486c669f825e9b00257caf9e6c61c4e7b659a10fde6269</guid>
+      <category>Incident</category>
+      <description>We have deployed a fix for this issue and will continue to monitor. We have not seen any elevated error rate since 1:20PM PT. </description>
+    </item>
+    <item>
+      <title>Elevated API error rate on Weekly Channel</title>
+      <link>https://status.vapi.ai/incident/933768</link>
+      <pubDate>Wed, 24 Jun 2026 20:41:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/933768#01f868c11c32546a1af78e3dce1903ab13c74f44fa3f29982a694b0608c6a542</guid>
+      <category>Incident</category>
+      <description>We have observed recovery of this issue starting around 1:20PM PT. We identified the root cause of the issue and are working to implement a fix. </description>
+    </item>
+    <item>
+      <title>Elevated API error rate on Weekly Channel</title>
+      <link>https://status.vapi.ai/incident/933768</link>
+      <pubDate>Wed, 24 Jun 2026 20:12:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/933768#b1b7898040897805eadcb6b8db4097ba4709a55436c9668766448a4e9a636bcd</guid>
+      <category>Incident</category>
+      <description>We are investigating reports of elevated failure rates affecting our API on weekly channel. Our team is actively working to confirm these reports and will provide an update within the next 30 minutes.</description>
+    </item>
+    <item>
+      <title>Elevated API error rates</title>
+      <link>https://status.vapi.ai/incident/926178</link>
+      <pubDate>Wed, 17 Jun 2026 01:47:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/926178#85d3aa232ce51d5242b88cc2f6971217e414c35792f618ce8df2f78b2be81c8b</guid>
+      <category>Incident</category>
+      <description>We have implemented a fix and observed full recovery. Failures were observed beginning 5:45pm and resolved as of 6:05pm.</description>
+    </item>
+    <item>
+      <title>Elevated API error rates</title>
+      <link>https://status.vapi.ai/incident/926178</link>
+      <pubDate>Wed, 17 Jun 2026 01:15:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/926178#103922de53d377d641aa90915e04b7acc9d20f20ddcc81c171bd4fcaaeb0098d</guid>
+      <category>Incident</category>
+      <description>We are observing recovery in API success rates across both daily and weekly channels.</description>
+    </item>
+    <item>
+      <title>Elevated API error rates</title>
+      <link>https://status.vapi.ai/incident/926178</link>
+      <pubDate>Wed, 17 Jun 2026 01:01:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/926178#db44a32e42e20600beabeaa326dc13acf4db55d659dd4300c10e8ea954eed11c</guid>
+      <category>Incident</category>
+      <description>We are observing elevated error rates across API endpoints in the daily and weekly channels. The team is actively investigating.</description>
+    </item>
+    <item>
+      <title>[Recovered] Elevated API error rates</title>
+      <link>https://status.vapi.ai/incident/925915</link>
+      <pubDate>Tue, 16 Jun 2026 19:17:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/925915#00c314800e90d36950fada68bf816cefcb844ea4ad3877b0d3c6af09705ef3ee</guid>
+      <category>Incident</category>
+      <description>We observed an increase in API error rates between 12:05-12:10pm PT affecting the weekly channel. Service levels recovered after 12:10pm PT. 
+We are investigating the root cause and actively monitoring API health.</description>
+    </item>
+    <item>
+      <title>Maintenance: SIP Server Restart – Certificate Rotation</title>
+      <link>https://status.vapi.ai/maintenance/918243</link>
+      <pubDate>Mon, 08 Jun 2026 20:22:48 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/918243#48d050d78312fb752a9f4dbd02b76f212cdec76b286fcd8f5fa50e18f7fba2e4</guid>
+      <category>Maintenance</category>
+      <description>We will be performing a routine certificate update on our SIP server. This maintenance requires a brief server restart and will be carried out during a low-traffic period to minimize any impact.
+
+We do not expect any significant disruption, and service will resume immediately after the restart.</description>
+    </item>
+    <item>
+      <title>Increased rate of call failures</title>
+      <link>https://status.vapi.ai/incident/911982</link>
+      <pubDate>Wed, 03 Jun 2026 13:31:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/911982#e708a1efcfc1a17ce288a3c0fc2332c716a440a40921cf9b77e261b482b00cde</guid>
+      <category>Incident</category>
+      <description>The incident has been resolved, and service restored as of 5:47am PDT.</description>
+    </item>
+    <item>
+      <title>Increased rate of call failures</title>
+      <link>https://status.vapi.ai/incident/911982</link>
+      <pubDate>Wed, 03 Jun 2026 13:03:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/911982#be03304b21231b2eb3e7cf4f89c34ec9e8db31b99af53a43828a5277bd90487c</guid>
+      <category>Incident</category>
+      <description>We implemented a fix and are seeing recovery as of 5:47am PDT. We will continue to monitor and update here.</description>
+    </item>
+    <item>
+      <title>Increased rate of call failures</title>
+      <link>https://status.vapi.ai/incident/911982</link>
+      <pubDate>Wed, 03 Jun 2026 12:40:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/911982#1b92b2133c933cca947293de77b3f5f88ed7fee6e6fce30f99afd56f7703309c</guid>
+      <category>Incident</category>
+      <description>We are seeing a high rate of call creation failures. We are investigating and will share updates here. </description>
+    </item>
+    <item>
+      <title>Dashboard Errors</title>
+      <link>https://status.vapi.ai/incident/911475</link>
+      <pubDate>Tue, 02 Jun 2026 23:42:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/911475#3d4230dd7d761815986010b63d384691b2e1efc904b55ca1d101c2cdc6f10f6d</guid>
+      <category>Incident</category>
+      <description>Our team has identified the root cause and deployed a fix. The issue has been resolved, and all systems are operating normally. We will continue monitoring to ensure stability.
+
+</description>
+    </item>
+    <item>
+      <title>Dashboard Errors</title>
+      <link>https://status.vapi.ai/incident/911475</link>
+      <pubDate>Tue, 02 Jun 2026 23:14:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/911475#f99e857be7d9f4452509dffadc3d3af6b4121763683a364dd28038629e15a908</guid>
+      <category>Incident</category>
+      <description>If you are seeing issues, you may use https://dashboard-weekly.vapi.ai/ as an immediate workaround instead of https://dashboard.vapi.ai/</description>
+    </item>
+    <item>
+      <title>Dashboard Errors</title>
+      <link>https://status.vapi.ai/incident/911475</link>
+      <pubDate>Tue, 02 Jun 2026 23:11:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/911475#b54a9c18e5bb1d9f5c1c67eb931c61fae1001d0469f10516962b5bfbb3255815</guid>
+      <category>Incident</category>
+      <description>We are investigating reports of errors loading the dashboard affecting customers on our Weekly channel. Our team is actively working to determine the root cause and will provide the next update within 30 minutes or sooner.</description>
+    </item>
+    <item>
+      <title>Voice calls dropped and dashboard unavailable</title>
+      <link>https://status.vapi.ai/incident/901977</link>
+      <pubDate>Fri, 29 May 2026 20:22:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/901977#6ca955afb85d1438ffcd967fb1a4b3901a89063a20df0c7b2481645fb848b568</guid>
+      <category>Incident</category>
+      <description># Vapi RCA - US Platform Outage, May 21, 2026
+
+**RCA:** US Platform Outage (Database Connection Exhaustion)
+**Status:** Resolved
+**Primary Impact:** Voice calls and API requests failed; the dashboard was unavailable
+**Date:** May 21, 2026
+**Customer-facing systems affected:** Calls, API, Chat, Dashboard, Logs
+**Severity:** Critical
+
+### Executive Summary
+
+On May 21, 2026, the Vapi US platform was unavailable for approximately 4 hours and 7 minutes, beginning at 7:02 AM PT, with service restored by 11:09 AM. Calls began failing at 7:02 AM PT, and by 7:12 AM PT the platform had progressed to a full outage of voice calls and the dashboard. During the window, voice calls failed to connect or complete, API requests returned errors, and the dashboard was inaccessible. Customers served from our EU and AUS regions were not affected.
+
+The outage began with a configuration change our database provider applied at 6:44 AM PT to the audit logging module used by our databases. The telemetry/audit logging setting caused Postgres processes to block while writing log output (syslog) at the moment they accepted new connections. Two databases that every call and API request depends on stopped accepting traffic, so the platform could neither authorize requests nor record new calls. Service was restored after the provider disabled the affected logging and restarted the database, and we ramped traffic back in a controlled way to avoid a second failure. We marked the incident resolved at 11:49 AM PT after sustained monitoring confirmed stability.
+
+The changes below focus on removing the dependencies that let a database fault become a full outage.
+
+### What You May Have Observed
+
+- Inbound and outbound voice calls failing to connect, or ending early
+- API requests returning server errors (HTTP 5xx)
+- Inability to access the Vapi dashboard
+- Scheduled and campaign calls not firing during the window
+- A brief period of partial recovery mid-incident, where some calls succeeded before failures resumed
+
+### Timeline (PT)
+
+- **6:44 AM**: Our database provider applies a configuration change to audit logging.
+- **7:02 AM**: First monitors fire for API degradation; calls begin failing.
+- **7:18 AM**: On-call engineer acknowledges the page and begins investigating.
+- **7:38 AM**: The core infrastructure team jumped into a formal incident.
+- **7:43 AM**: Status page updated to report degradation.
+- **7:53 AM**: Status page updated to confirm a full outage of calls and dashboard.
+- **8:10 AM**: Production database identified as the source; database provider support engaged.
+- **8:16 AM**: Escalated with the provider for higher urgency.
+- **8:29 AM**: Status page confirms the production database as the cause.
+- **9:35 to 10:00 AM**: Brief recovery after a database restart, followed by renewed degradation as traffic resumed.
+- **10:03 AM**: Provider identifies root cause: database processes stuck writing audit logs while accepting connections, caused by a misconfigured project-wide telemetry setting.
+- **10:05 AM**: Affected logging disabled and the database endpoint restarted; the database returns to normal.
+- **10:05 to 11:09 AM**: Traffic ramped back gradually, weekly cluster first (restored 10:38 AM), then daily (restored 11:09 AM).
+- **11:49 AM**: Incident resolved.
+
+### Root Cause
+
+**An audit-logging change exhausted the database connection pool**
+
+Vapi’s databases include audit logging. At 6:44 AM PT, our database provider changed where that audit output was written. A misconfiguration in the provider's project-wide telemetry settings caused Postgres processes to block while writing log output at the moment they accepted new connections. Connections accumulated in a waiting state until the pool was exhausted, and the affected databases could no longer accept traffic.
+
+**A hard dependency on two databases turned the problem into a full outage**
+
+Every API request and call passes through two of these databases: one authorizes the request at our API gateway, and the other records the call before it is queued for processing. Both were among the affected databases. With neither reachable, the platform could not authorize requests or create calls, so the failure was total rather than partial. A read replica was in place, but the provider's configuration change applied at the project level and affected both the primary and replica.
+
+**Resulting customer impact**
+
+For the duration of the window, calls failed to connect or complete and API requests returned errors. The dashboard, which also depends on these databases, did not load. Scheduled and campaign calls due to fire during the window did not run and were not retried automatically.
+
+Customers also would have noticed incidents before the Vapi status page was updated, due to the delay between on-call acknowledgment and creation of any status page.
+
+### Resolution
+
+- Our database provider disabled the audit log collection on the affected databases and restarted the database endpoint, which restored their ability to accept connections.
+- To avoid a connection storm overwhelming the recovered databases, we brought internal services back up gradually rather than all at once, restoring the weekly cluster first and then the daily cluster.
+- We confirmed recovery through API success-rate, error-rate, and database latency monitoring before closing the incident. Our provider has since published and confirmed a fix to the affected audit log collectors.
+
+### Prevention
+
+**Within the next week we are working towards:**
+
+- Add production monitoring for database query latency and connection-volume anomalies, so this signature is caught at onset rather than inferred from downstream symptoms.
+- Establish a faster, clearly defined escalation path with our database provider. Provider escalation and resolution took longer than it should have.
+- Implement a change management process with our database provider so changes that could impact availability are done in a more controlled manner.
+
+**Over the next quarter we are working towards:**
+
+- Introduce a read cache in front of authorization and configuration data, removing the hard dependency on that database so a future database fault degrades the platform rather than disabling it.
+- Migrate our critical databases to a platform that supports a regional hot standby, so we can fail over when a primary becomes unavailable.
+- Implement automatic status updates based on monitors, to ensure customers are made aware of incidents when we are.
+- Move call-record writes to an asynchronous path, removing the hard dependency on the call database for connecting a call.
+
+### Customer Actions
+
+- No action is required to restore service.
+
+We are committed to earning your trust.  As part of that, progress on the prevention items will be shared with you via your account team.</description>
+    </item>
+    <item>
+      <title>Dashboard Errors</title>
+      <link>https://status.vapi.ai/incident/907756</link>
+      <pubDate>Fri, 29 May 2026 03:58:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/907756#22a16b71a89835776385ccfa98c5645b5542f6a95a92c0e91ee74ad056250bee</guid>
+      <category>Incident</category>
+      <description>We have identified the cause of the issue and reverted the change. The issue has been resolved, and all systems are operating normally. We will continue monitoring to ensure stability.</description>
+    </item>
+    <item>
+      <title>Dashboard Errors</title>
+      <link>https://status.vapi.ai/incident/907756</link>
+      <pubDate>Fri, 29 May 2026 03:51:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/907756#b3ac414d3fde6833f4088e04ac0785b2ea4dabb4edefd0e1c2e45e3ba6edf297</guid>
+      <category>Incident</category>
+      <description>We are investigating reports of degraded performance affecting the Vapi Dashboard. Calls do not appear to be impacted. Our team is actively working to determine the root cause and will provide the next update within 30 minutes. </description>
+    </item>
+    <item>
+      <title>Increased Call Failure Rates</title>
+      <link>https://status.vapi.ai/incident/907173</link>
+      <pubDate>Thu, 28 May 2026 11:08:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/907173#aec14e18b6e63c2b511012d90f6c7afd46014c3c8792748c884ca35256265776</guid>
+      <category>Incident</category>
+      <description>The issue was caused by a brief DB hang that has been resolved, and all systems are operating normally. We will continue monitoring to ensure stability.</description>
+    </item>
+    <item>
+      <title>Increased Call Failure Rates</title>
+      <link>https://status.vapi.ai/incident/907173</link>
+      <pubDate>Thu, 28 May 2026 10:14:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/907173#cfead94652778cd287c1fd256a557ff2c8cfafd048bf449fbe387e03aa88f174</guid>
+      <category>Incident</category>
+      <description>We're seeing an increased rate in call failures and are actively looking into it.</description>
+    </item>
+    <item>
+      <title>Elevated call failure rate</title>
+      <link>https://status.vapi.ai/incident/905860</link>
+      <pubDate>Tue, 26 May 2026 19:55:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/905860#9a83bda61a044d7f2a170dca2c87ab6c99032e9164eaafcef05608d1dc24b7f8</guid>
+      <category>Incident</category>
+      <description>The issue was caused by a brief API latency blip that has been resolved, and all systems are operating normally. We will continue monitoring to ensure stability.</description>
+    </item>
+    <item>
+      <title>Elevated call failure rate</title>
+      <link>https://status.vapi.ai/incident/905860</link>
+      <pubDate>Tue, 26 May 2026 19:17:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/905860#aa521e7b942f04f2e8fd6bfe8f26c472eaebc14f3132f4ee5a351fb2879c2567</guid>
+      <category>Incident</category>
+      <description>We are investigating reports of degraded performance affecting calls. Our team is actively working to determine the root cause and will provide the next update in 45 minutes at the latest.</description>
+    </item>
+    <item>
+      <title>Voice calls dropped and dashboard unavailable</title>
+      <link>https://status.vapi.ai/incident/901977</link>
+      <pubDate>Fri, 22 May 2026 03:03:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/901977#7fc7a396a86f0f7be0cd4a61457ec1d1655323be5a7861c4185e04de8ec178ff</guid>
+      <category>Incident</category>
+      <description># Incident Report: Database Outage (Log Collector Misconfiguration)
+
+## What Happened
+
+Vapi experienced a large service outage causing voice calls to fail and the dashboard to become unavailable. This was caused by a failure in an audit log collector in the Vapi production database. The triggering event was an `apply_config` that our database provider executed at 6:44 AM PST. A misconfiguration in the project-wide telemetry settings caused Postgres processes to become stuck writing to syslog when accepting new connections, exhausting the connection pool and rendering the database unable to accept traffic, including from within the pod itself.
+
+We notified our provider's support line at 8:10 AM PST. The root cause was identified at 10:03 AM PST by our database provider. Mitigation was applied by disabling the OTEL connection and restarting the endpoint, after which the system returned to a normal state. A fix to the audit collectors was subsequently published and confirmed stable.
+
+## Customer Impact
+
+- **Service availability:** Large outage. Vapi's voice services were unavailable during the incident window, affecting 100% of customers from 7:12 AM PT until 11:49 AM PT when the incident was marked as resolved.
+- The Vapi dashboard was also unavailable during that time.
+
+## Timeline (PST)
+
+| Time | Event |
+|------|-------|
+| 6:44 AM | Our database provider executes an `apply_config` change, triggering the incident. |
+| 7:12 AM | Vapi begins to observe call degradation. |
+| 7:22 AM | The team begins its investigation. |
+| 7:43 AM | Vapi updates the status page to notify customers of observed degradation. |
+| 7:53 AM | Vapi updates the status page to confirm a full outage of both voice calls and the dashboard. |
+| 8:10 AM | Vapi suspects production database behavior as the source of the problem and notifies the database provider's support team. Initial investigation begins; a large spike in waiting-status connections is observed. |
+| 8:16 AM | Internal escalation with the database provider for increased urgency. |
+| 8:29 AM | Vapi confirms production database behavior as the source of the problem on the status page and continues to collaborate with the database provider on mitigation. |
+| 9:35–10:00 AM | A brief recovery is observed after restarting the database, but degradation reappears after services are scaled back up. |
+| 10:03 AM | Database provider identifies the root cause: Postgres processes stuck on syslog writes during connection acceptance, caused by a misconfigured project-wide `telemetry_setting` for log collectors. |
+| 10:03 AM+ | OTEL connection disabled; endpoint restarted; system returns to normal state. |
+| 10:38 AM | Vapi increases traffic back on the weekly environment and confirms that service is restored. |
+| 11:09 AM | Vapi increases traffic back on the daily environment, confirms service is restored, and moves to a monitoring stage. |
+| 11:49 AM | Vapi marks the incident as resolved. |</description>
+    </item>
+    <item>
+      <title>Voice calls dropped and dashboard unavailable</title>
+      <link>https://status.vapi.ai/incident/901977</link>
+      <pubDate>Thu, 21 May 2026 18:32:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/901977#44062674e3d0cbc5451015feee7c7fb3f8ec03ee220efb26d8a1448db4aee75e</guid>
+      <category>Incident</category>
+      <description>Service has returned to normal operating levels. Call success metrics have recovered and remained stable for 30 minutes across both daily and weekly channels, and all platform functionality has been restored. We’re continuing to monitor closely and will provide further updates if anything changes. We will update the status page with an incident report within 12 hours. Thank you for your patience.</description>
+    </item>
+    <item>
+      <title>Voice calls dropped and dashboard unavailable</title>
+      <link>https://status.vapi.ai/incident/901977</link>
+      <pubDate>Thu, 21 May 2026 18:09:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/901977#f05c9dd8a08e6a422e62e0de7b36eb56af35531bb3e6fa4ef8725564d406924d</guid>
+      <category>Incident</category>
+      <description>Services are recovering across both our weekly and daily clusters, and all metrics are trending positive. Our DB provider has identified and confirmed the root cause and we have applied an initial remediation. Our DB provider team remains actively engaged with us as we scale load back up. We are continuing to monitor closely and will provide updates as we have them.</description>
+    </item>
+    <item>
+      <title>Voice calls dropped and dashboard unavailable</title>
+      <link>https://status.vapi.ai/incident/901977</link>
+      <pubDate>Thu, 21 May 2026 18:06:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/901977#9e646ca8c56adf9e941e26f7db1a93098c1dfdb452cee157feedd656a5449973</guid>
+      <category>Incident</category>
+      <description>Our weekly cluster is still showing recovery and calls are going through. We are still monitoring the situation. We have shifted our focus to our daily cluster.</description>
+    </item>
+    <item>
+      <title>Voice calls dropped and dashboard unavailable</title>
+      <link>https://status.vapi.ai/incident/901977</link>
+      <pubDate>Thu, 21 May 2026 17:41:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/901977#3e2a01d7d5ad93a2974f339eed96fe11a8ced64352df40ab2d5ce25e749b5eee</guid>
+      <category>Incident</category>
+      <description>Our weekly cluster has seen recovery over the last 20 minutes. We are still monitoring the situation as there is a possibility for calls to fail again. 
+We are moving to fixing calls in our daily clusters now. 
+
+We will post updates when we have new information to share or in 30 minutes.</description>
+    </item>
+    <item>
+      <title>Voice calls dropped and dashboard unavailable</title>
+      <link>https://status.vapi.ai/incident/901977</link>
+      <pubDate>Thu, 21 May 2026 17:13:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/901977#74f9b2943cab833d7c8d2888c89361402717e6b75f2b2788175094299ae3fd9e</guid>
+      <category>Incident</category>
+      <description>Our daily cluster is still experiencing a full outage. Weekly is seeing some recovery.</description>
+    </item>
+    <item>
+      <title>Voice calls dropped and dashboard unavailable</title>
+      <link>https://status.vapi.ai/incident/901977</link>
+      <pubDate>Thu, 21 May 2026 17:11:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/901977#357ef6ad5131e7c9eeeecef431ff58c193189b214ba84493a5f01b48920e9e5b</guid>
+      <category>Incident</category>
+      <description>We are still in a degraded state on weekly and working on fully resolving the issue.
+Our daily cluster is still out.</description>
+    </item>
+    <item>
+      <title>Voice calls dropped and dashboard unavailable</title>
+      <link>https://status.vapi.ai/incident/901977</link>
+      <pubDate>Thu, 21 May 2026 16:41:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/901977#a9c65e0ad3cbd819ca9deda4d6f065b3107618e6ab4275f47d7aa66355c9886e</guid>
+      <category>Incident</category>
+      <description>We are seeing some recovery in Voice Calls and Dashboard calls and are continuing to monitor the situation. We will post updates as we have news or in 30 minutes.</description>
+    </item>
+    <item>
+      <title>Voice calls dropped and dashboard unavailable</title>
+      <link>https://status.vapi.ai/incident/901977</link>
+      <pubDate>Thu, 21 May 2026 16:29:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/901977#b27cb903a68fceac436fc50e6a3de5c98bdac799b17d0c6bae2b84f7f801eb8e</guid>
+      <category>Incident</category>
+      <description>Our DB provider has escalated to the highest level. Their most senior architect is now directly involved in identifying the fix. We are collaborating closely on resolution. 
+We will post an update as we have news or in 30 minutes.</description>
+    </item>
+    <item>
+      <title>Voice calls dropped and dashboard unavailable</title>
+      <link>https://status.vapi.ai/incident/901977</link>
+      <pubDate>Thu, 21 May 2026 15:59:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/901977#4d3a3033b97de54cb08f6f8a47e803639c9fb1003307ccf436fe3582a93d0d1f</guid>
+      <category>Incident</category>
+      <description>Our DB provider confirmed the config change which we have identified as the cause for our DB outage, which causes voice calls to drop and our dashboard to not load. 
+We are collaborating with our provider on an eventual fix or workaround. They have escalated this issue to the highest level of urgency on their side.
+We will post an update as we have news or in 30 minutes.</description>
+    </item>
+    <item>
+      <title>Voice calls dropped and dashboard unavailable</title>
+      <link>https://status.vapi.ai/incident/901977</link>
+      <pubDate>Thu, 21 May 2026 15:27:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/901977#98a8d6c344800b42cffd198fb2ef7061bfb51a020e9f2653cb2de3f24a07e77a</guid>
+      <category>Incident</category>
+      <description>We are still investigating a complete outage in Voice Calls. Our DB provider applied a configuration change at 6:44am which is causing our DB to be completely unavailable. We are working with them to get our DBs back up. 
+
+We do not have an ETA or resolution yet, however our provider has escalated the issue internally.
+
+We will post an update as we learn more or in 30 minutes.</description>
+    </item>
+    <item>
+      <title>Voice calls dropped and dashboard unavailable</title>
+      <link>https://status.vapi.ai/incident/901977</link>
+      <pubDate>Thu, 21 May 2026 13:55:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/901977#f8cb2d0811765f6efcc178134dad27ff9150a1d488382ef286927d953228693a</guid>
+      <category>Incident</category>
+      <description>We are investigating an incident causing voice calls dropped. We will publish updates as we get more information or in 30 minutes.</description>
+    </item>
+    <item>
+      <title>SIP Availability degraded</title>
+      <link>https://status.vapi.ai/incident/896802</link>
+      <pubDate>Fri, 15 May 2026 16:30:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/896802#4b2cf71d77f12b1dad14e3a76612656c3bd4e26d1ea24e74e51a715c1d53e4cc</guid>
+      <category>Incident</category>
+      <description>The incident has been resolved and platform functionality has been fully restored. We will continue monitoring and will publish additional details if necessary.</description>
+    </item>
+    <item>
+      <title>SIP Availability degraded</title>
+      <link>https://status.vapi.ai/incident/896802</link>
+      <pubDate>Fri, 15 May 2026 15:50:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/896802#63c63b1fef11ce64c537c08871590fceb93058d92a511fb0bb1da0e0d10644b9</guid>
+      <category>Incident</category>
+      <description>We are seeing SIP issues affecting some customers and are investigating.</description>
+    </item>
+    <item>
+      <title>Tool call is degraded in the Daily Channel</title>
+      <link>https://status.vapi.ai/incident/896603</link>
+      <pubDate>Fri, 15 May 2026 09:40:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/896603#aaeead6c15b0e6cf3a01c9d1f79a00354a9228a35ab459da32e3b0838d816608</guid>
+      <category>Incident</category>
+      <description>We have noticed a higher-than-usual rate of tool calls in the daily cluster and are currently investigating the issue.</description>
+    </item>
+    <item>
+      <title>Increased Call Failure Rates</title>
+      <link>https://status.vapi.ai/incident/894167</link>
+      <pubDate>Tue, 12 May 2026 17:03:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/894167#5d1ad18ddca38885c34c28a75a9500b6153384d09dd28cc187846204ab0cee26</guid>
+      <category>Incident</category>
+      <description>This incident has been resolved. All systems are operating normally</description>
+    </item>
+    <item>
+      <title>Increased Call Failure Rates</title>
+      <link>https://status.vapi.ai/incident/894167</link>
+      <pubDate>Tue, 12 May 2026 16:36:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/894167#cbf09e1c09f6921672735ab5044314a900e263ab7a2b3e376bcc4865181436e1</guid>
+      <category>Incident</category>
+      <description>The team has identified the issue, scaled the offending service accordingly, and we're starting to see a recovery. We will continue monitoring the situation as it improves. </description>
+    </item>
+    <item>
+      <title>Increased Call Failure Rates</title>
+      <link>https://status.vapi.ai/incident/894167</link>
+      <pubDate>Tue, 12 May 2026 15:53:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/894167#db22463265fe3788be0cdbd11b2cb82dd65ed59d879679fb8e2bc542e985696e</guid>
+      <category>Incident</category>
+      <description>The team is still actively looking into the issue and working on a fix.</description>
+    </item>
+    <item>
+      <title>Increased Call Failure Rates</title>
+      <link>https://status.vapi.ai/incident/894167</link>
+      <pubDate>Tue, 12 May 2026 15:18:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/894167#ec50b2c21912686da9cca0fbdce616872161d856785f7db1eb353f3046149bca</guid>
+      <category>Incident</category>
+      <description>We're seeing an increased rate in call failures and are actively looking into it.</description>
+    </item>
+    <item>
+      <title>Chat Tool Calls Degraded on Weekly Channel</title>
+      <link>https://status.vapi.ai/incident/888152</link>
+      <pubDate>Tue, 05 May 2026 14:44:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/888152#d8e442a8ed0005442498ab22d4651b680bfb582eb77faef1eb077c0297e23bd5</guid>
+      <category>Incident</category>
+      <description>Chat assistants on the weekly update channel were returning empty responses after tool calls, causing conversations to stall or end unexpectedly.
+
+We have rolled back the weekly update channel to a stable version for now to mitigate this.
+
+Note: It impacts only chat endpoints.</description>
+    </item>
+    <item>
+      <title>Documentation resources are down</title>
+      <link>https://status.vapi.ai/incident/876010</link>
+      <pubDate>Mon, 20 Apr 2026 22:12:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/876010#59f00261b0c32e94df074648a3dab5db108dd6ccb724afa222a50071d6bd057f</guid>
+      <category>Incident</category>
+      <description>Our documentation provider is experiencing an outage. We’re in touch with the team and will provide communication when services are back up</description>
+    </item>
+    <item>
+      <title>Degraded Performance on Inbound Calls</title>
+      <link>https://status.vapi.ai/incident/873215</link>
+      <pubDate>Thu, 16 Apr 2026 17:00:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/873215#18b409e2669990d474f29284b11efe38d57215d75ca822ea73189bcb020481ea</guid>
+      <category>Incident</category>
+      <description>We have now resolved this incident. Between ~7:30AM PT and ~9:30AM PT, a new query pattern caused database slowness that increased API latency and led to dropped inbound calls with certain providers. We mitigated by rolling back the deployment and are following up with a deeper review of the query change.</description>
+    </item>
+    <item>
+      <title>Degraded Performance on Inbound Calls</title>
+      <link>https://status.vapi.ai/incident/873215</link>
+      <pubDate>Thu, 16 Apr 2026 15:35:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/873215#2abf856bd8639124beef2926d54f8a6253d6fef620cccaeefce38244d6940d4e</guid>
+      <category>Incident</category>
+      <description>We are observing systems recover and performance is returning to normal. Some users may still see brief residual impact as systems stabilize. </description>
+    </item>
+    <item>
+      <title>Degraded Performance on Inbound Calls</title>
+      <link>https://status.vapi.ai/incident/873215</link>
+      <pubDate>Thu, 16 Apr 2026 14:45:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/873215#f8b4561bbbd5cacd6e39596af2c93a990b757cd4b12e82eed50cd45e67a0a986</guid>
+      <category>Incident</category>
+      <description>We are investigating reports of degraded performance affecting a subset of calls. Our team is actively working to determine the root cause and will provide updates as we learn more.</description>
+    </item>
+    <item>
+      <title>SIP Infrastructure Outage</title>
+      <link>https://status.vapi.ai/incident/871401</link>
+      <pubDate>Tue, 14 Apr 2026 15:27:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/871401#0af584e7d1c5175d618d42df5189ca155afd2b44082730b06ca589e879763bde</guid>
+      <category>Incident</category>
+      <description>The issue has been resolved. After applying the remediation, we monitored the affected systems and confirmed stable operation. All services are functioning normally.</description>
+    </item>
+    <item>
+      <title>SIP Infrastructure Outage</title>
+      <link>https://status.vapi.ai/incident/871401</link>
+      <pubDate>Tue, 14 Apr 2026 15:12:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/871401#85fb57417c21dde8daca9b278f9ea5fec0eb476b59e05d4eb4bd5ccb06a09cdd</guid>
+      <category>Incident</category>
+      <description>We identified and applied a remediation for the issue. The change has been deployed and we are actively monitoring to confirm full resolution. We will provide an update within 30 minutes or once we've confirmed stability.</description>
+    </item>
+    <item>
+      <title>SIP Infrastructure Outage</title>
+      <link>https://status.vapi.ai/incident/871401</link>
+      <pubDate>Tue, 14 Apr 2026 14:57:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/871401#c0d2308d61ca58168b0d729dc5d0122e5bdfa8d8464213adc3220f08840f44bc</guid>
+      <category>Incident</category>
+      <description>Our engineering team continues to actively work on restoring SIP services. We are still assessing the full scope of the issue and working toward a resolution.</description>
+    </item>
+    <item>
+      <title>SIP Infrastructure Outage</title>
+      <link>https://status.vapi.ai/incident/871401</link>
+      <pubDate>Tue, 14 Apr 2026 14:25:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/871401#ffd6ce58cc26cb5a15260b97207af798d8ce8dae659c694d0f47d4771bdc911e</guid>
+      <category>Incident</category>
+      <description>Upon further investigation, the impact to our SIP infrastructure is significantly greater than initially assessed. All SIP Calls services are currently experiencing full downtime, affecting inbound and outbound calls, transfers, and all in-call functionality. Our engineering team is fully engaged and working urgently to restore services. </description>
+    </item>
+    <item>
+      <title>SIP Infrastructure Outage</title>
+      <link>https://status.vapi.ai/incident/871401</link>
+      <pubDate>Tue, 14 Apr 2026 13:32:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/871401#320c111ddeb909721d8f0e0a899c6b1b518fecf51618f57480d0cba0c4155386</guid>
+      <category>Incident</category>
+      <description>We are currently experiencing degradation in our SIP infrastructure, resulting in in-call failures including call transfers, increased latency, and other related issues. Our team is actively investigating and working to resolve the problem. We will provide updates as more information becomes available.</description>
+    </item>
+    <item>
+      <title>Maintenance: SIP Maintenance</title>
+      <link>https://status.vapi.ai/maintenance/869144</link>
+      <pubDate>Sat, 11 Apr 2026 01:43:30 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/869144#d653a57238554929b87bb81e4fce4377daadd71128c6bf1f5cd08b378072e0ab</guid>
+      <category>Maintenance</category>
+      <description>We'll be applying the latest patches and security fixes to our SIP SBC node. This is a routine procedure and should result in no more than a few seconds of downtime.</description>
+    </item>
+    <item>
+      <title>Maintenance: SIP Maintenance</title>
+      <link>https://status.vapi.ai/maintenance/869141</link>
+      <pubDate>Sat, 11 Apr 2026 01:42:39 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/869141#d261f9be01667c0dc6904c7c245f3ac71ab177e0b4fb3890fd41ca951ebd888e</guid>
+      <category>Maintenance</category>
+      <description>We'll be applying the latest patches and security fixes to our SIP SBC node. This is a routine procedure and should result in no more than a few seconds of downtime.</description>
+    </item>
+    <item>
+      <title>Elevated Error Rates with Soniox Transcriber</title>
+      <link>https://status.vapi.ai/incident/863336</link>
+      <pubDate>Thu, 02 Apr 2026 11:30:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/863336#53cea7f2ac152d5b4664a9828855408247be9adb98db7ecf0e76abace2e4d320</guid>
+      <category>Incident</category>
+      <description>We are currently observing elevated error rates affecting calls that use the Soniox transcriber. Impacted calls may terminate unexpectedly with the ended reason call.in-progress.error-vapifault-soniox-transcriber-failed.
+
+While we work to resolve this, we recommend switching to an alternative transcriber or configuring a transcriber fallback plan to ensure call continuity. You can set up fallbacks by following the guide here: https://docs.vapi.ai/customization/transcriber-fallback-plan
+
+We are actively monitoring the situation and will provide updates as more information becomes available.</description>
+    </item>
+    <item>
+      <title>Degraded API performance on Daily and Weekly channels</title>
+      <link>https://status.vapi.ai/incident/857606</link>
+      <pubDate>Wed, 25 Mar 2026 20:53:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/857606#02cd21ac0ff66a6fbe37fc1f54779115dd562adbe292a497438d75d607804d2a</guid>
+      <category>Incident</category>
+      <description>We observed an elevated rate of API errors from 1:28pm to 1:39pm PDT. The errors have since resolved. We are closely monitoring API performance and investigating the root cause.</description>
+    </item>
+    <item>
+      <title>Elevated Call Failure Rate on Weekly</title>
+      <link>https://status.vapi.ai/incident/853214</link>
+      <pubDate>Sat, 21 Mar 2026 05:46:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/853214#1ec488020290792118f0b7a2ae7ed9c9e3f45afd391fecdba457cb0754119c0f</guid>
+      <category>Incident</category>
+      <description>**Incident Report, March 19, 2026**
+
+**Impact:** A service disruption affected inbound and outbound call reliability on the Daily and Weekly channel. Some calls failed to connect with `transport-never-connected`, `worker-not-available`, `worker-died`, and `deepgram-transcriber-failed` end reasons.
+
+**Timeline (all times PDT):**
+
+**12:20 PM** We detected elevated call failure rates on the Weekly production cluster.
+
+**12:22 PM** We published a status page incident and began investigating.
+
+**12:25 PM** We identified the trigger as an unanticipated surge in call volume that exceeded our provisioned cluster capacity and downstream rate limits with a model provider.
+
+**12:30 PM** We applied traffic controls and began working with the model provider to increase capacity. Call failures began declining.
+
+**1:40 PM** Call success rates returned to normal and held stable. First incident window closed.
+
+**~4:00 PM** A separate traffic spike re-triggered infrastructure constraints, leading to elevated failures. We began investigating immediately.
+
+**4:00 PM to 4:40 PM** We rebalanced traffic and migrated affected workloads to dedicated infrastructure to restore headroom on shared clusters.
+
+**4:50 PM** All mitigations took effect. Call success rates returned to normal. 
+
+**4:50 PM to 8:10 PM** We continued active monitoring. No further failures observed.
+
+**8:10 PM** Second incident window closed.
+
+**Immediate Action Items:** Improve workload isolation and per-account capacity guardrails to prevent resource contention from cascading across the platform.
+
+**Note:** A full root cause analysis is underway and will be available upon request. We sincerely apologize for the disruption and thank you for your patience.</description>
+    </item>
+    <item>
+      <title>Elevated Call Failure Rate on Weekly</title>
+      <link>https://status.vapi.ai/incident/853214</link>
+      <pubDate>Fri, 20 Mar 2026 04:23:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/853214#5df2c9f8e885c73cda7da0ac38204d30539512f762dc54edc94ac23fede085f0</guid>
+      <category>Incident</category>
+      <description>The incident has been resolved and services have been stable since 4:50pm PT. We will continue monitoring and will publish additional details if necessary.</description>
+    </item>
+    <item>
+      <title>Elevated Call Failure Rate on Weekly</title>
+      <link>https://status.vapi.ai/incident/853214</link>
+      <pubDate>Fri, 20 Mar 2026 03:09:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/853214#984c2c2ace24e6eb3834f91fe9062c6b16f798379f2d04db5f108a968d1c679f</guid>
+      <category>Incident</category>
+      <description>Our earlier mitigation is working and services have been stable since 4:50 PM. We have identified a potential root cause and are working on a permanent fix. We will share further updates once we deploy and validate the fix.</description>
+    </item>
+    <item>
+      <title>Elevated Call Failure Rate on Weekly</title>
+      <link>https://status.vapi.ai/incident/853214</link>
+      <pubDate>Fri, 20 Mar 2026 00:22:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/853214#2e4255ec6176ab936ad0884cb095c615f04ec928221d8c4b249268849a2d900d</guid>
+      <category>Incident</category>
+      <description>The immediate mitigation we deployed is working and we are seeing call success rates continuing to recover. We are still investigating root cause and closely monitoring service performance.</description>
+    </item>
+    <item>
+      <title>Elevated Call Failure Rate on Weekly</title>
+      <link>https://status.vapi.ai/incident/853214</link>
+      <pubDate>Thu, 19 Mar 2026 23:50:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/853214#f0fc82ad196c936cce266a8db767d28628a3f7c8d4b79943f80942e52bc506e1</guid>
+      <category>Incident</category>
+      <description>We're seeing improved call success rates, but we're still monitoring the situation.</description>
+    </item>
+    <item>
+      <title>Elevated Call Failure Rate on Weekly</title>
+      <link>https://status.vapi.ai/incident/853214</link>
+      <pubDate>Thu, 19 Mar 2026 23:17:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/853214#c3784d0d08086ea8f46b1fb51f1e997a8a5d9d0f6acd7c19a883b1590df52232</guid>
+      <category>Incident</category>
+      <description>We're seeing elevated call failures on weekly, and the team is actively looking into it. </description>
+    </item>
+    <item>
+      <title>Elevated errors in daily and weekly channels</title>
+      <link>https://status.vapi.ai/incident/853120</link>
+      <pubDate>Thu, 19 Mar 2026 20:40:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/853120#354d58eb21545626600e9462990f349adf1b427b908b28653ed0ed2eaa87c7d2</guid>
+      <category>Incident</category>
+      <description>Resolved — The issue causing degraded performance has been identified and mitigated as of 13:45 PDT. All services are operating normally. We will continue to monitor and provide an update if needed.</description>
+    </item>
+    <item>
+      <title>Elevated errors in daily and weekly channels</title>
+      <link>https://status.vapi.ai/incident/853120</link>
+      <pubDate>Thu, 19 Mar 2026 20:22:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/853120#4be5c7d28bd73a2af59638b6c59bfaa6b5db5410dd132575f10e3407a2a4bd0b</guid>
+      <category>Incident</category>
+      <description>We've partnered with Deepgram to apply a mitigation and are actively monitoring error rates. For an immediate workaround, affected users can switch to Deepgram Nova 3 or use a non-Deepgram transcriber.</description>
+    </item>
+    <item>
+      <title>Elevated errors in daily and weekly channels</title>
+      <link>https://status.vapi.ai/incident/853120</link>
+      <pubDate>Thu, 19 Mar 2026 19:51:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/853120#6367ee004b95c060207e4312a59ca11da57896a0717d13c8512049eaec2cf283</guid>
+      <category>Incident</category>
+      <description>We are seeing worker-not-available error rates going down in the weekly channel. We are also actively working with Deepgram to mitigate transcriber-failed errors in daily and weekly cluster.</description>
+    </item>
+    <item>
+      <title>Elevated errors in daily and weekly channels</title>
+      <link>https://status.vapi.ai/incident/853120</link>
+      <pubDate>Thu, 19 Mar 2026 19:32:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/853120#9d75a7851f747e2701bca61fa79cbadb0a61c6564b03cf09b82e5ae7c099a689</guid>
+      <category>Incident</category>
+      <description>The root cause for worker-not-available failures has been identified and we are actively deploying fixes to restore normal service. Some users may still experience failures or degraded performance while mitigation is in progress and fixes roll out.</description>
+    </item>
+    <item>
+      <title>Elevated errors in daily and weekly channels</title>
+      <link>https://status.vapi.ai/incident/853120</link>
+      <pubDate>Thu, 19 Mar 2026 19:21:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/853120#e70e2fb4dfabdcb8c139bba4564db00499e0f425dfa6ac755f634e4b564cfc20</guid>
+      <category>Incident</category>
+      <description>We are aware of elevated call failures rates on the weekly cluster with worker-not-available ended reason, and deepgram-transcriber-unavailable in both daily and weekly channels. Our team is actively investigating the issue.</description>
+    </item>
+    <item>
+      <title>Some GPT 5.2 calls failing with inference issues</title>
+      <link>https://status.vapi.ai/incident/846049</link>
+      <pubDate>Thu, 19 Mar 2026 18:51:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/846049#b51781609f443eb200d1af8b7e96afaf5ba26bc2ad64c6e661bcbec2e0bf33a6</guid>
+      <category>Incident</category>
+      <description>The issue has been resolved we're not seeing any further degradation</description>
+    </item>
+    <item>
+      <title>Maintenance: SIP System Restart</title>
+      <link>https://status.vapi.ai/maintenance/851649</link>
+      <pubDate>Tue, 17 Mar 2026 22:46:01 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/851649#5eb65de955ff90a46b3914711615e3ab1d042fe6d125c5169a68fc013139a7a3</guid>
+      <category>Maintenance</category>
+      <description>We need to apply updates to our SIP server, which will require a restart. During this time, there may be a brief service disruption. The activity is low risk and should be completed within 15 seconds.</description>
+    </item>
+    <item>
+      <title>Daily channel - Calls &amp; dashboard are impacted</title>
+      <link>https://status.vapi.ai/incident/847828</link>
+      <pubDate>Thu, 12 Mar 2026 16:22:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/847828#bbdb7cf035399a9373ccd33f319621f0a0fd0012ed3b5437f80274a507f50b13</guid>
+      <category>Incident</category>
+      <description>Resolved — The issue causing degraded performance has been identified and mitigated as of 8:22 AM. All services are operating normally. We will continue to monitor and provide an update if needed.
+</description>
+    </item>
+    <item>
+      <title>Daily channel - Calls &amp; dashboard are impacted</title>
+      <link>https://status.vapi.ai/incident/847828</link>
+      <pubDate>Thu, 12 Mar 2026 15:23:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/847828#6d3aecc1793582c0fc4442a8940e129c8ed340d0abb259d20e930f09d40b7794</guid>
+      <category>Incident</category>
+      <description>High failure rate in connecting calls and API in the daily channel. Team is working on resolving it.</description>
+    </item>
+    <item>
+      <title>Some GPT 5.2 calls failing with inference issues</title>
+      <link>https://status.vapi.ai/incident/846049</link>
+      <pubDate>Tue, 10 Mar 2026 12:46:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/846049#32f9f2185d9f6e3c552d7057038d5964864cc8b820fc504d5ffebd57b1c63dd1</guid>
+      <category>Incident</category>
+      <description>We're noticing a small percentage of calls using GPT 5.2 fail with an internal error during inference from OpenAI's side. We've reached out to the team and are closely monitoring the situation. In the meantime, we recommend switching to another model as we're seeing the degradation only on 5.2 currently. </description>
+    </item>
+    <item>
+      <title>Maintenance: Update SIP certificates</title>
+      <link>https://status.vapi.ai/maintenance/845585</link>
+      <pubDate>Mon, 09 Mar 2026 22:33:49 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/845585#96529491b2f49a27d31943239c6a118c3735014a590de90c446a6a6fdbeba103</guid>
+      <category>Maintenance</category>
+      <description>Our SIP service TLS certificate is approaching its expiration date and needs to be renewed. To apply the updated certificate, a brief restart of the SIP service will be required. No prolonged disruption to the service is expected.</description>
+    </item>
+    <item>
+      <title>Call Degradation on Daily</title>
+      <link>https://status.vapi.ai/incident/840264</link>
+      <pubDate>Wed, 04 Mar 2026 16:17:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/840264#304cb5d51fc9af638fdece66d154f08819643cb862a108bf47236509ad7e044a</guid>
+      <category>Incident</category>
+      <description>The issue has been resolved and all systems are operational. </description>
+    </item>
+    <item>
+      <title>Vapi Voice "Emma" is temporarily unavailable</title>
+      <link>https://status.vapi.ai/incident/839609</link>
+      <pubDate>Wed, 04 Mar 2026 16:04:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/839609#24325fe434d524f2b351e087db0c12f1593c5aa2c7ce1182435018024c50a024</guid>
+      <category>Incident</category>
+      <description>The issue has been resolved and the voice is currently usable. We still recommend setting up fallbacks for any voices for the future to avoid call drops - 
+https://docs.vapi.ai/voice-fallback-plan</description>
+    </item>
+    <item>
+      <title>Call Degradation on Daily</title>
+      <link>https://status.vapi.ai/incident/840264</link>
+      <pubDate>Wed, 04 Mar 2026 16:03:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/840264#b7b23cbc3a05789d4cb49c2c7d50e0929efaef9c70e6513785313f6b5b64217e</guid>
+      <category>Incident</category>
+      <description>We're noticing some call degradation primarily on the Daily channel. We are monitoring the situation and will update as we know more.</description>
+    </item>
+    <item>
+      <title>Vapi Voice "Emma" is temporarily unavailable</title>
+      <link>https://status.vapi.ai/incident/839609</link>
+      <pubDate>Wed, 04 Mar 2026 02:31:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/839609#e5fb4ac499f5cf6aa787fb226f77ed5b833b28fce31cdac86467b956ffd456c4</guid>
+      <category>Incident</category>
+      <description>We're noticing issues with calls using the Vapi voice "Emma". If you are using this voice, we recommend switching to another voice while this is resolved, and add voice fallbacks to prevent complete failures - https://docs.vapi.ai/voice-fallback-plan
+
+No other voices are currently impacted. We will update the status page as we know more. </description>
+    </item>
+    <item>
+      <title>Authentication Provider Degradation in India</title>
+      <link>https://status.vapi.ai/incident/832329</link>
+      <pubDate>Thu, 26 Feb 2026 17:08:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/832329#36f7f43f7d538fe3528a574a3e3b6ce6c5848d69be677bb1ba9475cc87d56373</guid>
+      <category>Incident</category>
+      <description>Our provider has confirmed the issue is specific to accessing projects and seems to not include authentication. They are still resolving the issue from their end, but we are marking the issue as resolved.
+
+If customers continue to see issues with authentication, please reach out to support@vapi.ai</description>
+    </item>
+    <item>
+      <title>Calls are degraded on Daily channel</title>
+      <link>https://status.vapi.ai/incident/833083</link>
+      <pubDate>Thu, 26 Feb 2026 01:59:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/833083#d960f75e523f7589e67724f439f653dacba6ca2842c93f61339741927cfb449a</guid>
+      <category>Incident</category>
+      <description>We have not seen the issue since ~3:50pm today. We have determined the root cause and are rolling out a fix to improve stability in the `daily` channel.
+
+# Incident Report — Daily Channel Call Failures (February 25, 2026)
+
+## Impact
+
+Between 7:27 AM – 3:59 PM PST, approximately 19,527 calls failed on the Daily channel due to call worker failures.
+
+All Daily channel users were impacted. The Weekly channel was not affected.
+
+## Timeline (all times in PST)
+
+**7:27 AM** — Degraded call reliability detected on the Daily channel. Status page updated and investigation begins immediately.
+
+**8:33 AM** — Issue escalated. Team recommends affected customers switch to the Weekly channel while investigation continues. Status page updated.
+
+**9:04 AM** — Team begins proactive outreach to guide affected customers to the Weekly channel.
+
+**10:55 AM** — Additional call failures observed on Daily after a brief period of stability. Investigation continues.
+
+**11:00 AM** — Rolled back previous deployment. Did not observe any significant improvement.
+
+**1:30 PM** — Continued investigating the issue.
+
+**3:59 PM** — No further issues observed.
+
+**6:00 PM** — Released a fix to improve stability in the Daily channel. Incident resolved.
+
+## What Went Well
+
+- The issue was detected and acknowledged quickly.
+- A dedicated incident response was organized promptly to focus investigation.
+- Teams were notified early and guided affected customers to switch to the Weekly channel.
+
+## Action Items
+
+- Isolate background operations from call handling
+- Strengthen deployment validation
+- Improve resilience under load
+- Expand monitoring and alerting
+
+## Note
+
+This report is intended as a summary of the incident timeline, impact, and immediate action items. A deeper root cause analysis is available upon request.
+
+This issue impacted the Daily channel only. Customers desiring increased stability (at the cost of delayed access to features) can switch to the Weekly channel by navigating to **Organization Settings** on the Vapi Dashboard and changing the Channel to **"weekly"**.</description>
+    </item>
+    <item>
+      <title>Calls are degraded on Daily channel</title>
+      <link>https://status.vapi.ai/incident/833083</link>
+      <pubDate>Wed, 25 Feb 2026 19:12:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/833083#1a5adba1beeb5e73a07bdce1f5663eff2720adbed947530bcedc4ed7736bbc74</guid>
+      <category>Incident</category>
+      <description>We are seeing intermittent failures related to the earlier incident, slightly higher than normal amounts. The team is investigating and will share additional updates here.
+
+Degradation is still limited to `daily` channel. If you are seeing instability we suggest switching to the `weekly` channel (in Organization Settings → Channel).</description>
+    </item>
+    <item>
+      <title>Call degradation on Weekly channel</title>
+      <link>https://status.vapi.ai/incident/832374</link>
+      <pubDate>Wed, 25 Feb 2026 17:50:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/832374#8e267946a34af6f45ad3da3cb4f68356a389140cf2268817d17ce1e9caa314eb</guid>
+      <category>Incident</category>
+      <description>Incident report:
+
+**Impact:**
+
+A service disruption affected call reliability on the Weekly channel. Some calls ended unexpectedly with `worker-not-available` or `worker-died` end reasons.
+
+**Timeline (all times PT):**
+
+- **8:07 AM** - We detected a burst of call failures across the platform.
+- **8:16 AM** - Automated monitoring alert fired. We acknowledged and began investigating.
+- **8:42 AM** - We scoped the impact across affected accounts.
+- **8:47 AM** - The issue self-resolved. We identified the root cause as resource contention in our call processing infrastructure during a traffic spike.
+- **9:18 AM** - We completed an initial root cause analysis and identified an underlying bottleneck in our call queue infrastructure.
+- **11:13 AM** - A related issue resurfaced due to cascading effects from the earlier contention. We began investigating immediately.
+- **11:25 AM** - We published a status page to notify customers.
+- **11:38 AM** - We confirmed the root cause as CPU contention between infrastructure components.
+- **11:39 AM** - We applied a mitigation. Call queue metrics began recovering.
+- **11:45 AM** - We updated the status page with the identified cause and fix.
+- **11:46 AM** - Error rates began declining. We continued active monitoring.
+- **1:11 PM** - We declared resolution on the status page.
+- **~1:35 PM** - A brief secondary spike occurred during an infrastructure resource adjustment. We responded immediately.
+- **3:21 PM** - All systems fully stabilized.
+
+**Action Items**
+
+Enforce resource limits across processing components and improve infrastructure isolation for critical call processing.
+
+**Note**
+
+A full root cause analysis is underway and will be available upon request. We sincerely apologize for the disruption and thank you for your patience.</description>
+    </item>
+    <item>
+      <title>Calls are degraded on Daily channel</title>
+      <link>https://status.vapi.ai/incident/833083</link>
+      <pubDate>Wed, 25 Feb 2026 16:56:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/833083#1581c620ecea317f3dad3478cc375f953d024e372ba2cef8333d7a8c42b4a62b</guid>
+      <category>Incident</category>
+      <description>The issue is resolved, the team is monitoring and continuing to work on a fix for the recurrent issue.</description>
+    </item>
+    <item>
+      <title>Calls are degraded on Daily channel</title>
+      <link>https://status.vapi.ai/incident/833083</link>
+      <pubDate>Wed, 25 Feb 2026 16:33:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/833083#fc5b0fab6c02d12414def1de60ce44389a0007be9513e7521604d443a3cc577e</guid>
+      <category>Incident</category>
+      <description>We have identified the root cause. We did see the issue spike up again during investigation. The team is working on a fix and will update here.
+
+In the meantime we suggest customers switch to the Weekly channel for more stability.</description>
+    </item>
+    <item>
+      <title>Calls are degraded on Daily channel</title>
+      <link>https://status.vapi.ai/incident/833083</link>
+      <pubDate>Wed, 25 Feb 2026 15:27:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/833083#f62b1936cb663db3ba58659aaf2c3dc2e5630af799c889069acc801ab575ddcd</guid>
+      <category>Incident</category>
+      <description>We are seeing calls being dropped on the Daily channel with ended reason "call.in-progress.error-vapifault-worker-died". The team is looking into it and will update here.</description>
+    </item>
+    <item>
+      <title>Call degradation on Weekly channel</title>
+      <link>https://status.vapi.ai/incident/832374</link>
+      <pubDate>Tue, 24 Feb 2026 23:21:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/832374#ceb6c6a12d670f0ec7193715c3cb5731871986445cdb889796a4aa6d8b7e0c9b</guid>
+      <category>Incident</category>
+      <description>At ~1:35pm roughly 211 more calls dropped on the Weekly cluster. The team is investigating the matter, but we do not see any on-going degradation of service after 2pm PT.
+
+We will share an incident report update with the full timeline and action items today. Internally, we are working on a more in-depth root cause analysis to understand deeply why our systems failed and what action we will take to make our platform more stable.</description>
+    </item>
+    <item>
+      <title>Call degradation on Weekly channel</title>
+      <link>https://status.vapi.ai/incident/832374</link>
+      <pubDate>Tue, 24 Feb 2026 21:11:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/832374#32b7013c6688aafc7434a3e867c28fb90fe36dffe3745e0f8ab35fc032c4f547</guid>
+      <category>Incident</category>
+      <description>The issue is now resolved.</description>
+    </item>
+    <item>
+      <title>Call degradation on Weekly channel</title>
+      <link>https://status.vapi.ai/incident/832374</link>
+      <pubDate>Tue, 24 Feb 2026 19:45:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/832374#03898747a6fa255fd793c56979fea7bd58014cdce7bc91a2873ae17075801b7a</guid>
+      <category>Incident</category>
+      <description>We identified an issue causing a small number of calls to terminate unexpectedly with worker-not-available or worker-died end reasons. A fix has been deployed and error rates are declining. We are continuing to monitor and will provide another update once fully resolved.</description>
+    </item>
+    <item>
+      <title>Call degradation on Weekly channel</title>
+      <link>https://status.vapi.ai/incident/832374</link>
+      <pubDate>Tue, 24 Feb 2026 19:25:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/832374#64342ce7a0687591132a1a09cd3951b0e61f4c94edde46c2cbfd7d1d52647716</guid>
+      <category>Incident</category>
+      <description>We are seeing calls degraded on Weekly channel. The team is looking into the issue and will share updates here.</description>
+    </item>
+    <item>
+      <title>Authentication Provider Degradation in India</title>
+      <link>https://status.vapi.ai/incident/832329</link>
+      <pubDate>Tue, 24 Feb 2026 18:33:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/832329#f7781f1316a8cfeb7b5ff1c61972a51f46cb2f42f02dde0b8de37353b52a1ae0</guid>
+      <category>Incident</category>
+      <description>Our auth service provider is reporting a degradation specifically in India. Some customers in that region will see issues with login.
+
+See our providers status page for live updates: https://status.supabase.com/incidents/xmgq69x4brfk.</description>
+    </item>
+    <item>
+      <title>Call Degradation in Daily Channel</title>
+      <link>https://status.vapi.ai/incident/831494</link>
+      <pubDate>Mon, 23 Feb 2026 18:09:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/831494#97e4497eef8d8ef214551be8396ecedd837e217acd54f5ffbe4a14fb0d85ff8c</guid>
+      <category>Incident</category>
+      <description>The issue is resolved as of 10:05am PST.
+
+## Incident Report
+
+### Impact
+Between 9:10–10:05 AM, 37,806 calls were dropped due to call worker failures. All Daily users were impacted.
+
+### Timeline (all times in PST)
+9:02 AM — On-call engineer notices pods crashing in the Daily cluster.
+9:11 AM — Black box probe alert fires; acknowledged by on-call engineer, triggering investigation.
+9:27 AM — Issue escalates to the point of impacting all calls on Daily.
+9:30 AM — Status page created to inform users of impact and request they switch to the Weekly channel.
+9:34 AM — Incident team assembles.
+9:37 AM — Rollback to previous deployment is initiated. Due to a large backlog of unprocessed jobs, rollback is delayed waiting for an excessive number of pods to become ready.
+10:05 AM — Forceful cutover is initiated and service is restored.
+
+### What Went Well
+Monitoring detected the issue before it became widespread.
+On-call engineer assembled the incident team quickly.
+
+### Action Items
+Improve emergency rollback procedure to bypass or relax pod readiness checks during incidents, enabling faster cutover.
+Continue ongoing observability improvements to reduce MTTD.
+
+### Note
+A full root cause analysis is underway and available upon request. This report is intended as a summary of the incident timeline, impact, and immediate action items.
+
+Note that this issue impacted the Daily cluster only. Customers desiring increased stability (at the cost of delayed access to features) should switch to the Weekly channel by navigating to Organization Settings on the Vapi Dashboard and changing the Channel to "weekly".</description>
+    </item>
+    <item>
+      <title>Call Degradation in Daily Channel</title>
+      <link>https://status.vapi.ai/incident/831494</link>
+      <pubDate>Mon, 23 Feb 2026 17:52:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/831494#fe035841c0c82a76f7b2307589267f66acb9ed1d9b77e3d32179117275bf7072</guid>
+      <category>Incident</category>
+      <description>We are rolling back to an earlier deployment. We are seeing calls getting picked up, but will update here once resolved.</description>
+    </item>
+    <item>
+      <title>Call Degradation in Daily Channel</title>
+      <link>https://status.vapi.ai/incident/831494</link>
+      <pubDate>Mon, 23 Feb 2026 17:30:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/831494#ce1095467be60eeac14672bc65dc9e49591a4529b17dc6e2fa3d127a6bd34040</guid>
+      <category>Incident</category>
+      <description>We are seeing decreased success rate in calls on the `daily` channel. The team is investigating and we will post updates here. In the meantime, we highly recommend switching to `weekly` channel to mitigate service disruption. </description>
+    </item>
+    <item>
+      <title>Unable to Sign in to the Vapi dashboard via Email Authentication</title>
+      <link>https://status.vapi.ai/incident/824613</link>
+      <pubDate>Fri, 13 Feb 2026 05:05:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/824613#d610e560fa7d0de92472bd39ffebd97bb0b6fea02d19a1babf0e1094b0deb4bf</guid>
+      <category>Incident</category>
+      <description>Email authentication for the Vapi dashboard has been restored. Users should now be able to sign in normally using their email credentials.</description>
+    </item>
+    <item>
+      <title>Unable to Sign in to the Vapi dashboard via Email Authentication</title>
+      <link>https://status.vapi.ai/incident/824613</link>
+      <pubDate>Thu, 12 Feb 2026 20:57:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/824613#f2afb93f781803ba0437713b5d4f2e72bec00afc2c264301ba182ae581740e05</guid>
+      <category>Incident</category>
+      <description>email authentication for the vapi dashboard was experiencing issues. users were unable to sign in using their email credentials.</description>
+    </item>
+    <item>
+      <title>Maintenance: SIP system restart</title>
+      <link>https://status.vapi.ai/maintenance/824340</link>
+      <pubDate>Thu, 12 Feb 2026 19:22:35 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/824340#e504e837a95a52478df28644d57756e643ff39c8a39b4d3302acf3a6ea718780</guid>
+      <category>Maintenance</category>
+      <description>We need to apply patches to our SIP server, which will require a restart. During this time, there may be a brief service disruption. The activity is low risk and should be completed within seconds.</description>
+    </item>
+    <item>
+      <title>Calls not showing up on dashboard</title>
+      <link>https://status.vapi.ai/incident/824251</link>
+      <pubDate>Thu, 12 Feb 2026 18:58:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/824251#6b005e5beb99fe0f74232cb1cae9123e72f6225667eadca42ef189b139fd94c7</guid>
+      <category>Incident</category>
+      <description>The CDC ClickPipes issue was resolved, and we've confirmed calls made during and after the outage are now appearing in the Vapi dashboard. This issue has now been resolved.</description>
+    </item>
+    <item>
+      <title>Calls not showing up on dashboard</title>
+      <link>https://status.vapi.ai/incident/824251</link>
+      <pubDate>Thu, 12 Feb 2026 17:34:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/824251#9f24ef212b23cf6396e2945d3f7ecf4245fa95e2d9d7580dce8d6a7ffe5a960b</guid>
+      <category>Incident</category>
+      <description>We've identified that the issue is related to the ongoing CDC ClickPipes outage (see: https://status.clickhouse.com/incidents/01KH9BE0WY28P4Z48DQ7FPS4DQ).</description>
+    </item>
+    <item>
+      <title>Calls not showing up on dashboard</title>
+      <link>https://status.vapi.ai/incident/824251</link>
+      <pubDate>Thu, 12 Feb 2026 17:08:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/824251#a825500f248fdbef453185ec55566b4ef68a84d5ce8c706761623933b206476b</guid>
+      <category>Incident</category>
+      <description>We are currently observing that recent call logs are not showing up on the Vapi dashboard since around 7:30am PST. Calls are still being placed.
+
+We are actively monitoring the situation and will provide updates as more information becomes available.</description>
+    </item>
+    <item>
+      <title>Elevated Error Rates with Deepgram Transcriber</title>
+      <link>https://status.vapi.ai/incident/823436</link>
+      <pubDate>Wed, 11 Feb 2026 20:30:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/823436#7fa639d7dcc346e24911264e028e1706fcbfdab8baf94ab91ad3c5dd0845982a</guid>
+      <category>Incident</category>
+      <description>Deepgram had an issue while upgrading their system, which caused 429 errors. They've fixed it and are implementing controls to prevent recurrence.
+</description>
+    </item>
+    <item>
+      <title>Elevated Error Rates with Deepgram Transcriber</title>
+      <link>https://status.vapi.ai/incident/823436</link>
+      <pubDate>Wed, 11 Feb 2026 17:10:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/823436#bb0adf31170a7409804b1c6dd76049ee5c8e2abf77351d00e49d2c70e8bb3e4a</guid>
+      <category>Incident</category>
+      <description>We are currently observing elevated error rates affecting calls that use the Deepgram transcriber. Impacted calls may terminate unexpectedly with the ended reason call.in-progress.error-vapifault-deepgram-transcriber-failed.
+
+While we work to resolve this, we recommend switching to an alternative transcriber or configuring a transcriber fallback plan to ensure call continuity. You can set up fallbacks by following the guide here: https://docs.vapi.ai/customization/transcriber-fallback-plan 
+
+We are actively monitoring the situation and will provide updates as more information becomes available.</description>
+    </item>
+    <item>
+      <title>Api, call execution degradation</title>
+      <link>https://status.vapi.ai/incident/818473</link>
+      <pubDate>Wed, 04 Feb 2026 14:32:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/818473#b540297f3bc5d5acd82f36307eb99e7678f8201473b4cc9eda2e225e9d8e3227</guid>
+      <category>Incident</category>
+      <description>Errors have decreased and the incident has been resolved. We'll post an RCA soon.
+
+</description>
+    </item>
+    <item>
+      <title>Api, call execution degradation</title>
+      <link>https://status.vapi.ai/incident/818473</link>
+      <pubDate>Wed, 04 Feb 2026 14:24:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/818473#3c3c4863a153751720f5351c4a5f28e371de18867f694ccc9cb589d036f3387e</guid>
+      <category>Incident</category>
+      <description>We've identified the issue and have deployed a potential fix - we will continue to monitor the situation. </description>
+    </item>
+    <item>
+      <title>Api, call execution degradation</title>
+      <link>https://status.vapi.ai/incident/818473</link>
+      <pubDate>Wed, 04 Feb 2026 14:14:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/818473#8b1f594e61d0bea32dd6a0604036bc2f65c472dd45b707e248c36ebdc255a6d2</guid>
+      <category>Incident</category>
+      <description>The incident has been mitigated. Between 5:00 AM PT and 6:12 AM PT, API and call execution experienced reduced success rates. Services has been fully restored and is operating normally.</description>
+    </item>
+    <item>
+      <title>Google Gemini Rate Limiting</title>
+      <link>https://status.vapi.ai/incident/809181</link>
+      <pubDate>Tue, 03 Feb 2026 21:16:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/809181#12f78c93de9b6020aff066baa19f8ddee40fe3d849600f8545597b73246ea05b</guid>
+      <category>Incident</category>
+      <description>Google is still resolving capacity issues on their end, but we have put a mitigation in place to resolve this for gemini-2.5-flash. Please switch to this model when using Google, if you require another model reach out to support@vapi.ai.
+
+We are continuing to monitor and work with the Google team to resolve.</description>
+    </item>
+    <item>
+      <title>Google Gemini Rate Limiting</title>
+      <link>https://status.vapi.ai/incident/809181</link>
+      <pubDate>Tue, 27 Jan 2026 17:47:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/809181#a49460a22f262ced6d88d0ba3af864e1f72792199668c7cab2637d912cfadec3</guid>
+      <category>Incident</category>
+      <description>We are still seeing rate limiting issues for Google LLMs and are looking into another fix we can implement to mitigate it. 
+
+This is likely caused by regional exhaustion of Google Vertex AI resources rather than us hitting an org-level quota.</description>
+    </item>
+    <item>
+      <title>Google Gemini Rate Limiting</title>
+      <link>https://status.vapi.ai/incident/809181</link>
+      <pubDate>Tue, 27 Jan 2026 06:50:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/809181#f56b91a3bbf655bc3dcdafa59098dbe23eff71cad9b7bcae66dde1ff8b231f06</guid>
+      <category>Incident</category>
+      <description>Google has confirmed the underlying issue is resolved. We’re continuing to deploy a mitigation to ensure this doesn’t impact customers if it recurs.</description>
+    </item>
+    <item>
+      <title>Google Gemini Rate Limiting</title>
+      <link>https://status.vapi.ai/incident/809181</link>
+      <pubDate>Mon, 26 Jan 2026 04:03:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/809181#e4dba0203117f84a3cf043fa34b68ca373b2cc19d6ad58c5057f03725702c653</guid>
+      <category>Incident</category>
+      <description>Google has not resolved the issue on their side, we have requested an updated timeline. 
+
+Our team is working on implementing fallbacks for the services impacted by the Google degradation (the query tool).</description>
+    </item>
+    <item>
+      <title>Google Gemini Rate Limiting</title>
+      <link>https://status.vapi.ai/incident/809181</link>
+      <pubDate>Thu, 22 Jan 2026 18:47:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/809181#c6f70425a0d63b0535a64d8ba015ccedea5015a9d398758a4ddcb0dcb35deafd</guid>
+      <category>Incident</category>
+      <description>Google is again reporting issues with the Vertex AI API that is impacting both our default and fallback Gemini clients.
+
+Consider using a different model. We are working with the provider to resolve this and will update here.</description>
+    </item>
+    <item>
+      <title>Google Gemini Rate Limiting</title>
+      <link>https://status.vapi.ai/incident/809181</link>
+      <pubDate>Thu, 22 Jan 2026 07:30:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/809181#0ab115a6ddec9474d52234f1f55057facd32a1b0034cd966ea5405af7c1c9387</guid>
+      <category>Incident</category>
+      <description>We have confirmed with the provider that the issue is from their end. We have implemented fallbacks that should help mitigate this issue going forward.
+
+We apologize for any disruption to service as a result of this issue.</description>
+    </item>
+    <item>
+      <title>Google Gemini Rate Limiting</title>
+      <link>https://status.vapi.ai/incident/809181</link>
+      <pubDate>Wed, 21 Jan 2026 20:11:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/809181#4d91b03aa8a17973b8554f71730eeb8e70d4efcbfde3e739434cc8d072180fae</guid>
+      <category>Incident</category>
+      <description>**Google/Gemini Service Degradation - Immediate Workarounds**
+We're experiencing intermittent rate limiting from Google affecting several Vapi features. We're working with Google to resolve this. In the meantime, there are immediate workarounds for affected features. 
+
+- Model (LLM): Gemini models may intermittently fail.
+    - Workaround one - switch to a different model (e.g., GPT 4.1)
+    - Workaround two - [obtain an API key](https://aistudio.google.com/app/api-keys) from Google and use that.
+        - Vapi Dashboard → Settings → Integrations → Custom Credentials
+- Transcriber (STT): Gemini-based transcription may intermittently fail
+    - Two workarounds - switch your primary or fallback transcriber to a different model (e.g., Deepgram Nova 3) or obtain an API key from Google and use that.
+- [Voicemail detection](https://docs.vapi.ai/tools/voicemail-tool): may intermittently fail if "provider" is set to "google"
+    - Two workarounds. Switch to "openai" or "twilio" provider (if using Twilio telephony) or turn off **`voicemailDetection`**  and switch to Voicemail tool
+- [Query tool](https://docs.vapi.ai/knowledge-base/using-query-tool): may intermittently fail since it relies on Google infrastructure
+    - Two workarounds (both high effort) - switch to a custom knowledgebase or use a function tool to replicate behavior
+- [Structured Outputs](https://docs.vapi.ai/assistants/structured-outputs-quickstart): Gemini models may intermittently fail.
+    - Workaround - switch to a different model provider: OpenAI or Anthropic
+- [Speech-to-Speech](https://docs.vapi.ai/openai-realtime): Gemini models may intermittently fail.
+    - Workaround - switch to a different model provider: OpenAI</description>
+    </item>
+    <item>
+      <title>Google Gemini Rate Limiting</title>
+      <link>https://status.vapi.ai/incident/809181</link>
+      <pubDate>Wed, 21 Jan 2026 19:40:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/809181#3cc62811313738e4c232d188067840f60dbe95718a79ad883d513cd9a108bb7a</guid>
+      <category>Incident</category>
+      <description>We are hitting rate limits again with our Google Gemini models. We are working with the vendor to resolve this issue. Please consider using another model at this time or implementing fallbacks.</description>
+    </item>
+    <item>
+      <title>Google Gemini Rate Limiting Issue</title>
+      <link>https://status.vapi.ai/incident/808504</link>
+      <pubDate>Wed, 21 Jan 2026 04:19:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/808504#75f67e2148c2e61275d84c417c68db265844ed49fe6a79d0ae4c990a7e8f09be</guid>
+      <category>Incident</category>
+      <description>We have pushed a fix and this issue should be resolved. The team will continue to monitor.</description>
+    </item>
+    <item>
+      <title>Google Gemini Rate Limiting Issue</title>
+      <link>https://status.vapi.ai/incident/808504</link>
+      <pubDate>Wed, 21 Jan 2026 00:10:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/808504#7a5636e503b13bbef73b0ddc0e4aed883be3e11da83e219799be66fecd890fa1</guid>
+      <category>Incident</category>
+      <description>We have identified the issue and are pushing a fix now.</description>
+    </item>
+    <item>
+      <title>Google Gemini Rate Limiting Issue</title>
+      <link>https://status.vapi.ai/incident/808504</link>
+      <pubDate>Tue, 20 Jan 2026 23:32:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/808504#3b1f595d7a771fc6f462153cbd69dd7ce082e92bbcb7d3f97b1c8b64123872b1</guid>
+      <category>Incident</category>
+      <description>We are seeing an issue with our own Google Vertex AI API key resulting in increased 429 errors using Gemini models. Please consider using a different model provider if you are experiencing this issue.
+
+Customers bringing their own key should not be impacted.
+
+The team is looking into this issue and will update here.</description>
+    </item>
+    <item>
+      <title>Maintenance: SIP maintenance</title>
+      <link>https://status.vapi.ai/maintenance/808464</link>
+      <pubDate>Tue, 20 Jan 2026 21:55:31 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/808464#b89e04c02c96bfca6c6dd9366d795d1e4d46df99a4d2cba0146a9ed78d279d75</guid>
+      <category>Maintenance</category>
+      <description>We're doing an upgrade to our SIP database which might cause a few minutes of downtime and instability. </description>
+    </item>
+    <item>
+      <title>Calls not connecting in daily channel</title>
+      <link>https://status.vapi.ai/incident/807551</link>
+      <pubDate>Mon, 19 Jan 2026 18:38:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/807551#7874b714454fa58ca8805ea3c6d28f2ca4b1f416d93518371f31284e7298a8f0</guid>
+      <category>Incident</category>
+      <description>We experienced a temporary increase in call connection errors caused by worker unavailability. The issue has since been resolved. Impact was limited to the daily channel; the weekly channel was not affected.</description>
+    </item>
+    <item>
+      <title>Maintenance: SIP Database Maintenance</title>
+      <link>https://status.vapi.ai/maintenance/804803</link>
+      <pubDate>Thu, 15 Jan 2026 04:00:21 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/804803#f37a3fb6c91786505808a727a6af6d0d3d53319cd72022d27bddbdda20f46de9</guid>
+      <category>Maintenance</category>
+      <description>We need to perform resizing of our existing SIP database. The operation should finish within a few seconds. </description>
+    </item>
+    <item>
+      <title>Call Degradation in Daily Channel</title>
+      <link>https://status.vapi.ai/incident/800838</link>
+      <pubDate>Thu, 08 Jan 2026 18:11:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/800838#ee9a1114381505acef8f72c9491239deebdb1b108ce7b3dcef15e39d5f8ef3ea</guid>
+      <category>Incident</category>
+      <description>We are seeing decreased success rate in calls on the `daily` channel. The team is investigating and we will post updates here.</description>
+    </item>
+    <item>
+      <title>End of call reports + transcript showing duplicate messages</title>
+      <link>https://status.vapi.ai/incident/793239</link>
+      <pubDate>Wed, 24 Dec 2025 07:21:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/793239#5e9c6f6c2cf967e727a2bb2228d621fe5379a774a8d73074c53d84574f0e2261</guid>
+      <category>Incident</category>
+      <description>We have reverted the change and tested to confirm the issue is resolved.</description>
+    </item>
+    <item>
+      <title>Maintenance: Database maintenance </title>
+      <link>https://status.vapi.ai/maintenance/793418</link>
+      <pubDate>Wed, 24 Dec 2025 06:29:15 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/793418#68169ebf084085e1a3d79fd96cf850a6eec1b13fd255ce1bf65b8403e410ee6f</guid>
+      <category>Maintenance</category>
+      <description>A continuation of yesterday's maintenance will be completed tonight. We anticipate minimal disruption to services. 
+
+We appreciate your patience and apologize for any inconvenience this may cause.</description>
+    </item>
+    <item>
+      <title>Calls failing due to worker unavailability</title>
+      <link>https://status.vapi.ai/incident/788461</link>
+      <pubDate>Tue, 23 Dec 2025 23:18:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/788461#0a4b9dc0b211fdefd3f877d85a547586a1fdd71ab55b4b5b0fd2da9602b92146</guid>
+      <category>Incident</category>
+      <description># [IR] Dec 17th — Call Worker Degradation — Object Storage Upload Errors
+
+## Summary
+On December 17, 2025, at 10:25 AM PST, we observed degradation in our Call Worker service. The issue was caused by Call Workers becoming blocked while uploading call recordings to a downstream object storage provider facing an outage of their own. The incident was fully resolved by 11:02 AM PST, once the downstream provider recovered and Call Workers returned to normal operation.
+
+## Timeline (PST)
+- **10:25 AM** — Initial call degradation alert triggered  
+- **10:40 AM** — Investigation began  
+- **10:45 AM** — Downstream provider partially recovered  
+- **10:52 AM** — Downstream provider fully recovered  
+- **11:02 AM** — Call Workers fully recovered  
+
+## Root Cause
+A downstream object storage provider experienced a partial outage, during which call recording upload requests began failing or stalling. Requests either timed out or returned 502 errors.
+
+These stalled upload operations increased processing time within Call Workers, leading to worker exhaustion. Due to this resource saturation, the system was unable to scale quickly enough to accept new incoming calls, resulting in dropped or unaccepted calls during the affected period.
+
+## Impact
+For approximately 30 minutes, a subset of calls could not be accepted or were dropped due to unavailable or terminated Call Workers. There was no data loss.
+
+**Calls not picked up (worker not available):**
+- Daily organizations: 15,555  
+- Weekly organizations: 478  
+
+## What Went Well
+- Autoscaling eventually resolved the issue of workers being unavailable without the need for manual intervention.
+
+## What Went Poorly
+- No fallback mechanism was in place for object storage uploads.
+- Monitoring did not quickly identify the downstream dependency as the root cause.
+
+## Remediation
+- [ ] Make the object storage upload process asynchronous  
+- [ ] Add more aggressive timeouts and retries for upload operations  
+- [x] Investigate procedures for manually scaling capacity during incidents  
+- [x] Add monitoring for object storage upload errors  
+
+---
+
+If working on realtime distributed systems excites you, consider applying:  
+https://jobs.ashbyhq.com/vapi/295f5269-1bb5-4740-81fa-9716adc32ad5
+</description>
+    </item>
+    <item>
+      <title>End of call reports + transcript showing duplicate messages</title>
+      <link>https://status.vapi.ai/incident/793239</link>
+      <pubDate>Tue, 23 Dec 2025 22:48:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/793239#0e83ad86a09ed5a329fbd6272b1d535944f171cd3bcc9da2e4091dbf0a914cc3</guid>
+      <category>Incident</category>
+      <description>A code bug is causing the final call transcripts to show duplicate assistant messages when using `modelOutputInMessagesEnabled`. Calls are working fine, but post-call processing may be impacted. This issue is impacting both `weekly` and `daily` channels.
+
+The team is working to revert the offending change. We will update here. </description>
+    </item>
+    <item>
+      <title>Calls failing due to worker unavailability</title>
+      <link>https://status.vapi.ai/incident/788461</link>
+      <pubDate>Wed, 17 Dec 2025 19:20:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/788461#02640499745c8598a79dd4b66123a322fbc0743e7f45671f20152b667d620ad3</guid>
+      <category>Incident</category>
+      <description>The system has recovered. The team is monitoring, and we will update here with a full RCA.</description>
+    </item>
+    <item>
+      <title>Calls failing due to worker unavailability</title>
+      <link>https://status.vapi.ai/incident/788461</link>
+      <pubDate>Wed, 17 Dec 2025 19:06:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/788461#2100d0cb083c6e6f46bba4db4115172a2d27870c5549e9fe4bdad6c617bba7ac</guid>
+      <category>Incident</category>
+      <description>We have detected an issue with our call workers not scaling to meet demand. The team is investigating and will update here.</description>
+    </item>
+    <item>
+      <title>Maintenance: Database maintenance </title>
+      <link>https://status.vapi.ai/maintenance/787241</link>
+      <pubDate>Tue, 16 Dec 2025 03:31:25 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/787241#58c1607f140fdfe1d16ef4f170e24bc30bfcfa19ef4da4817a854062e7bbd32c</guid>
+      <category>Maintenance</category>
+      <description>We'll be adjusting our database configuration during a brief maintenance window of up to 1 hour. During this period, API requests may experience intermittent delays or errors, but we do not anticipate any significant disruption.
+
+We appreciate your patience and apologize for any inconvenience this may cause.</description>
+    </item>
+    <item>
+      <title>Maintenance: SIP maintenance</title>
+      <link>https://status.vapi.ai/maintenance/785619</link>
+      <pubDate>Sat, 13 Dec 2025 04:00:59 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/785619#950be9e9582774a146b457bc887c6e5ef7f974718c6d820ba35a89dbb09b6ba7</guid>
+      <category>Maintenance</category>
+      <description>We need to perform an upgrade on our SIP servers, which needs a restart of some critical services. 
+We expect a few seconds of downtime, and the service should recover itself shortly.</description>
+    </item>
+    <item>
+      <title>Deepgram Transcriber Degraded</title>
+      <link>https://status.vapi.ai/incident/783967</link>
+      <pubDate>Wed, 10 Dec 2025 20:18:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/783967#c347d694f633728ac11ff9f2fa110153e6de611cc3f8e5e9d5a75b352597f93d</guid>
+      <category>Incident</category>
+      <description>Deepgram has resolved the issue, and we're seeing calls go through fine. We will be closely monitoring the issue. We highly recommend setting up transcriber fallbacks to avoid call failures in situations like this. 
+https://docs.vapi.ai/api-reference/assistants/create#request.body.transcriber.DeepgramTranscriber.fallbackPlan</description>
+    </item>
+    <item>
+      <title>Deepgram Transcriber Degraded</title>
+      <link>https://status.vapi.ai/incident/783967</link>
+      <pubDate>Wed, 10 Dec 2025 19:49:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/783967#6cb2da61667740cc1c5331727956aa17e51e09a85dbcfee412d75ed155db291b</guid>
+      <category>Incident</category>
+      <description>We're noticing some calls failing with issues with the deepgram transcriber, we're actively monitoring it. In the meantime, we recommend switching to a different transcriber and setting up Transcriber Fallbacks to prevent calls from failing.</description>
+    </item>
+    <item>
+      <title>ElevenLabs Transcriber Performance Degraded</title>
+      <link>https://status.vapi.ai/incident/781023</link>
+      <pubDate>Sat, 06 Dec 2025 00:26:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/781023#90b3f4c1552bb50d05ffa7d4f155a27c6e0b404fdb43542ebc93147bd798f3c2</guid>
+      <category>Incident</category>
+      <description>The issue has been resolved and we will continue monitoring the situation. We recommend setting up transcriber fallbacks to avoid any failed calls in such situations - https://docs.vapi.ai/api-reference/assistants/create#request.body.transcriber.ElevenLabsTranscriber.fallbackPlan</description>
+    </item>
+    <item>
+      <title>ElevenLabs Transcriber Performance Degraded</title>
+      <link>https://status.vapi.ai/incident/781023</link>
+      <pubDate>Fri, 05 Dec 2025 23:33:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/781023#79708a3ace5df717a1ab01a6c9ccf18fc1fe5503df3eae2dfc96abd520ab1b27</guid>
+      <category>Incident</category>
+      <description>Transcriber performance for ElevenLabs STT is currently degraded with some requests being dropped. While we monitor the situation, we recommend switching to another transcriber or setting up fallbacks - https://docs.vapi.ai/api-reference/assistants/create#request.body.transcriber.ElevenLabsTranscriber.fallbackPlan
+
+Status Report from ElevenLabs - https://status.elevenlabs.io/incidents/01KBRDKA2CKANKJK182W1WXFXH</description>
+    </item>
+    <item>
+      <title>Dashboard unavailable due to Cloudflare Issues</title>
+      <link>https://status.vapi.ai/incident/780568</link>
+      <pubDate>Fri, 05 Dec 2025 09:27:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/780568#e0c4f05bcfbed0b2fd849049011160bc6292ee039a78edc42f3f00962bdc95b7</guid>
+      <category>Incident</category>
+      <description>The Vapi dashboard is now available after cloudflare have applied the fix. We will continue to monitor to ensure no further disruptions. </description>
+    </item>
+    <item>
+      <title>Maintenance: Authentication system maintenance</title>
+      <link>https://status.vapi.ai/maintenance/777732</link>
+      <pubDate>Mon, 01 Dec 2025 22:29:38 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/777732#0d2342d1a9116b9e808b6f7bdd07714a94e6f24d74c3307321ea5628bae65c2d</guid>
+      <category>Maintenance</category>
+      <description>We’re performing a planned resize of our authentication database, which will require a brief restart of the instance.
+During this window, users may experience elevated errors when signing in or signing up.
+Call functionality will not be affected.
+The process is typically completed within one minute.</description>
+    </item>
+    <item>
+      <title>Maintenance: SIP Maintenance</title>
+      <link>https://status.vapi.ai/maintenance/774887</link>
+      <pubDate>Wed, 26 Nov 2025 23:18:54 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/774887#669daaff986c33779c3fc739c30d1526b0d42e81eb54773b69dc29dc918310a0</guid>
+      <category>Maintenance</category>
+      <description>We will be performing critical maintenance on our SIP infrastructure. Calls may be impacted during this period. 
+
+We appreciate your patience and apologize for any inconvenience this may cause.</description>
+    </item>
+    <item>
+      <title>Maintenance: SIP Database Maintenance</title>
+      <link>https://status.vapi.ai/maintenance/761704</link>
+      <pubDate>Mon, 10 Nov 2025 19:40:57 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/761704#7527734f28dd220faea37abcf7b450367acf5c6e2adf49b91fcda6c7d60048c8</guid>
+      <category>Maintenance</category>
+      <description>We are seeing moderately higher latency on our SIP database (separate from our core application databases) resulting in slightly higher SIP response times (1-1.5 seconds).
+
+We will be performing critical maintenance on our database to remediate this issue.</description>
+    </item>
+    <item>
+      <title>Maintenance: SIP maintenance </title>
+      <link>https://status.vapi.ai/maintenance/760148</link>
+      <pubDate>Fri, 07 Nov 2025 22:27:05 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/760148#aa086f281b403d1940f5562d211a5fccdbdfdf69f8431bddc5372a3dcbde2c0c</guid>
+      <category>Maintenance</category>
+      <description>We will be performing critical maintenance on our SIP infrastructure. Calls may be impacted during this period. 
+
+We appreciate your patience and apologize for any inconvenience this may cause.</description>
+    </item>
+    <item>
+      <title>Maintenance: Database maintenance </title>
+      <link>https://status.vapi.ai/maintenance/758083</link>
+      <pubDate>Tue, 04 Nov 2025 23:15:41 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/758083#2dd04ed2ee25c5495a0603df45f6762459b2f5164e707a5365c9bb129f437124</guid>
+      <category>Maintenance</category>
+      <description>We'll be adjusting our database configuration during a brief maintenance window of up to 1 hour. During this period, API requests may experience intermittent delays or errors, but we do not anticipate any significant disruption.
+
+We appreciate your patience and apologize for any inconvenience this may cause.</description>
+    </item>
+    <item>
+      <title>Maintenance: Database maintenance </title>
+      <link>https://status.vapi.ai/maintenance/758079</link>
+      <pubDate>Tue, 04 Nov 2025 23:13:23 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/758079#75c52968d56747f09ec59a3db5ad51cb68e17014a08b6f89cf95a009c16952d1</guid>
+      <category>Maintenance</category>
+      <description>We'll be adjusting our database configuration during a brief maintenance window of up to 1 hour. During this period, API requests may experience intermittent delays or errors, but we do not anticipate any significant disruption.
+
+We appreciate your patience and apologize for any inconvenience this may cause.</description>
+    </item>
+    <item>
+      <title>Maintenance: SIP Maintenance</title>
+      <link>https://status.vapi.ai/maintenance/754139</link>
+      <pubDate>Wed, 29 Oct 2025 23:02:51 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/754139#c3100f531b02603b292233515abb5be40aceb3af5c2b2c7068beebc1f13ff18a</guid>
+      <category>Maintenance</category>
+      <description>We are making a minor change to our SIP service (hosted at sip.vapi.ai) that may result in some downtime. </description>
+    </item>
+    <item>
+      <title>Maintenance: SIP Maintenance</title>
+      <link>https://status.vapi.ai/maintenance/663861</link>
+      <pubDate>Thu, 31 Jul 2025 02:35:30 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/663861#5697f4c2940e8c72c0d965677d0216f2a72acf40c0ce60c4b2e1020192ee80d3</guid>
+      <category>Maintenance</category>
+      <description>We need to perform an upgrade on our SIP service. Therefore, the SIP service needs a restart. It should be a quick restart but there might be some disruption with ongoing calls and incoming calls, during the restart.</description>
+    </item>
+    <item>
+      <title>Maintenance: Regular DB maintenance</title>
+      <link>https://status.vapi.ai/maintenance/624009</link>
+      <pubDate>Tue, 22 Jul 2025 18:00:00 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/624009#eb41bf4e5e77d9bfbd65dcbe678361cdc5ff37b6dc20e49b28cccc01ea23b8d0</guid>
+      <category>Maintenance</category>
+      <description>We are rolling out an important update to our database. Call logs and analytics may be impacted during this period.
+
+We appreciate your patience and apologize for any inconvenience this may cause.</description>
+    </item>
+    <item>
+      <title>Maintenance: Regular DB maintenance</title>
+      <link>https://status.vapi.ai/maintenance/622184</link>
+      <pubDate>Sat, 19 Jul 2025 00:35:22 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/622184#74d93083c5f77cec4eef968d9f9c3bc409c5bd1e9ecd04394e91a8967001c3f5</guid>
+      <category>Maintenance</category>
+      <description>We are rolling out security patches and important updates to our database. This would need a restart of all our database servers. 
+Restarts are quick but there could be a few seconds of intermittent unavailability.</description>
+    </item>
+    <item>
+      <title>Maintenance: SIP Infrastructure Changes</title>
+      <link>https://status.vapi.ai/maintenance/613441</link>
+      <pubDate>Thu, 03 Jul 2025 04:57:58 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/613441#8b5cc5c1982e9e57cf3e8202763f311475977f3bc05a172141bb08056b7a3a6a</guid>
+      <category>Maintenance</category>
+      <description>We will be making changes to our SIP infrastructure which may result in some service degradation, especially for SIP REFER's and outbound calls. </description>
+    </item>
+    <item>
+      <title>Maintenance: Database maintenance</title>
+      <link>https://status.vapi.ai/maintenance/611086</link>
+      <pubDate>Sun, 29 Jun 2025 03:30:20 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/611086#03333700f42d153bfcba7952eeaad980e3c1632d500477d32abb0f4eeffecccc</guid>
+      <category>Maintenance</category>
+      <description>We'll be adjusting our database configuration during a brief maintenance window of up to 30 minutes. During this period, API requests may experience intermittent delays or errors, but we do not anticipate any significant disruption.
+
+We appreciate your patience and apologize for any inconvenience this may cause. </description>
+    </item>
+    <item>
+      <title>Maintenance: Version upgrade for dedicated SIP instances </title>
+      <link>https://status.vapi.ai/maintenance/608654</link>
+      <pubDate>Wed, 25 Jun 2025 02:34:23 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/608654#9aa7c3a2e879c94e3093c5aa25471321b9364499d1e9dea34bcb5d43e5cfdcc6</guid>
+      <category>Maintenance</category>
+      <description>We are scheduling a 4 hour maintenance window 2025-06-28 1-5pm PT to upgrade the version of our dedicated SIP infrastructure. There may be some disruption to calls during this time.</description>
+    </item>
+    <item>
+      <title>Maintenance: Weekly cluster call export maintenance</title>
+      <link>https://status.vapi.ai/maintenance/608457</link>
+      <pubDate>Tue, 24 Jun 2025 15:00:02 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/608457#0155401031b04db193306c40a08d981b98fd6b12ebabb4c653323b10627ccd3e</guid>
+      <category>Maintenance</category>
+      <description>We’re currently performing maintenance on our analytics database. As a result, call exports from the weekly cluster may return blank CSV files until maintenance is complete. 
+
+If you run into this issue and need to export data, please temporarily switch your organization’s export setting to daily, then revert back to weekly after exporting.
+
+Maintenance will finish by 6 PM PST today. Thank you for your patience.</description>
+    </item>
+    <item>
+      <title>Maintenance: Weekly cluster maintenance</title>
+      <link>https://status.vapi.ai/maintenance/596392</link>
+      <pubDate>Tue, 03 Jun 2025 17:00:28 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/596392#0c66983c18defde7bd44b75d04e02ceabec1ec38246a87f2eb8596085f530960</guid>
+      <category>Maintenance</category>
+      <description>Weekly cluster is undergoing additional maintenance</description>
+    </item>
+    <item>
+      <title>Maintenance: Weekly cluster maintenance</title>
+      <link>https://status.vapi.ai/maintenance/595722</link>
+      <pubDate>Mon, 02 Jun 2025 18:00:25 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/595722#6520f342d0eba9ca95157cc8585b66e698d1f702a42d61ec428eebe6a148925e</guid>
+      <category>Maintenance</category>
+      <description>Weekly cluster is under additional monitoring and maintenance after update. We should have things resolved by tonight</description>
+    </item>
+    <item>
+      <title>Maintenance: Upgrading Weekly Cluster</title>
+      <link>https://status.vapi.ai/maintenance/556160</link>
+      <pubDate>Sun, 04 May 2025 03:20:35 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/556160#176bdbb88e6591794fa4861760d76610dcdb2b2b3adb38b61804bb7294ef3408</guid>
+      <category>Maintenance</category>
+      <description>Regular upgrades to cluster</description>
+    </item>
+    <item>
+      <title>Maintenance: Auth DB restart</title>
+      <link>https://status.vapi.ai/maintenance/551227</link>
+      <pubDate>Fri, 25 Apr 2025 03:16:59 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/551227#c526351a07064d68239f280afc8ee5accf115b082c606cd096653802db39fb5c</guid>
+      <category>Maintenance</category>
+      <description>We will be performing a brief restart of our authentication database to accommodate increased scale. This maintenance is expected to complete within one minute. We appreciate your patience and apologize for any inconvenience.
+Should only impact the signin &amp; signup on dashboard. Calls and other APIs will not be impacted by it.</description>
+    </item>
+    <item>
+      <title>Maintenance: Upgrading Weekly API</title>
+      <link>https://status.vapi.ai/maintenance/545796</link>
+      <pubDate>Tue, 15 Apr 2025 18:21:20 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/545796#cbdf444c8b6a535dc24ab371e6773fbd6a3fa000638912c819eb257d4594eed5</guid>
+      <category>Maintenance</category>
+      <description>Applying performance optimizations</description>
+    </item>
+    <item>
+      <title>Maintenance: Upgrade SIP infrastructure</title>
+      <link>https://status.vapi.ai/maintenance/534587</link>
+      <pubDate>Wed, 26 Mar 2025 01:44:35 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/534587#c50935ef7ac59cbe45242e553e39517657dfe860a347fe46bced63ac3a10d633</guid>
+      <category>Maintenance</category>
+      <description>We are rolling out some major infra changes to our SIP infrastructure that should make it more stable.
+There should not be any downtime but could be some cases of call drops that rely on SIP during the infrastructure rollout.</description>
+    </item>
+    <item>
+      <title>Maintenance: NeonDB Scheduled Maintenance: DB endpoing restart</title>
+      <link>https://status.vapi.ai/maintenance/526599</link>
+      <pubDate>Tue, 11 Mar 2025 19:58:24 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/526599#c946fab547dc33ed64fc8868cb81d6bf91fe1f61a670ccfb70e5d29e4d4a3e81</guid>
+      <category>Maintenance</category>
+      <description>Neon is doing scheduled maintenance in our region `us-west-2`: https://neonstatus.com/aws-us-west-oregon/incidents/01JP2WGPKFV2GDV4QSKV8F8NGP.
+
+This will require a restart of our endpoint that will result in seconds of downtime. We have marked off the block of time in which this restart will likely happen.</description>
+    </item>
+    <item>
+      <title>Maintenance: Kubernetes cluster upgrades</title>
+      <link>https://status.vapi.ai/maintenance/524956</link>
+      <pubDate>Sat, 08 Mar 2025 19:00:38 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/524956#e2133bb71f134d0fc1dc4d970e2308a5d4740a52904e50666499c8d0bc628ddc</guid>
+      <category>Maintenance</category>
+      <description>We're rolling out Kubernetes cluster upgrades for security and reliability.</description>
+    </item>
+    <item>
+      <title>Maintenance: SIP cluster scaling</title>
+      <link>https://status.vapi.ai/maintenance/504040</link>
+      <pubDate>Wed, 29 Jan 2025 21:49:46 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/504040#59b705687ec6a76e027862f48cdf0c749d83073bd5d9574279813ba4e7b5670c</guid>
+      <category>Maintenance</category>
+      <description>We will be retrying our deployment of SIP cluster to make sure we are ready for upcoming scale. There might be some minor disruptions wrt connecting SIP calls, but we will be closely monitoring the situation and complete the migration swiftly.</description>
+    </item>
+    <item>
+      <title>Maintenance: DB resizing, 5m of downtime expected.</title>
+      <link>https://status.vapi.ai/maintenance/451110</link>
+      <pubDate>Sat, 26 Oct 2024 21:45:29 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/451110#389ad992f9fae1583f3b19f5ab3ee645be8274364c15d70ffd0a218159d8974c</guid>
+      <category>Maintenance</category>
+      <description>We need to resize the DB to handle increased load. 5m of downtime is expected.</description>
+    </item>
+    <item>
+      <title>Maintenance: DB partitioning Saturday afternoon.</title>
+      <link>https://status.vapi.ai/maintenance/442681</link>
+      <pubDate>Fri, 11 Oct 2024 01:04:56 -0000</pubDate>
+      <guid isPermaLink="false">https://status.vapi.ai/incident/442681#dd5bebb37dd51e8e4d03ac3c3c73c1464df20556737b37107cc145c04bb87c62</guid>
+      <category>Maintenance</category>
+      <description>We're partitioning our biggest table call. We expect this to be zero downtime but want to be communicative.</description>
+    </item>
+  </channel>
+</rss>

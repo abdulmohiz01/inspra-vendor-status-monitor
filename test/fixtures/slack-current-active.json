@@ -1,0 +1,25 @@
+{
+  "status": "active",
+  "date_created": "2026-10-22T11:50:50-07:00",
+  "date_updated": "2026-10-22T11:50:50-07:00",
+  "active_incidents": [
+    {
+      "id": 1582,
+      "title": "Slack Real-Time Connection Disruption",
+      "type": "incident",
+      "status": "active",
+      "url": "https://slack-status.com/2026-10/58a30c7fc8aa3e80",
+      "date_created": "2026-10-22T11:50:50-07:00",
+      "date_updated": "2026-10-22T11:50:50-07:00",
+      "notes": [
+        {
+          "body": "<p>Some Slack customers experienced disrupted real-time connections, delayed message delivery, and errors loading conversation history on October 22, 2026, starting at 16:08 UTC. A large number of active connections closed at once and then reconnected, which briefly strained the services customers rely on to send and read messages. By 16:26 UTC, connections had reconnected and service had returned to normal. We apologize for how this incident affected you and your business. We will undertake a full investigation of the incident, establishing the technical trigger, the underlying cause, and preventive action to avoid a repeat in the future.</p>",
+          "date_created": "2026-10-22T11:50:50-07:00"
+        }
+      ],
+      "services": [
+        "Messaging"
+      ]
+    }
+  ]
+}

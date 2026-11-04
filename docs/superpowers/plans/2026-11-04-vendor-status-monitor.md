@@ -1,0 +1,265 @@
+# Vendor Status Monitor Implementation Plan
+
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+
+**Goal:** One local Node service that polls every third-party platform Inspra depends on, stores state in SQLite, alerts Slack/email on any state change, and serves a minimal dashboard.
+
+**Architecture:** Pure parsers turn each vendor's real feed into a `CheckOutcome`; a `Check` interface wraps fetch+parse; a `Poller` runs all checks in isolation on an interval, records results in a `Store`, feeds a pure `decideAlerts` state machine, and hands events to a `Notifier`. A Hono app renders the dashboard and JSON from the store.
+
+**Tech Stack:** Node 24, TypeScript (ESM, `"type": "module"`, NodeNext), pnpm 10.33.0, Hono + @hono/node-server, better-sqlite3, zod, yaml, fast-xml-parser, nodemailer, vitest, tsx.
+
+**Spec:** `docs/superpowers/specs/2026-11-04-vendor-status-monitor-design.md`
+
+## Global Constraints
+
+- Status values, exactly: `operational | degraded | partial_outage | major_outage | maintenance | unknown`.
+- Fetch failures → `unknown` with `error` set; never an outage. Fetch failures never resolve stored incidents.
+- No real Slack posts or emails in tests or local runs. All network in tests is injected/mocked; parsers are tested against `test/fixtures/*` (see `test/fixtures/README.md`).
+- Env defaults: `PORT=8080`, `HOST=0.0.0.0`, `APP_URL=https://status.automateaccelerator.com`, `POLL_INTERVAL_SECONDS=180` (60–600), `FETCH_TIMEOUT_MS=10000` (1000–60000), `ALERT_REMINDER_MINUTES=60` (5–1440), `UNKNOWN_ALERT_THRESHOLD=3` (1–20), `HISTORY_RETENTION_DAYS=30` (1–365), `DATA_DIR=./data`, `VENDORS_FILE=./vendors.yaml`, optional `SLACK_WEBHOOK_URL`, optional `SMTP_HOST`, `SMTP_PORT` (587), `SMTP_SECURE` (false), `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM`, `SMTP_TO` (comma list). Empty-string env values are treated as unset.
+- User-Agent on every outbound request: `inspra-vendor-status-monitor/1.0`.
+- No `console.log` debug leftovers; logging goes through a `log` dependency (`src/log.ts`, JSON lines to stdout/stderr).
+- pnpm only (`packageManager: "pnpm@10.33.0"`; `pnpm.onlyBuiltDependencies: ["better-sqlite3", "esbuild"]`). No global installs.
+- Never use ports 3000/3001.
+- Commit style: `type(scope): description`, imperative, ending with the line `Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>`.
+
+## Review Focus
+
+- Component filter typo (e.g. `Gmial`) on a source that lists components → must report `unknown` with an error naming the missing entry, not `operational`. Test in Task 2 and Task 3.
+- A transient fetch failure during an open incident → must not resolve the incident or send a recovery. Tests in Task 5 (store + decide).
+- One check that hangs forever (ignores AbortSignal) → the cycle still finishes within the timeout and other checks report. Test in Task 4.
+- A vendor JSON endpoint that returns HTML with HTTP 200 (seen live on Vapi without the Accept header) → `unknown` with a parse error, not a crash. Test in Task 4.
+- Process restart while a vendor is already down → no repeat "degraded" alert, because alert state is persisted. Test in Task 6.
+
+---
+
+### Task 1: Scaffold, core types, normalisation, config, vendor loader
+
+**Files:**
+- Create: `package.json`, `tsconfig.json`, `vitest.config.ts`, `src/types.ts`, `src/normalise.ts`, `src/config.ts`, `src/vendors.ts`, `src/log.ts`
+- Test: `test/normalise.test.ts`, `test/config.test.ts`, `test/vendors.test.ts`
+
+**Interfaces:**
+- Produces (`src/types.ts`):
+  ```ts
+  export const STATUSES = ['operational','maintenance','degraded','partial_outage','major_outage','unknown'] as const;
+  export type Status = (typeof STATUSES)[number];
+  export const SEVERITY: Record<Status, number>; // operational 0, maintenance 1, degraded 2, partial_outage 3, major_outage 4, unknown -1
+  export interface ComponentStatus { name: string; group?: string; status: Status }
+  export interface Incident { id: string; title: string; status: Status; url?: string; startedAt?: string; updatedAt?: string }
+  export interface CheckOutcome { status: Status; summary?: string; components: ComponentStatus[]; incidents: Incident[]; error?: string }
+  export interface CheckResult extends CheckOutcome { checkId: string; checkedAt: string; durationMs: number }
+  export type FetchFn = typeof fetch;
+  export interface CheckContext { fetch: FetchFn; signal: AbortSignal; now: Date; timeoutMs: number }
+  export interface Check { id: string; name: string; kind: string; pageUrl?: string; sourceUrl?: string; notes?: string; feed?: 'none'; run(ctx: CheckContext): Promise<CheckOutcome> }
+  export class ParseError extends Error {}
+  ```
+- Produces (`src/normalise.ts`): `worstStatus(statuses: Status[], fallback?: Status): Status`; `fromStatuspageComponent(s: string): Status`; `fromStatuspageIndicator(s: string): Status`; `fromStatuspageImpact(s: string): Status`; `fromInstatus(s: string): Status`; `fromBetterstack(s: string): Status | null`; `matchesFilter(names: Array<string | undefined>, filter?: string[]): boolean`; `missingFilterEntries(allNames: string[], filter?: string[]): string[]`; `summarise(o: Pick<CheckOutcome,'status'|'incidents'|'components'>): string`.
+- Produces (`src/config.ts`): `interface AppConfig { port; host; appUrl; pollIntervalSeconds; fetchTimeoutMs; alertReminderMinutes; unknownAlertThreshold; historyRetentionDays; dataDir; vendorsFile; slackWebhookUrl?: string; smtp?: { host: string; port: number; secure: boolean; user?: string; pass?: string; from: string; to: string[] } }`; `loadConfig(env?: Record<string, string | undefined>): AppConfig` (throws `Error` listing every invalid var).
+- Produces (`src/vendors.ts`): `VENDOR_TYPES = ['statuspage','instatus','betterstack','slack','google_workspace','rss','atom','http'] as const`; `type VendorConfig = { id: string; name: string; type: VendorType; url: string; pageUrl?: string; components?: string[]; notes?: string; feed?: 'none'; lookbackHours: number; expectBody?: string; slowMs: number }`; `parseVendors(yamlText: string): VendorConfig[]`; `loadVendors(path: string): VendorConfig[]`.
+- Produces (`src/log.ts`): `type Logger = { info(msg: string, fields?: object): void; warn(...); error(...) }`; `createLogger(): Logger` (one JSON line per call: `{ts, level, msg, ...fields}`).
+
+- [ ] **Step 1: Scaffold.** `package.json` (`name: vendor-status-monitor`, private, `type: module`, `packageManager`, `pnpm.onlyBuiltDependencies`, `engines.node >=22`), scripts: `dev: tsx watch src/main.ts`, `start: node dist/main.js`, `build: tsc -p tsconfig.build.json`, `test: vitest run`, `typecheck: tsc --noEmit`, `sample:slack: tsx scripts/sample-payloads.ts`. Install deps: `pnpm add hono @hono/node-server better-sqlite3 zod yaml fast-xml-parser nodemailer` and `pnpm add -D typescript tsx vitest @types/node @types/better-sqlite3 @types/nodemailer`. `tsconfig.json`: strict, `module`/`moduleResolution` NodeNext, target ES2023, includes `src`, `test`, `scripts`, noEmit. `tsconfig.build.json` extends it with `rootDir: src`, `outDir: dist`, includes only `src`, emit on. Relative imports use `.js` suffixes.
+- [ ] **Step 2: Write failing tests.**
+  - `normalise.test.ts`: `worstStatus(['operational','degraded','maintenance'])==='degraded'`; `worstStatus(['unknown','operational'])==='operational'`; `worstStatus(['unknown'])==='unknown'`; `worstStatus([])==='operational'`; `worstStatus([], 'unknown')==='unknown'`. `fromStatuspageComponent`: operational→operational, degraded_performance→degraded, partial_outage→partial_outage, major_outage→major_outage, under_maintenance→maintenance, `'weird'`→unknown. `fromStatuspageIndicator`: none→operational, minor→degraded, major→partial_outage, critical→major_outage, maintenance→maintenance. `fromStatuspageImpact`: none→degraded, minor→degraded, major→partial_outage, critical→major_outage, maintenance→maintenance. `fromInstatus`: OPERATIONAL/UP→operational, DEGRADEDPERFORMANCE/HASISSUES→degraded, PARTIALOUTAGE/SOMEPARTIALOUTAGE→partial_outage, MAJOROUTAGE/ALLMAJOROUTAGE→major_outage, SOMEMAJOROUTAGE→partial_outage, UNDERMAINTENANCE/ALLUNDERMAINTENANCE→maintenance, other→degraded. `fromBetterstack`: operational→operational, degraded→degraded, downtime→major_outage, maintenance→maintenance, resolved→operational, not_monitored→null. `matchesFilter(['Media Streams US1','PROGRAMMABLE VOICE US1'], ['programmable voice us1'])===true`; `matchesFilter(['x'], undefined)===true`; `matchesFilter(['Voice, APAC'], ['Voice'])===false` (exact, not substring). `missingFilterEntries(['Gmail','Google Calendar'], ['Gmail','Gmial'])` deep-equals `['Gmial']`.
+  - `config.test.ts`: `loadConfig({})` returns the Global Constraints defaults (appUrl `https://status.automateaccelerator.com`, port 8080, pollIntervalSeconds 180, unknownAlertThreshold 3, smtp undefined, slackWebhookUrl undefined); `APP_URL='http://localhost:4180/'` → `appUrl==='http://localhost:4180'`; `POLL_INTERVAL_SECONDS='30'` throws mentioning `POLL_INTERVAL_SECONDS`; `'601'` throws; `SLACK_WEBHOOK_URL=''` → undefined; `SLACK_WEBHOOK_URL='not a url'` throws; `SMTP_HOST='smtp.x'` without `SMTP_FROM`/`SMTP_TO` throws; full SMTP set with `SMTP_TO='a@x.com, b@x.com'` → `to` deep-equals `['a@x.com','b@x.com']`, port 587, secure false.
+  - `vendors.test.ts`: `loadVendors('vendors.yaml')` — skipped here, covered in Task 4. `parseVendors` of a two-entry YAML returns defaults `lookbackHours: 24`, `slowMs: 5000`; duplicate ids throw mentioning the id; bad id `Bad Id` throws; unknown `type: foo` throws; `components: []` throws; error messages include the entry index or id.
+- [ ] **Step 3: Run `pnpm test`** — expected FAIL (modules missing).
+- [ ] **Step 4: Implement** the files per Interfaces. `id` regex `^[a-z0-9][a-z0-9-]*$`. `url`/`pageUrl` must be http(s) URLs. `lookbackHours` 1–168. `slowMs` 100–60000. Unknown YAML keys are rejected (zod `.strict()`), so typos in vendors.yaml fail loudly. Top-level YAML shape: `{ vendors: [...] }`.
+- [ ] **Step 5: Run `pnpm test` and `pnpm typecheck`** — expected PASS / no errors.
+- [ ] **Step 6: Commit** `feat(core): scaffold project with types, normalisation, config and vendor loader`.
+
+### Task 2: Parsers — Statuspage, Instatus, BetterStack
+
+**Files:**
+- Create: `src/parsers/statuspage.ts`, `src/parsers/instatus.ts`, `src/parsers/betterstack.ts`
+- Test: `test/parsers/statuspage.test.ts`, `test/parsers/instatus.test.ts`, `test/parsers/betterstack.test.ts`
+
+**Interfaces:**
+- Consumes: Task 1 types + normalise helpers.
+- Produces:
+  - `parseStatuspage(summary: unknown, unresolved: unknown | null, opts: { pageUrl: string; components?: string[] }): CheckOutcome`
+  - `parseInstatus(summary: unknown, components: unknown | null, opts: { pageUrl: string; components?: string[] }): CheckOutcome`
+  - `parseBetterstack(index: unknown, opts: { pageUrl: string; now: Date; components?: string[] }): CheckOutcome`
+  - All validate input with permissive zod schemas (`.passthrough()`), throw `ParseError` on shape mismatch, and set `summary` via `summarise`.
+
+Rules (beyond the normalise mappings):
+- **Statuspage.** Components from `summary.components`; a component's group name comes from its `group_id` parent. Incidents = `summary.incidents ?? []` ∪ `unresolved?.incidents ?? []`, deduped by id, excluding `status` `resolved`/`postmortem`; status via `fromStatuspageImpact(impact)`; url = `shortlink` ?? `${pageUrl}/incidents/${id}`. `summary.scheduled_maintenances` with status `in_progress` or `verifying` become incidents with status `maintenance`. No filter: status = worst(indicator, all components, incidents). With filter: matched = components whose name or group name matches; status = worst(matched components, incidents that list a matched component id or list no components); incidents are filtered the same way; `components` output = matched. Missing filter entries (checked against all component names and group names) → status `unknown`, `error: "component filter matched nothing: <entries>"`.
+- **Instatus.** Components from `components.components` (group name from `group.name`). Incidents: without filter `summary.activeIncidents`; with filter, union (by id) of matched components' `activeIncidents`; status via `fromInstatus(impact)`; url given. Status = worst(components, incidents) when the components payload is present; otherwise `fromInstatus(summary.page.status)` and components `[]`. Missing filter entries → unknown as above.
+- **BetterStack.** Resources = `included` of type `status_page_resource` (name `public_name`, group = name of the `status_page_section` with id `status_page_section_id`, empty section name → no group); resources with `not_monitored` are dropped. Reports = `included` of type `status_report`; active when `aggregate_state !== 'resolved'` and, for `report_type === 'maintenance'`, `starts_at <= now < ends_at` (null `ends_at` = open). Report status: maintenance reports → `maintenance`; else worst of `fromBetterstack` over `affected_resources[].status`, defaulting to `degraded`. Url `${pageUrl}/${report_type === 'maintenance' ? 'maintenance' : 'incident'}/${id}`. No filter: status = worst(`fromBetterstack(data.attributes.aggregate_state)`, resources, active reports). With filter: matched resources by name/section; reports kept if any affected resource id is matched; missing entries → unknown.
+
+- [ ] **Step 1: Write failing tests** (load fixtures with `JSON.parse(readFileSync(new URL('../fixtures/<file>', import.meta.url), 'utf8'))`):
+  - statuspage: OpenAI summary + `null` → `status 'operational'`, `incidents []`, components length > 5. GitHub summary + unresolved → `operational`. Twilio summary + unresolved, no filter → `degraded`, `incidents.length === 6`, each incident url starts with `https://stspg.io/`. Twilio with filter `['PROGRAMMABLE VOICE AU1','PROGRAMMABLE VOICE US1','ELASTIC SIP TRUNKING AU1','ELASTIC SIP TRUNKING US1','TWILIO PLATFORM']` → `degraded`, `incidents []`, components include `{ name: 'Media Streams US1', group: 'PROGRAMMABLE VOICE US1', status: 'degraded' }`. Twilio with filter `['PROGRAMMABLE VOICE AU1']` → `operational`. Twilio filter `['PROGRAMMABLE VOICE AU9']` → `unknown`, error contains `PROGRAMMABLE VOICE AU9`. Telnyx summary + null → `maintenance`, at least one incident with status `maintenance` and title `Voice Services Update - All Regions`. Anthropic summary + unresolved → `operational`. `parseStatuspage('<html>', null, …)` throws `ParseError`.
+  - instatus: Northflank summary + components → `major_outage`, exactly one incident `{ id: 'cmvv0rn5a092f14rutwccodpp', title: 'Security incident', status: 'major_outage', url: 'https://status.northflank.com/cmvv0rn5a092f14rutwccodpp' }`, component `Networking` has group `Northflank Platform`. With filter `['Northflank App']` → `operational`, incidents `[]`. Summary + `null` components → status `fromInstatus('HASISSUES')` = `degraded`, incident still listed. Filter `['Nope']` → unknown.
+  - betterstack: Vapi with `now = new Date('2026-11-04T13:00:00Z')` → `operational`, `incidents []` (the 2026-11-08 maintenance is future), no `not_monitored` resources in components. Vapi with `now = new Date('2026-11-08T05:05:00Z')` → `maintenance`, incident id `1108915`, url `https://status.vapi.ai/maintenance/1108915`. GoHighLevel at `2026-11-04T13:00:00Z` → `operational`. GHL with filter `['app.gohighlevel.com']` → `operational`, components length 1. Filter `['nope.example']` → unknown.
+- [ ] **Step 2: Run `pnpm test test/parsers`** — FAIL.
+- [ ] **Step 3: Implement** the three parsers per the rules above.
+- [ ] **Step 4: Run `pnpm test` and `pnpm typecheck`** — PASS.
+- [ ] **Step 5: Commit** `feat(parsers): add Statuspage, Instatus and BetterStack parsers`.
+
+### Task 3: Parsers — Slack, Google Workspace, RSS/Atom, HTTP
+
+**Files:**
+- Create: `src/parsers/slack.ts`, `src/parsers/google-workspace.ts`, `src/parsers/feed.ts`, `src/parsers/http.ts`
+- Test: `test/parsers/slack.test.ts`, `test/parsers/google-workspace.test.ts`, `test/parsers/feed.test.ts`, `test/parsers/http.test.ts`
+
+**Interfaces:**
+- Consumes: Task 1.
+- Produces:
+  - `parseSlack(current: unknown, opts: { components?: string[] }): CheckOutcome`
+  - `parseGoogleWorkspace(incidents: unknown, products: unknown | null, opts: { now: Date; components?: string[] }): CheckOutcome`
+  - `parseFeed(xml: string, opts: { now: Date; lookbackHours: number; components?: string[] }): CheckOutcome` (RSS 2.0 and Atom, via fast-xml-parser)
+  - `parseHttp(res: { statusCode: number; body: string; latencyMs: number }, opts: { url: string; expectBody?: string; slowMs: number }): CheckOutcome`
+
+Rules:
+- **Slack.** Active incidents = `active_incidents` with status not `resolved`/`completed`. Status by `type`: `outage`→major_outage, `incident`→partial_outage, `notice`→degraded, other→degraded. Components = one per service named in active incidents with the worst status touching it. Filter (case-insensitive exact on `services`) keeps only incidents touching a filtered service; no missing-entry validation (Slack lists no services). No active incidents → operational.
+- **Google Workspace.** Ongoing = `end` absent/null or later than `now`. `status_impact`: SERVICE_OUTAGE→major_outage, SERVICE_DISRUPTION→partial_outage, SERVICE_INFORMATION→degraded, else degraded. Filter on `affected_products[].title` (case-insensitive exact). Components: for each filter entry (or, without a filter, each product affected by an ongoing incident) → worst ongoing status touching it, else operational. If `products` is non-null, filter entries absent from `products.products[].title` → unknown with error. Incident title = first non-empty line of `external_desc` after removing a leading `**Summary:**` line and `**` markers; url `https://www.google.com/appsstatus/dashboard/${uri}`; startedAt `begin`.
+- **Feed.** Items: RSS `channel.item[]` (title, link, guid, pubDate, description, category) or Atom `feed.entry[]` (title, link@href, id, updated/published, summary/content). Optional filter: case-insensitive substring of any entry against guid/id + title + description. Group key: guid/id with a trailing `#<40+ hex chars>` fragment removed. The newest item per group (by date; ties keep feed order, newest-first) decides. A group is active when its newest item is within `lookbackHours` of `now` and its title+description does not match `/\b(resolved|operating normally|completed)\b/i`. Active status: maintenance (title or category matches `/maintenance/i`) → maintenance; `/disruption|outage|unavailable|down\b/i` → partial_outage; else degraded. Status = worst(active) or operational. Incidents = active groups (id = key, title, url = link, startedAt/updatedAt = item date ISO). Components `[]`.
+- **HTTP.** As the spec's HTTP mapping. Non-operational outcomes carry one incident with id `http-<statusCode>` / `http-body` / `http-slow` and a title like `HTTP 503 from <url>` / `Health response did not contain "<expectBody>"` / `Slow response: <ms> ms (limit <slowMs> ms)`.
+
+- [ ] **Step 1: Write failing tests:**
+  - slack: `slack-current.json` → operational, incidents []. `slack-current-active.json` → `partial_outage`, one incident titled `Slack Real-Time Connection Disruption`, url `https://slack-status.com/2026-10/58a30c7fc8aa3e80`, components `[{ name: 'Messaging', status: 'partial_outage' }]`. With filter `['Huddles']` → operational.
+  - google: fixture + products, filter `['Gmail','Google Calendar']`, now `2026-11-04T13:00:00Z` → operational, components `[Gmail operational, Google Calendar operational]`. Clone the fixture, set `end = null` on incident `vagmms1y6yRxwg6RMQZp` → `partial_outage`, one incident with that id, url ending `incidents/vagmms1y6yRxwg6RMQZp`, Gmail and Google Calendar both `partial_outage`, title does not start with `**`. Filter `['Gmail','Gmial']` with products → unknown, error contains `Gmial`. Same with `products = null` → operational.
+  - feed: `aws-all.rss`, filter `['ap-southeast-2']`, now `2026-11-04T13:30:00Z`, lookback 24 → operational, incidents []. Same feed, filter `['me-central-1']`, now `2026-09-15T12:00:00Z` → `partial_outage`, ≥1 incident whose title contains `Service disruption`. `betterstack-vapi-feed.rss`, now `2026-10-20T09:30:00Z`, no filter → no active incident with url `https://status.vapi.ai/maintenance/1095047` (the newest item says "Maintenance completed"). `google-workspace-feed.atom`, now `2026-09-25T17:00:00Z` → operational (entry title starts `RESOLVED:`). The same Atom text with `RESOLVED: ` removed and `has been resolved` replaced by `is being investigated` (both plain string replaces), same `now` → `degraded`, one incident with url `https://www.google.com/appsstatus/dashboard/incidents/BoKRw5LNb3Vb2NadUJRU`. Lookback: that modified Atom with now `2026-09-28T17:00:00Z` (beyond 24 h) → operational. Malformed XML `'<rss'` → throws `ParseError`.
+  - http: body = `http-inspra-health.json`, status 200, latency 120, expectBody `"status":"healthy"` → operational, incidents []. Same body with expectBody `"status":"down"` → degraded, incident id `http-body`. Status 503 → major_outage, incident id `http-503`, title contains `HTTP 503`. 429 → unknown. 404 → degraded. 200 with latency 6000, slowMs 5000 → degraded, id `http-slow`. Odoo body `http-odoo-health.json` with expectBody `"pass"` → operational.
+- [ ] **Step 2: Run `pnpm test test/parsers`** — FAIL for the new files.
+- [ ] **Step 3: Implement** the four parsers.
+- [ ] **Step 4: Run `pnpm test` and `pnpm typecheck`** — PASS.
+- [ ] **Step 5: Commit** `feat(parsers): add Slack, Google Workspace, RSS/Atom and HTTP parsers`.
+
+### Task 4: Fetcher, vendor checks, `runCheck`, vendors.yaml
+
+**Files:**
+- Create: `src/fetcher.ts`, `src/checks/vendor.ts`, `src/run-check.ts`, `vendors.yaml`
+- Test: `test/fetcher.test.ts`, `test/checks/vendor.test.ts`, `test/run-check.test.ts`, extend `test/vendors.test.ts`
+
+**Interfaces:**
+- Consumes: Tasks 1–3.
+- Produces:
+  - `src/fetcher.ts`: `USER_AGENT = 'inspra-vendor-status-monitor/1.0'`; `class FetchError extends Error {}`; `fetchText(ctx: CheckContext, url: string, headers?: Record<string,string>): Promise<{ statusCode: number; body: string; latencyMs: number }>` (never throws on HTTP status; throws `FetchError` on network error/abort; body capped at 5 MB → `FetchError`); `fetchJson(ctx, url, opts?: { headers?: Record<string,string>; optional?: boolean }): Promise<unknown | null>` (non-2xx → `FetchError("HTTP <code> from <url>")`, except `optional` and 404 → `null`; invalid JSON → `ParseError("invalid JSON from <url>")`). All requests pass `ctx.signal`.
+  - `src/checks/vendor.ts`: `createVendorCheck(v: VendorConfig): Check` — `kind` = `v.type`; `pageUrl` = `v.pageUrl ?? ` the page base (for statuspage/instatus/betterstack `v.url`; slack `https://slack-status.com`; google `https://www.google.com/appsstatus/dashboard/`; others `v.url`); `sourceUrl` = the primary endpoint fetched. Endpoints: statuspage `${url}/api/v2/summary.json` + optional `${url}/api/v2/incidents/unresolved.json`; instatus `${url}/summary.json` + optional `${url}/v2/components.json`; betterstack `${url}/index.json` with `Accept: application/json`; slack `url`; google_workspace `url` + optional sibling `products.json` (same directory); rss/atom `fetchText` + `parseFeed`; http `fetchText` + `parseHttp`. Strip trailing slashes from base urls. `createVendorChecks(vs: VendorConfig[]): Check[]`.
+  - `src/run-check.ts`: `runCheck(check: Check, opts: { timeoutMs: number; fetch: FetchFn; now?: () => Date }): Promise<CheckResult>` — never throws; creates an AbortController, races `check.run` against a hard timer of `timeoutMs` (so a check that ignores the signal still ends), aborts on timeout; any thrown error or timeout → `{ status: 'unknown', components: [], incidents: [], error: <message>, summary: 'Check failed: <message>' }`; timeout message `timed out after <timeoutMs> ms`; sets `checkId`, `checkedAt` (ISO, start time), `durationMs`.
+- `vendors.yaml`: the 16 entries from the spec's endpoint table, in that order, ids `vapi, northflank, openai, twilio, telnyx, gohighlevel, odoo, google-workspace, slack, elevenlabs, deepgram, cartesia, github, aws, anthropic, inspra-platform`. Twilio `components` = the five spec names; google-workspace `components: [Gmail, Google Calendar]`; aws `type: rss`, `components: [ap-southeast-2]`, `lookbackHours: 24`; odoo `type: http`, `url: https://www.odoo.com/web/health`, `expectBody: '"pass"'`, `feed: none`, `pageUrl: https://status.odoo.com`, notes saying status.odoo.com is a Twitter embed; inspra-platform `type: http`, `url: https://platform.inspra.ai/api/health`, `expectBody: '"status":"healthy"'`, `pageUrl: https://platform.inspra.ai`. GoHighLevel notes: covers LeadConnector (status.leadconnectorhq.com does not resolve). incident.io-hosted statuspage vendors (openai, telnyx, elevenlabs, cartesia) notes: "incident.io page; summary only, no unresolved.json". Each entry gets a YAML comment with the verification result.
+
+- [ ] **Step 1: Write failing tests** with an injected fake `fetch` (`vi.fn` returning `new Response(...)`), never real network:
+  - fetcher: 200 JSON → parsed; 404 + optional → null; 404 not optional → `FetchError` with `HTTP 404`; 200 with `'<html>'` body → `ParseError` (Vapi-without-Accept case); request carries `user-agent: inspra-vendor-status-monitor/1.0`; network rejection → `FetchError`.
+  - vendor check: statuspage check against fixture-serving fake fetch for the Twilio fixtures returns the same outcome as `parseStatuspage` directly; it requests exactly `https://status.twilio.com/api/v2/summary.json` and `.../incidents/unresolved.json`; unresolved 404 is tolerated (OpenAI case → operational). betterstack check sends `accept: application/json`. google check requests `.../dashboard/products.json`. http check with fake 503 → major_outage.
+  - runCheck: a check whose `run` never resolves and ignores the signal, `timeoutMs: 50` → resolves within 500 ms with `unknown` and error `timed out after 50 ms`; a check that throws `new Error('boom')` → unknown, error `boom`; a healthy check → its outcome plus `checkId`, ISO `checkedAt`, numeric `durationMs`. Running a hanging check and a healthy check together with `Promise.all` → the healthy one still `operational`.
+  - vendors: `loadVendors('vendors.yaml')` → 16 entries, ids in the order above, `createVendorChecks` builds 16 checks without throwing.
+- [ ] **Step 2: Run `pnpm test`** — FAIL.
+- [ ] **Step 3: Implement.**
+- [ ] **Step 4: Run `pnpm test` and `pnpm typecheck`** — PASS.
+- [ ] **Step 5: Commit** `feat(checks): add fetcher, vendor checks, runCheck and vendors.yaml`.
+
+### Task 5: SQLite store and alert decision logic
+
+**Files:**
+- Create: `src/store.ts`, `src/alerts/decide.ts`
+- Test: `test/store.test.ts`, `test/alerts/decide.test.ts`
+
+**Interfaces:**
+- Consumes: Task 1 types.
+- Produces (`src/alerts/decide.ts`):
+  ```ts
+  export interface AlertState { alertedStatus: Status | null; alertedIncidentIds: string[]; consecutiveUnknown: number; lastAlertAt: string | null; since: string | null }
+  export type AlertKind = 'degraded' | 'improved' | 'recovered' | 'new_incident' | 'reminder' | 'unreachable';
+  export interface AlertEvent { kind: AlertKind; checkId: string; checkName: string; from: Status | null; to: Status; since: string; at: string; incidents: Incident[]; components: ComponentStatus[]; error?: string; pageUrl?: string; dedupeKey: string }
+  export interface AlertPolicy { unknownAlertThreshold: number; reminderMinutes: number }
+  export function initialAlertState(): AlertState;
+  export function decideAlerts(check: Pick<Check, 'id' | 'name' | 'pageUrl'>, prev: AlertState, result: CheckResult, policy: AlertPolicy): { events: AlertEvent[]; next: AlertState };
+  ```
+  `components` on an event = the result's non-operational components. `at` = `result.checkedAt`. `dedupeKey`: `${id}:state:${to}` for degraded/improved/recovered/unreachable, `${id}:incident:${sortedNewIds.join(',')}` for new_incident, `${id}:reminder:${to}:${at}` for reminder.
+- Produces (`src/store.ts`): `interface StoredIncident { checkId: string; incidentId: string; title: string; url?: string; status: Status; startedAt: string; lastSeenAt: string; resolvedAt: string | null }`; `class Store { constructor(dbPath: string); recordResult(r: CheckResult): void; latestResults(): Map<string, CheckResult>; getAlertState(checkId: string): AlertState | undefined; saveAlertState(checkId: string, s: AlertState): void; logAlert(e: AlertEvent): void; recentAlerts(limit: number): Array<{ dedupeKey: string; kind: AlertKind; checkId: string; at: string }>; incidents(checkId: string, opts?: { openOnly?: boolean }): StoredIncident[]; dailyHistory(days: number, now: Date): Map<string, Array<{ day: string; status: Status }>>; prune(retentionDays: number, now: Date): number; close(): void }`.
+
+decideAlerts rules (t = result.checkedAt):
+1. `result.status === 'unknown'`: `consecutiveUnknown + 1`. If it reaches `unknownAlertThreshold` and `alertedStatus !== 'unknown'` → one `unreachable` event (from = alertedStatus, error = result.error); next `alertedStatus 'unknown'`, `since t`, `lastAlertAt t`. Otherwise no event; everything else in state unchanged.
+2. Otherwise `consecutiveUnknown = 0`, s = result.status, ids = result incident ids:
+   a. `alertedStatus === null` (first observation): no event if s is operational, else one `degraded` (from null). next: s, since t, ids; lastAlertAt t only if an event fired.
+   b. `s !== alertedStatus`: kind `recovered` if s is operational; `degraded` if prev is operational/unknown or SEVERITY[s] > SEVERITY[prev]; else `improved`. next: s, since t, lastAlertAt t, ids.
+   c. same status: new ids (not in `alertedIncidentIds`) and s not operational → one `new_incident` carrying only the new incidents; lastAlertAt t. next ids = current ids.
+3. Reminder: when no event fired this round, alertedStatus (after the update) is not operational/maintenance, `lastAlertAt` set and `t - lastAlertAt >= reminderMinutes` → one `reminder` (from = to = alertedStatus); lastAlertAt t. Applies to `unknown` too.
+
+Store rules: schema created on open (`journal_mode = WAL`; tables `check_history(id INTEGER PK, check_id, checked_at, status, summary, error, duration_ms)` indexed on `(check_id, checked_at)`; `check_latest(check_id PK, result_json)`; `incidents(check_id, incident_id, title, url, status, started_at, last_seen_at, resolved_at, PK(check_id, incident_id))`; `alert_state(check_id PK, state_json)`; `alerts(id PK, dedupe_key, kind, check_id, at, event_json)`). `recordResult` inserts history and latest; then reconciles incidents (insert new with `started_at` = incident.startedAt ?? checkedAt; update title/status/last_seen for seen; set `resolved_at = checkedAt` for open ones not in the result; a resolved incident that reappears is reopened with `resolved_at = NULL`) — **skipped entirely when `status === 'unknown'`**. `dailyHistory`: UTC days `YYYY-MM-DD`, last `days` days including today, worst non-unknown status per day, `unknown` if the day had only unknowns, days without rows omitted, ascending. `prune` deletes `check_history` rows and `alerts` older than `retentionDays` and resolved incidents resolved before the cutoff; returns rows deleted from `check_history`. Constructor creates the parent directory if missing; accepts `':memory:'`.
+
+- [ ] **Step 1: Write failing tests:**
+  - decide (policy `{ unknownAlertThreshold: 3, reminderMinutes: 60 }`, helper `res(status, minute, incidents?)` building a CheckResult at `2026-11-04T00:00Z + minute`): first operational → no events; first major_outage → one `degraded` from null. op → degraded → `degraded` event, dedupeKey `x:state:degraded`; degraded → major_outage → `degraded`; major_outage → degraded → `improved`; degraded → operational → `recovered`. Same status twice → no event. Two unknowns after operational → no events; third → `unreachable`; fourth (minute +3) → none; operational again → `recovered`. **Unknown below threshold during an outage**: major_outage, unknown, unknown, major_outage → exactly one event total (the first). Same degraded status with a new incident id → `new_incident` with only that incident; same again → none. Reminder: degraded at 0 → event; degraded at 30 → none; at 60 → `reminder`; at 90 → none; at 120 → `reminder`. Maintenance at 0 then at 180 → only the first event. Unknown reminder: after `unreachable` at minute 2, unknown at 62 → `reminder`.
+  - store (`':memory:'`): recordResult then latestResults round-trips the result. An incident appears (degraded), then a result without it (operational) → `resolvedAt` set to second checkedAt. **Fetch failure keeps incident open**: incident seen, then `unknown` result with error → `incidents(id, { openOnly: true })` still has it. Alert state round-trips; missing → undefined. dailyHistory: rows degraded+operational on day 1 and only unknown on day 2 → `[{day1, 'degraded'}, {day2, 'unknown'}]`. prune(30, now) deletes a 31-day-old history row and keeps a 29-day-old one, returns 1. Constructor on `<tmpdir>/nested/dir/x.db` creates the directory.
+- [ ] **Step 2: Run** — FAIL.
+- [ ] **Step 3: Implement.**
+- [ ] **Step 4: Run `pnpm test` and `pnpm typecheck`** — PASS.
+- [ ] **Step 5: Commit** `feat(state): add SQLite store and alert decision state machine`.
+
+### Task 6: Notifier, sample payload script, Poller
+
+**Files:**
+- Create: `src/alerts/format.ts`, `src/alerts/notifier.ts`, `src/poller.ts`, `scripts/sample-payloads.ts`
+- Test: `test/alerts/format.test.ts`, `test/alerts/notifier.test.ts`, `test/poller.test.ts`
+
+**Interfaces:**
+- Consumes: Tasks 1, 4 (`runCheck`), 5 (`Store`, `decideAlerts`, `AlertEvent`), `AppConfig`, `Logger`.
+- Produces:
+  - `src/alerts/format.ts`: `statusLabel(s: Status): string` (`'Operational' | 'Degraded' | 'Partial outage' | 'Major outage' | 'Maintenance' | 'Unknown'`); `headline(e: AlertEvent): string`; `buildSlackPayload(e: AlertEvent, appUrl: string): { text: string; blocks: unknown[] }`; `buildEmail(e: AlertEvent, appUrl: string): { subject: string; text: string }`.
+  - `src/alerts/notifier.ts`: `interface Notifier { notify(e: AlertEvent): Promise<void> }`; `createNotifier(cfg: Pick<AppConfig, 'slackWebhookUrl' | 'smtp' | 'appUrl'>, deps: { fetch: FetchFn; log: Logger; sendMail?: (m: { from: string; to: string[]; subject: string; text: string }) => Promise<void> }): Notifier`. Slack: POST JSON to the webhook with a 10 s timeout; non-2xx or throw → `log.error`, never rethrow. Webhook unset → `log.info('slack webhook not configured; alert payload', { payload })`. Email only when `cfg.smtp` is set; `sendMail` defaults to a nodemailer transport built from `cfg.smtp`; failures logged, never thrown.
+  - `src/poller.ts`: `nextDelayMs(intervalSeconds: number, random: () => number): number` = `intervalSeconds*1000 + Math.floor(random() * Math.min(intervalSeconds*100, 15000))`; `interface Liveness { startedAt: string; lastCycleStartedAt: string | null; lastCycleCompletedAt: string | null; cycles: number; running: boolean; intervalSeconds: number }`; `class Poller { constructor(deps: { checks: Check[]; store: Store; notifier: Notifier; config: Pick<AppConfig, 'pollIntervalSeconds' | 'fetchTimeoutMs' | 'alertReminderMinutes' | 'unknownAlertThreshold' | 'historyRetentionDays'>; log: Logger; fetch?: FetchFn; now?: () => Date; random?: () => number }); runCycle(): Promise<CheckResult[]>; start(): void; stop(): Promise<void>; liveness(): Liveness; isHealthy(now?: Date): boolean }`.
+
+Rules:
+- Slack payload: `text` = headline (fallback). Headline by kind: degraded/unreachable/new_incident/reminder start with `:red_circle:` for partial/major outage, `:large_orange_circle:` for degraded, `:large_blue_circle:` for maintenance, `:white_circle:` for unknown; recovered starts `:large_green_circle:`. Forms: degraded/improved `"<emoji> <Name>: <Label>"`; recovered `"<emoji> <Name> recovered (was <Label from>)"`; unreachable `"<emoji> <Name>: status unavailable"`; new_incident `"<emoji> <Name>: new incident"`; reminder `"<emoji> Reminder: <Name> still <Label> since <since ISO>"`. Blocks: header section with headline; a section listing up to 5 incidents as `<url|title>` (plain title when no url) with their labels; a context line with up to 10 affected component names; for unreachable the error text; a final actions/section with links `View dashboard` → `${appUrl}/#${checkId}` and `Vendor status page` → `pageUrl` (omitted when absent). Email: subject = headline without the leading emoji; text body lists the same facts with absolute dashboard link.
+- Poller.runCycle: runs every check concurrently via `runCheck` (timeout `fetchTimeoutMs`); for each result, sequentially: `store.recordResult`; `decideAlerts(check, store.getAlertState(id) ?? initialAlertState(), result, policy)`; `store.saveAlertState`; for each event `store.logAlert` then `notifier.notify` (all notify promises awaited with `Promise.allSettled`). Errors recording one result are logged and do not stop others. Prunes via `store.prune(historyRetentionDays)` at most once per hour (first cycle included). Updates liveness. Overlapping cycles are prevented (a cycle started while one is running is skipped and logged).
+- start(): runs a cycle immediately, then schedules the next with `setTimeout(nextDelayMs(...))` after each cycle completes. stop(): clears the timer and awaits the in-flight cycle.
+- isHealthy(now): window = `2*pollIntervalSeconds + fetchTimeoutMs/1000 + 30` seconds; healthy if `lastCycleCompletedAt` is within the window, or no cycle has completed yet and `startedAt` is within the window.
+- `scripts/sample-payloads.ts`: prints to stdout only (no network) `JSON.stringify({ degradation, recovery }, null, 2)` where both are `buildSlackPayload` outputs for a Northflank example built from the real fixture incident (`Security incident`, `https://status.northflank.com/cmvv0rn5a092f14rutwccodpp`, components Networking/Certificates/Services major outage) using `loadConfig().appUrl`.
+
+- [ ] **Step 1: Write failing tests:**
+  - format: degraded event for Northflank major_outage → `text` starts `:red_circle: Northflank: Major outage`; serialized blocks contain `<https://status.northflank.com/cmvv0rn5a092f14rutwccodpp|Security incident>`, `https://status.automateaccelerator.com/#northflank` and `View dashboard`. Recovered event → text `:large_green_circle: Northflank recovered (was Major outage)`. With appUrl `http://localhost:4180` the dashboard link uses it. Email subject has no emoji.
+  - notifier: webhook unset → fetch not called, `log.info` called with a `payload`. Webhook set → fetch called once with POST to that url and JSON body equal to `buildSlackPayload(...)`. Fetch rejects → `notify` resolves, `log.error` called. smtp set → injected `sendMail` called with `to` list; smtp unset → not called.
+  - poller (in-memory Store, fake checks, fake notifier, injected `now`): `nextDelayMs(180, () => 0) === 180000`, `nextDelayMs(180, () => 0.999)` < `180000 + 15000` and `nextDelayMs(600, () => 0.999)` < `615000`. One cycle with an operational and a hanging check (timeout 50 ms) completes; the hanging one is recorded `unknown`; liveness `cycles === 1`. Check goes operational → major_outage across two cycles → notifier received exactly one `degraded`. **Restart**: second `Poller` on the same Store file (tmp file db) with the check still major_outage → zero new notifications. `isHealthy`: fresh poller → true; after a completed cycle, `now` advanced by 2*interval+timeout/1000+31 s → false. A cycle running while `runCycle` is called again → second call returns `[]` without running checks.
+- [ ] **Step 2: Run** — FAIL.
+- [ ] **Step 3: Implement.**
+- [ ] **Step 4: Run `pnpm test`, `pnpm typecheck`, and `pnpm sample:slack`** — PASS; script prints valid JSON with `degradation` and `recovery` keys.
+- [ ] **Step 5: Commit** `feat(alerts): add Slack/email notifier, sample payload script and poller`.
+
+### Task 7: Web — dashboard, `/api/status`, `/healthz`, main entrypoint
+
+**Files:**
+- Create: `src/web/view.ts`, `src/web/dashboard.ts`, `src/server.ts`, `src/main.ts`
+- Test: `test/web/view.test.ts`, `test/server.test.ts`
+
+**Interfaces:**
+- Consumes: `Store`, `Poller` (`liveness`, `isHealthy`), `Check[]`, `AppConfig`, `statusLabel`.
+- Produces:
+  - `src/web/view.ts`: `interface CheckView { id; name; kind; status: Status; label: string; since: string | null; checkedAt: string | null; summary?: string; error?: string; incidents: Incident[]; components: ComponentStatus[]; pageUrl?: string; sourceUrl?: string; notes?: string; feed?: 'none'; history: Array<{ day: string; status: Status | null }> }`; `interface StatusView { generatedAt: string; overall: Status; issues: number; checks: CheckView[]; liveness: Liveness; healthy: boolean }`; `buildStatusView(deps: { checks: Check[]; store: Store; poller: Pick<Poller,'liveness'|'isHealthy'>; now?: Date }): StatusView`. `since` = `store.getAlertState(id)?.since ?? null`. `history` has exactly 7 entries (oldest→today, UTC), `null` where no data. Checks never polled yet → status `unknown`, checkedAt null. `overall` = worstStatus of all check statuses (unknown ignored unless all unknown); `issues` = count of checks not operational. `components` in the view = non-operational components only. Config order is preserved.
+  - `src/web/dashboard.ts`: `renderDashboard(v: StatusView): string` — full HTML document, all dynamic text HTML-escaped (`&<>"'`), `<meta http-equiv="refresh" content="60">`, inline CSS, system font, no external assets, no JS required. Header: "Inspra vendor status", overall line ("All systems operational" or "<n> of <total> need attention"), generated time. Grid of cards (`id` attribute = check id so `/#<id>` anchors work): name, colour badge with label, "since", last checked, current incident title linked to its url (first incident; "+N more" if several), non-operational component names (max 5), error text for unknown, `feed: none` tag ("no public feed — HTTP ping"), link to the vendor page, 7-day strip of 7 small squares with `title="<day>: <label>"`. Colours only: operational `#1a7f37`, maintenance `#0969da`, degraded `#bf8700`, partial_outage `#d1580b`, major_outage `#cf222e`, unknown `#8c959f`, no-data `#eaeef2`. Footer: poller liveness (last cycle completed, interval) and links to `/api/status` and `/healthz`.
+  - `src/server.ts`: `createApp(deps: { checks: Check[]; store: Store; poller: Pick<Poller,'liveness'|'isHealthy'> }): Hono` — `GET /` HTML; `GET /api/status` JSON `StatusView`; `GET /healthz` → 200 `{ ok: true, ...liveness }` when `isHealthy()`, else 503 `{ ok: false, reason: 'poller stalled', ...liveness }`; `Cache-Control: no-store` on all three.
+  - `src/main.ts`: `loadConfig()`, `createLogger()`, `loadVendors(config.vendorsFile)`, `new Store(join(config.dataDir, 'status.db'))`, `createVendorChecks`, `createNotifier`, `new Poller(...)`, `serve({ fetch: app.fetch, port, hostname: host })`, `poller.start()`, log `listening` with port and vendor count; SIGINT/SIGTERM → stop poller, close server, close store, exit 0. Config/vendor errors → log error and `process.exit(1)`.
+
+- [ ] **Step 1: Write failing tests:**
+  - view (in-memory Store seeded via `recordResult`): a check with no results → `unknown`, checkedAt null, 7 history entries all null. Seeded degraded result today → that check `degraded`, last history entry `degraded`, `issues === 1`. Only non-operational components included.
+  - server (via `app.request`): `/` → 200, `content-type` text/html, body contains each check name, `id="northflank"`-style anchors, and an incident title containing `<script>` is rendered escaped (`&lt;script&gt;`). `/api/status` → 200 JSON with `checks.length` equal to the check count and `overall`. `/healthz` with a stub poller whose `isHealthy()` is true → 200 `ok: true`; false → 503 `ok: false`. All three send `cache-control: no-store`.
+- [ ] **Step 2: Run** — FAIL.
+- [ ] **Step 3: Implement.**
+- [ ] **Step 4: Run `pnpm test`, `pnpm typecheck`, `pnpm build`** — PASS, `dist/main.js` exists.
+- [ ] **Step 5: Commit** `feat(web): add dashboard, status API, healthz and main entrypoint`.
+
+### Task 8: Docker, Compose, env example, README
+
+**Files:**
+- Create: `Dockerfile`, `.dockerignore`, `docker-compose.yml`, `docker-compose.local.yml`, `.env.example`, `README.md`
+
+**Interfaces:**
+- Consumes: scripts and env vars from Tasks 1–7 (`pnpm build`, `node dist/main.js`, `DATA_DIR`, `VENDORS_FILE`, `PORT`, `HOST`, `/healthz`).
+
+Requirements:
+- **Dockerfile**: `node:24-bookworm-slim` base. Stage `deps`/`build`: `corepack enable`, copy `package.json pnpm-lock.yaml`, install `python3 make g++` (fallback for better-sqlite3 build), `pnpm install --frozen-lockfile`, copy source, `pnpm build`, `pnpm prune --prod`. Runtime stage: `NODE_ENV=production`, `PORT=8080`, `HOST=0.0.0.0`, `DATA_DIR=/data`, `VENDORS_FILE=/app/vendors.yaml`; copy `node_modules`, `dist`, `package.json`, `vendors.yaml`; `mkdir -p /data && chown node:node /data`; `USER node`; `EXPOSE 8080`; `VOLUME ["/data"]`; `HEALTHCHECK --interval=30s --timeout=5s --start-period=60s --retries=3 CMD node -e "fetch('http://127.0.0.1:'+(process.env.PORT||8080)+'/healthz').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"`; `CMD ["node","dist/main.js"]`. No ENV for secrets.
+- **.dockerignore**: node_modules, dist, data, .env*, .git, .superpowers, docs, test, coverage (keep `!.env.example` irrelevant — exclude it too).
+- **docker-compose.yml**: one service `vendor-status-monitor`, `build: .`, `restart: unless-stopped`, `expose: ["8080"]`, **no `ports:`**, env list with `${VAR}` / `${VAR:-default}` for every env var in Global Constraints (secrets with no default: `SLACK_WEBHOOK_URL`, `SMTP_*`), `DATA_DIR=/data`, volume `status-data:/data`, healthcheck mirroring the Dockerfile, named volume `status-data`.
+- **docker-compose.local.yml**: override publishing `${LOCAL_PORT:-4180}:8080` and `APP_URL=${APP_URL:-http://localhost:4180}`; usage `docker compose -f docker-compose.yml -f docker-compose.local.yml up --build`.
+- **.env.example**: every env var with a one-line comment; `APP_URL=https://status.automateaccelerator.com` with a note to set `http://localhost:<port>` locally; secrets empty.
+- **README.md** sections: What/why (the Northflank churn); quick start (`pnpm install`, `cp .env.example .env`, `pnpm dev`, local `APP_URL`/`PORT`); scripts (`dev`, `build`, `start`, `test`, `typecheck`, `sample:slack`); env var table; `vendors.yaml` reference (fields, types, component filter semantics incl. the unknown-on-typo rule, `feed: none`); how to add a vendor; status normalisation table per source; alerting rules (kinds, dedupe keys, reminders, unknown threshold, no reminders for maintenance, webhook-unset logging, `APP_URL` links); dashboard/API/healthz; **Adding a check** — the `Check` interface, and design-only notes for per-client flow checks: silence alerts on call logs (no call logs for client X in N minutes during business hours → degraded), number-to-workspace mapping drift (compare Twilio/Telnyx number → GHL workspace mapping against an expected snapshot), downstream Odoo/email checks (records created / emails delivered for recent calls), daily test calls (place a scripted call and verify it lands in logs); each plugs in as a `Check` returning a `CheckOutcome` and registered alongside `createVendorChecks` (e.g. a future `clients.yaml` → `createClientChecks`), with no scheduler/store/alerter changes; **Deployment — Coolify**: Coolify → Internal Projects → New resource → from the git repo; build pack Dockerfile (or Docker Compose with `docker-compose.yml`); Ports Exposes 8080; Domains `https://status.automateaccelerator.com`; env vars (APP_URL, SLACK_WEBHOOK_URL, optional SMTP_*); persistent storage mounted at `/data` (Dockerfile pack) — the compose pack uses the named volume; health check path `/healthz` port 8080; overriding vendors.yaml via a mounted file + `VENDORS_FILE`. **Before first deploy** checklist exactly per the spec's four items, including the NXDOMAIN and 52.65.8.240 facts. **Generic docker compose** path. **Vendor table**: every vendor with source type, endpoint, verification status (verified / no feed) and notes, matching `vendors.yaml`. Known limitations / tech debt.
+
+- [ ] **Step 1: Write the files.**
+- [ ] **Step 2: Validate**: `docker` is not installed on this machine — record that; instead check the compose files are valid YAML (`node -e "require('yaml').parse(require('fs').readFileSync('docker-compose.yml','utf8'))"` for both files), `grep -n "ports:" docker-compose.yml` returns nothing, and every `${VAR}` in docker-compose.yml appears in `.env.example`.
+- [ ] **Step 3: Run `pnpm test`, `pnpm typecheck`, `pnpm build`** — still PASS.
+- [ ] **Step 4: Commit** `docs: add Docker, Compose, env example and README`.
+
+### Final verification (controller)
+
+Local run on port 4180 with `APP_URL=http://localhost:4180`, no webhook, one full poll cycle, hit `/api/status` and `/healthz`, headless Edge screenshot → `docs/dashboard.png`, `pnpm sample:slack` → `docs/sample-slack-alert.json`, stop the server, commit.

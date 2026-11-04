@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>Google Workspace Status Dashboard Updates</title>
+  <updated>2026-09-25T16:53:22+00:00</updated>
+  <link href="https://www.google.com/appsstatus/dashboard/" rel="alternate" type="text/html"></link>
+  <link href="https://www.google.com/appsstatus/dashboard/en/feed.atom" rel="self"></link>
+  <author>
+    <name>Google Workspace</name>
+  </author>
+  <id>https://www.google.com/appsstatus/dashboard/</id>
+  <entry>
+    <title>RESOLVED: **Summary:**
+Mitigating elevated error rate with Google Workspace Studio web.
+**Description:**
+Mitigation work is currently underway by our engineering team.
+We do not have an ETA for mitigation at this point.
+We will provide more information by Friday, 2026-09-25 10:30 PDT.
+**Symptoms:**
+Customers may experience an endless loading screen when attempting to access Google Workspace Studio on the web.
+**Workaround:**
+None at this time.</title>
+    <link href="https://www.google.com/appsstatus/dashboard/incidents/BoKRw5LNb3Vb2NadUJRU" rel="alternate" type="text/html"></link>
+    <id>tag:www.google.com,2026:feed:BoKRw5LNb3Vb2NadUJRU.2hVqZumrXRuXhBJL2BYb</id>
+    <updated>2026-09-25T16:53:22+00:00</updated>
+    <summary type="html">&lt;p&gt; Incident began at &lt;strong&gt;2026-09-25 15:47&lt;/strong&gt; and ended at &lt;strong&gt;2026-09-25 16:40&lt;/strong&gt; &lt;span&gt;(times are in &lt;strong&gt;Coordinated Universal Time (UTC)&lt;/strong&gt;).&lt;/span&gt;&lt;/p&gt;&lt;div class="cBIRi14aVDP__status-update-text"&gt;&lt;p&gt;&lt;strong&gt;Summary:&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Mitigated elevated error rate with Google Workspace Studio web.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Description:&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;The issue with Google Workspace Studio has been resolved for all affected users as of Friday, 2026-09-25 09:40 PDT.&lt;/p&gt;
+&lt;p&gt;From preliminary analysis, the root cause of the issue is a recent rollout. Our engineering team has rolled back which mitigated the issue.&lt;/p&gt;
+&lt;p&gt;We thank you for your patience while we worked on resolving the issue.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Symptoms:&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Customers may have experienced an endless loading screen when attempting to access Google Workspace Studio on the web.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Workaround:&lt;/strong&gt;
+The issue is now mitigated.&lt;/p&gt;
+&lt;/div&gt;&lt;hr&gt;&lt;p&gt;Affected products: Google Workspace Studio&lt;/p&gt;</summary>
+  </entry>
+</feed>
