@@ -81,6 +81,6 @@ describe('createApp under /insprastatus', () => {
     const res = await a.request('/');
     expect(res.status).toBe(200);
     expect(res.headers.get('content-type')).toContain('text/html');
-    expect(await res.text()).toContain('href="/assets/app.css"');
+    expect(await res.text()).toMatch(/href="\/assets\/app\.css\?v=[0-9a-f]{10}"/);
   });
 });
