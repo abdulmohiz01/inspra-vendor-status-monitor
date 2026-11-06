@@ -26,7 +26,11 @@ export interface CheckView {
 export interface StatusView {
   generatedAt: string;
   overall: Status;
+  /** Checks that are neither operational nor in maintenance. */
   issues: number;
+  maintenance: number;
+  /** True until any check has a latest result. */
+  awaitingFirstPoll: boolean;
   checks: CheckView[];
   liveness: Liveness;
   healthy: boolean;
@@ -44,16 +48,21 @@ function lastDays(now: Date, n: number): string[] {
   return days;
 }
 
-export function buildStatusView(deps: {
+export async function buildStatusView(deps: {
   checks: Check[];
   store: Store;
   poller: Pick<Poller, 'liveness' | 'isHealthy'>;
   now?: Date;
-}): StatusView {
+}): Promise<StatusView> {
   const { checks, store, poller } = deps;
   const now = deps.now ?? new Date();
-  const latest = store.latestResults();
-  const history = store.dailyHistory(HISTORY_DAYS, now);
+  const [latest, history, alerts, openIncidents, liveness] = await Promise.all([
+    store.latestResults(),
+    store.dailyHistory(HISTORY_DAYS, now),
+    store.alertStates(),
+    store.openIncidents(),
+    poller.liveness(),
+  ]);
   const days = lastDays(now, HISTORY_DAYS);
 
   const views = checks.map((check): CheckView => {
@@ -62,7 +71,7 @@ export function buildStatusView(deps: {
     // A fetch failure overwrites the latest result's incidents; fall back to the stored open ones.
     const incidents: Incident[] =
       status === 'unknown'
-        ? store.incidents(check.id, { openOnly: true }).map((i) => ({
+        ? (openIncidents.get(check.id) ?? []).map((i) => ({
             id: i.incidentId,
             title: i.title,
             status: i.status,
@@ -71,13 +80,16 @@ export function buildStatusView(deps: {
           }))
         : (r?.incidents ?? []);
     const perDay = new Map((history.get(check.id) ?? []).map((h) => [h.day, h.status]));
+    // `since` belongs to the alerted status; hide it when the badge shows something else.
+    const alert = alerts.get(check.id);
+    const since = r && alert?.alertedStatus === status ? alert.since : null;
     const view: CheckView = {
       id: check.id,
       name: check.name,
       kind: check.kind,
       status,
       label: statusLabel(status),
-      since: store.getAlertState(check.id)?.since ?? null,
+      since,
       checkedAt: r?.checkedAt ?? null,
       incidents,
       components: (r?.components ?? []).filter((c) => c.status !== 'operational'),
@@ -95,9 +107,11 @@ export function buildStatusView(deps: {
   return {
     generatedAt: now.toISOString(),
     overall: worstStatus(views.map((v) => v.status)),
-    issues: views.filter((v) => v.status !== 'operational').length,
+    issues: views.filter((v) => v.status !== 'operational' && v.status !== 'maintenance').length,
+    maintenance: views.filter((v) => v.status === 'maintenance').length,
+    awaitingFirstPoll: views.every((v) => v.checkedAt === null),
     checks: views,
-    liveness: poller.liveness(),
-    healthy: poller.isHealthy(),
+    liveness,
+    healthy: poller.isHealthy(liveness, now),
   };
 }

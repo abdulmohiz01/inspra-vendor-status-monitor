@@ -1,32 +1,42 @@
-import { join } from 'node:path';
 import { serve } from '@hono/node-server';
 import { createNotifier } from './alerts/notifier.js';
 import { createVendorChecks } from './checks/vendor.js';
-import { loadConfig } from './config.js';
+import { appUrlWarning, loadConfig } from './config.js';
 import { createLogger } from './log.js';
 import { Poller } from './poller.js';
 import { createApp } from './server.js';
 import { Store } from './store.js';
 import { loadVendors } from './vendors.js';
 
+/** Long-running mode (`pnpm dev`, `pnpm start`, Docker): an in-process loop polls every interval. */
 const log = createLogger();
 
-function main(): void {
+async function main(): Promise<void> {
   let config: ReturnType<typeof loadConfig>;
   let vendors: ReturnType<typeof loadVendors>;
+  let store: Store;
   try {
     config = loadConfig();
     vendors = loadVendors(config.vendorsFile);
+    store = await Store.open({ url: config.databaseUrl, authToken: config.databaseAuthToken });
   } catch (err) {
     log.error('startup failed', { error: err instanceof Error ? err.message : String(err) });
     process.exit(1);
   }
+  const urlWarning = appUrlWarning(config);
+  if (urlWarning) log.warn(urlWarning, { appUrl: config.appUrl, basePath: config.basePath });
 
-  const store = new Store(join(config.dataDir, 'status.db'));
   const checks = createVendorChecks(vendors);
   const notifier = createNotifier(config, { fetch, log });
   const poller = new Poller({ checks, store, notifier, config, log });
-  const app = createApp({ checks, store, poller, basePath: config.basePath });
+  const app = createApp({
+    checks,
+    store,
+    poller,
+    basePath: config.basePath,
+    poll: { runCycle: () => poller.runCycle(), cronSecret: config.cronSecret },
+    log,
+  });
   const server = serve({ fetch: app.fetch, port: config.port, hostname: config.host });
   poller.start();
   log.info('listening', { port: config.port, basePath: config.basePath, vendors: vendors.length });
@@ -51,4 +61,4 @@ function main(): void {
   process.on('SIGTERM', () => shutdown('SIGTERM'));
 }
 
-main();
+void main();

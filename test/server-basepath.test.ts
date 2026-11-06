@@ -20,7 +20,6 @@ const checks: Check[] = [
   },
 ];
 const liveness = {
-  startedAt: new Date().toISOString(),
   lastCycleStartedAt: null,
   lastCycleCompletedAt: null,
   cycles: 0,
@@ -28,21 +27,21 @@ const liveness = {
   intervalSeconds: 180,
 };
 
-function app(basePath = BP) {
-  const store = new Store(':memory:');
+async function app(basePath = BP) {
+  const store = await Store.open({ url: ':memory:' });
   stores.push(store);
-  return createApp({ checks, store, poller: { liveness: () => liveness, isHealthy: () => true }, basePath });
+  return createApp({ checks, store, poller: { liveness: async () => liveness, isHealthy: () => true }, basePath });
 }
 
 describe('createApp under /insprastatus', () => {
   it.each([`${BP}/`, BP])('serves HTML at %s', async (p) => {
-    const res = await app().request(p);
+    const res = await (await app()).request(p);
     expect(res.status).toBe(200);
     expect(res.headers.get('content-type')).toContain('text/html');
   });
 
   it('serves api, healthz and assets under the prefix', async () => {
-    const a = app();
+    const a = await app();
     const api = await a.request(`${BP}/api/status`);
     expect(api.status).toBe(200);
     expect(api.headers.get('content-type')).toContain('application/json');
@@ -58,7 +57,7 @@ describe('createApp under /insprastatus', () => {
   });
 
   it('redirects / and 404s everything else outside the prefix', async () => {
-    const a = app();
+    const a = await app();
     const root = await a.request('/');
     expect(root.status).toBe(302);
     expect(root.headers.get('location')).toBe(`${BP}/`);
@@ -68,7 +67,7 @@ describe('createApp under /insprastatus', () => {
   });
 
   it('uses only prefixed, anchor or absolute-URL links', async () => {
-    const html = await (await app().request(`${BP}/`)).text();
+    const html = await (await (await app()).request(`${BP}/`)).text();
     const values = [...html.matchAll(/\b(?:href|src)="([^"]*)"/g)].map((m) => m[1]!);
     expect(values.length).toBeGreaterThan(3);
     for (const v of values) {
@@ -77,11 +76,11 @@ describe('createApp under /insprastatus', () => {
   });
 
   it('works at the root when basePath is empty', async () => {
-    const a = app('');
+    const a = await app('');
     expect((await a.request('/assets/app.css')).status).toBe(200);
     const res = await a.request('/');
     expect(res.status).toBe(200);
     expect(res.headers.get('content-type')).toContain('text/html');
-    expect(await res.text()).toContain('href="/assets/app.css"');
+    expect(await res.text()).toMatch(/href="\/assets\/app\.css\?v=[0-9a-f]{10}"/);
   });
 });

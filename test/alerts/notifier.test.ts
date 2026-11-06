@@ -79,6 +79,61 @@ describe('createNotifier', () => {
     expect(log.error).toHaveBeenCalled();
   });
 
+  describe('delivery result', () => {
+    const url = 'https://hooks.slack.test/x';
+    const okFetch = () => vi.fn().mockResolvedValue(new Response('ok', { status: 200 }));
+
+    it('is ok in log-only mode (no channels configured)', async () => {
+      const r = await createNotifier({ appUrl: APP }, { fetch: vi.fn() as never, log: silent() }).notify(event);
+      expect(r).toEqual({ ok: true });
+    });
+
+    it('is ok when every configured channel succeeds', async () => {
+      const r = await createNotifier(
+        { appUrl: APP, slackWebhookUrl: url, smtp },
+        { fetch: okFetch() as never, log: silent(), sendMail: vi.fn().mockResolvedValue(undefined) },
+      ).notify(event);
+      expect(r).toEqual({ ok: true });
+    });
+
+    it('is not ok on a Slack 5xx, even when email succeeds', async () => {
+      const r = await createNotifier(
+        { appUrl: APP, slackWebhookUrl: url, smtp },
+        {
+          fetch: vi.fn().mockResolvedValue(new Response('no', { status: 503 })) as never,
+          log: silent(),
+          sendMail: vi.fn().mockResolvedValue(undefined),
+        },
+      ).notify(event);
+      expect(r.ok).toBe(false);
+      expect(r.error).toContain('503');
+    });
+
+    it('is not ok when fetch rejects', async () => {
+      const r = await createNotifier(
+        { appUrl: APP, slackWebhookUrl: url },
+        { fetch: vi.fn().mockRejectedValue(new Error('down')) as never, log: silent() },
+      ).notify(event);
+      expect(r).toMatchObject({ ok: false, error: expect.stringContaining('down') });
+    });
+
+    it('is not ok when sendMail throws, even when Slack succeeds', async () => {
+      const r = await createNotifier(
+        { appUrl: APP, slackWebhookUrl: url, smtp },
+        { fetch: okFetch() as never, log: silent(), sendMail: vi.fn().mockRejectedValue(new Error('smtp down')) },
+      ).notify(event);
+      expect(r).toMatchObject({ ok: false, error: expect.stringContaining('smtp down') });
+    });
+
+    it('is not ok when only email is configured and it fails', async () => {
+      const r = await createNotifier(
+        { appUrl: APP, smtp },
+        { fetch: vi.fn() as never, log: silent(), sendMail: vi.fn().mockRejectedValue(new Error('smtp down')) },
+      ).notify(event);
+      expect(r.ok).toBe(false);
+    });
+  });
+
   it('clears the sendMail race timer after a successful send', async () => {
     vi.useFakeTimers();
     try {

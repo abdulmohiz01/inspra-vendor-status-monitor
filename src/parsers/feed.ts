@@ -79,6 +79,15 @@ function activeStatus(item: FeedItem): Status {
   return 'degraded';
 }
 
+/**
+ * Items that are updates of one incident share a key. BetterStack-style guids append a
+ * `#<40+ hex>` fragment per update; AWS appends `_<unix ts>` to the fragment
+ * (`.../#multipleservices-me-central-1_1772554485`).
+ */
+function groupKey(guid: string): string {
+  return guid.replace(/#[0-9a-f]{40,}$/i, '').replace(/(#[^#]*)_\d+$/, '$1');
+}
+
 export function parseFeed(
   feedXml: string,
   opts: { now: Date; lookbackHours: number; components?: string[] },
@@ -107,7 +116,7 @@ export function parseFeed(
   // Ties keep feed order (feeds are newest-first).
   const groups = new Map<string, { newest: FeedItem; matched: boolean }>();
   for (const item of readItems(root)) {
-    const key = item.guid.replace(/#[0-9a-f]{40,}$/i, '');
+    const key = groupKey(item.guid);
     const cur = groups.get(key);
     if (!cur) {
       groups.set(key, { newest: item, matched: matches(item) });

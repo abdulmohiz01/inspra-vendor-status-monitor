@@ -1,0 +1,9 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
+  "outputDirectory": "public",
+  "functions": {
+    "api/index.js": { "includeFiles": "vendors.yaml", "maxDuration": 15 }
+  },
+  "rewrites": [{ "source": "/(.*)", "destination": "/api" }]
+}
